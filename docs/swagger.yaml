@@ -801,6 +801,57 @@ paths:
           description: Not found
         "500":
           description: Internal server error
+  
+  /users:
+    post:
+    summary: User Sign Up
+    tags:
+      - Users
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RegistrationDTO"
+    responses:
+      "200":
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Users"
+      "400":
+        description: Invalid input
+
+  /users/validate-signup:
+    post:
+      summary: Validate User Signup Information (email and phone number)
+      tags:
+        - Users
+      requestBody:
+        description: Validate signup data using the provided identity type and identifier.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ValidateSignupDTO"
+      responses:
+        "200":
+          description: Signup validated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  is_valid:
+                    type: boolean
+                    description: Indicates if the signup identifier is valid
+                    example: true
+        "400":
+          description: Invalid input
+    
+
+
 
 components:
   parameters:
@@ -1857,6 +1908,151 @@ components:
         info:
           $ref: "#/components/schemas/AssetInfo"
           description: Additional information about the asset.
+
+
+    RegisterationDTO:
+      type: object
+      required:
+        - email_address
+        - password
+        - phone_number
+        - address_metadata
+        - country
+        - country_of_residence
+      properties:
+        email_address:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        phone_number:
+          type: string
+        address_metadata:
+          $ref: '#/components/schemas/AddressMetadata'
+        country:
+          type: string
+        country_of_residence:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        profile_picture:
+          type: string
+          format: uri
+        date_of_birth:
+          type: string
+          format: date
+        referral_code:
+          type: string
+        referral_id:
+          type: string
+              
+        AddressMetadata:
+          type: object
+          required:
+            - street_address
+            - city
+            - state
+            - zip_code
+          properties:
+            street_address:
+              type: string
+              description: street address of a user
+            city:
+              type: string
+              description: city of that address
+            state:
+              type: string
+              description: state the city is in
+            zip_code:
+              type: string
+              description: zipcode of user's area
+
+        Session:
+          type: object
+          required:
+            - id
+            - user_id
+            - first_name
+            - last_name
+            - email_address
+            - location
+            - account_id
+            - account_type
+            - platform
+            - platform-os
+            - current_app_version
+          properties:
+            id:
+              type: string
+              description: a random uuid for the session
+            user_id:
+              type: string
+              description: the user's id
+            first_name:
+              type: string
+              description: first name of the user
+            last_name:
+              type: string
+              description: last name of the user
+            email_address:
+              type: string
+              format: email
+              description: email of the user
+            location:
+              type: string
+              description: where the user signed in from
+            account_id:
+              type: string
+              description: account the user is signed into
+            account_type:
+              type: string
+              description: type of account the user is signed in to
+            platform:
+              oneOf:
+                - type: string
+                - type: array
+                  items:
+                    type: string
+              description: platform the user signed in from
+            platform-os:
+              oneOf:
+                - type: string
+                - type: array
+                  items:
+                    type: string
+              description: platform os the user signed in from
+            current_app_version:
+              type: string
+              description: current app version
+
+      RegistrationResponse:
+        type: object
+        properties:
+          token:
+            type: string
+            description: authentication token returned after registration
+          session:
+            $ref: '#/components/schemas/Session'
+
+      ValidateSignupDTO:
+        type: object
+        required:
+          - identity_type
+          - identifier
+        properties:
+          identity_type:
+            type: string
+            enum:
+              - email
+              - phone
+            description: The type of identity provided (e.g., email, phone, etc.)
+          identifier:
+            type: string
+            description: The identifier value to be validated
+
 
   securitySchemes:
     headlessAuth:
