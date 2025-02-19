@@ -1910,7 +1910,7 @@ components:
           description: Additional information about the asset.
 
 
-    RegisterationDTO:
+    RegistrationDTO:
       type: object
       required:
         - email_address
@@ -1918,7 +1918,6 @@ components:
         - phone_number
         - address_metadata
         - country
-        - country_of_residence
       properties:
         email_address:
           type: string
