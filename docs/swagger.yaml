@@ -804,6 +804,12 @@ paths:
 
   /auth/register:
     post:
+      parameters:
+        - in: header 
+          name: Content-Type 
+          schema: 
+            type: string 
+            enum: [multipart/form-data, application/json] 
       summary: Register a new user
       tags:
         - Auths
@@ -827,7 +833,7 @@ paths:
 
   /auth/validate-signup:
     post:
-      summary: Validate if a user can sign up
+      summary: Checks if a users email, phone_number or referral code is valid
       tags:
         - Auths
       requestBody:
@@ -848,6 +854,27 @@ paths:
 
   /auth/login:
     post:
+      parameters:
+        - in: header 
+          name: device
+          schema: 
+            type: string 
+            example: "Apple/iPhone 13"
+        - in: header 
+          name: rise-platform
+          schema: 
+            type: string 
+            example: "mobile"
+        - in: header 
+          name: rise-platform-os
+          schema: 
+            type: string 
+            example: "ios"
+        - in: header 
+          name: rise-app-version
+          schema: 
+            type: string 
+            example: "3.21.34"
       summary: User Login
       tags:
         - Auths
@@ -870,25 +897,21 @@ paths:
         "500":
           description: We are having system-level issues. Please bear with us
 
-  /auth/forgot-password:
+  /auth/request-otp:
     post:
-      summary: Forgot Password
+      summary: Request OTP used in password or pin reset
       tags:
         - Auths
-      description: Resets a user's password using OTP verification
+      description: Generates an OTP using the verification service and emails the user the generated OTP
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ForgotPasswordDTO"
+              $ref: "#/components/schemas/RequestOTP"
       responses:
         "200":
-          description: Password reset successful
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RegistrationDTOResponse"
+          description: OTP Sent succesfully
         "401":
           description: Invalid OTP or unauthorized access
         "404":
@@ -897,7 +920,7 @@ paths:
           description: We are having system-level issues. Please bear with us
 
   /auth/reset-password:
-    put:
+    patch:
       summary: Change Password
       tags:
         - Auths
@@ -907,21 +930,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ChangePasswordDTO"
+              $ref: "#/components/schemas/ResetPasswordDTO"
       responses:
         "200":
           description: Password changed successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserDTO"
-        "401":
+                $ref: "#/components/schemas/RegistrationDTOResponse"
+        "422":
           description: Invalid OTP
         "500":
           description: We are having system-level issues. Please bear with us
 
   /auth/reset-pin:
-    put:
+    patch:
       summary: Reset PIN
       tags:
         - Auths
@@ -946,7 +969,7 @@ paths:
         "500":
           description: We are having system-level issues. Please bear with us
 
-  /auth/validate-otp:
+  /auth/confirm-password:
     post:
       summary: Validate otp
       tags:
@@ -956,7 +979,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ValidateOTPDTO"
+              $ref: "#/components/schemas/ConfirmPasswordDTO"
       responses:
         "200":
           description: Successful validation
@@ -1925,8 +1948,8 @@ components:
           format: password
         phone_number:
           type: string
-        address_metadata:
-          $ref: "#/components/schemas/AddressMetadata"
+        address:
+          $ref: "#/components/schemas/Address"
         country:
           type: string
           example: ngn
@@ -1967,14 +1990,18 @@ components:
           type: string
           example: bruce@test.com
 
-    ValidateOTPDTO:
+    ConfirmPasswordDTO:
       type: object
       required:
-        - otp
+        - email_address
+        - password
       properties:
-        otp:
+        email_address:
           type: string
           example: 234567
+        password:
+          type: string
+          example: "NewPassword"
 
     ValidateSignupResponse:
       type: object
@@ -1982,12 +2009,12 @@ components:
         is_valid:
           type: boolean
 
-    AddressMetadata:
+    Address:
       type: object
       required:
         - street_name
         - city
-        - state
+        - house_number
         - zip_code
       properties:
         street_name:
@@ -2021,30 +2048,11 @@ components:
         email_address:
           type: string
           example: bruce@test.com
-        location:
-          type: string
         account_id:
           type: string
           format: uuid
         account_type:
           $ref: "#/components/schemas/AccountType"
-        platform:
-          oneOf:
-            - type: string
-              enum: [string]
-              example: mobile
-            - type: array
-              items:
-                type: string
-                enum: [string]
-        platform-os:
-          $ref: "#/components/schemas/PlatformOS"
-        current_app_version:
-          type: string
-          example: 3.0
-        device:
-          type: string
-          example: iPhone 16
 
     IdentifierType:
       type: string
@@ -2089,6 +2097,22 @@ components:
             - password
             - pin
 
+    RequestOTP:
+      type: object
+      required:
+        - request_type
+        - identifier
+      properties:
+        identifier:
+          type: string
+          example: user@example.com
+        request_type:
+          type: string
+          enum:
+            - forgot-password
+            - reset-pin
+          example: "forgot-password"
+          
     ForgotPasswordDTO:
       type: object
       required:
@@ -2108,16 +2132,25 @@ components:
           type: string
           example: "123456"
 
-    ChangePasswordDTO:
+    ResetPasswordDTO:
       type: object
       required:
         - otp
+        - email_address
         - password
+        - confirm_password
       properties:
         otp:
           type: string
           example: "123456"
+        email_address:
+          type: string
+          example: "test@doe.com"
         password:
+          type: string
+          format: password
+          example: "NewSecurePass123"
+        confirm_password:
           type: string
           format: password
           example: "NewSecurePass123"
@@ -2125,13 +2158,18 @@ components:
     ChangePINDTO:
       type: object
       required:
-        - otp
+        - email_address
         - transaction_pin
+        - confirm_pin
       properties:
-        otp:
+        email_address:
           type: string
-          example: "123456"
+          example: "john@doe.com"
         transaction_pin:
+          type: string
+          format: password
+          example: "123456"
+        confirm_pin:
           type: string
           format: password
           example: "123456"
@@ -2148,7 +2186,7 @@ components:
         phone_number:
           type: string
         address_metadata:
-          $ref: "#/components/schemas/AddressMetadata"
+          $ref: "#/components/schemas/Address"
         country:
           type: string
           example: ngn
@@ -2176,9 +2214,6 @@ components:
           type: string
           nullable: true
           format: uuid
-        role:
-          type: string
-          example: investor
         username:
           type: string
           example: "johndoe"
