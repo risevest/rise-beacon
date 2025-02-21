@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Plan API
+  title: Rise API
   version: 1.0.0
   description: Rise API Docs
 
@@ -225,7 +225,7 @@ paths:
                     items:
                       $ref: "#/components/schemas/PlanPerformance"
                 description: The response may either be paginated or a full list of performances, depending on the `paginate` query parameter.
-        
+
               examples:
                 paginated:
                   summary: Paginated response example
@@ -801,35 +801,36 @@ paths:
           description: Not found
         "500":
           description: Internal server error
-  
-  /users:
+
+  /auth/register:
     post:
-    summary: User Sign Up
-    tags:
-      - Users
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/RegistrationDTO"
-    responses:
-      "200":
-        description: Successful operation
+      summary: Register a new user
+      tags:
+        - Auths
+      requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Users"
-      "400":
-        description: Invalid input
+              $ref: "#/components/schemas/RegistrationDTO"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegistrationDTOResponse"
+        "400":
+          description: Referral not found with that code ERTH20912
+        "500":
+          description: We are having system-level issues. Please bear with us
 
-  /users/validate-signup:
+  /auth/validate-signup:
     post:
-      summary: Validate User Signup Information (email and phone number)
+      summary: Validate if a user can sign up
       tags:
-        - Users
+        - Auths
       requestBody:
-        description: Validate signup data using the provided identity type and identifier.
         required: true
         content:
           application/json:
@@ -837,21 +838,134 @@ paths:
               $ref: "#/components/schemas/ValidateSignupDTO"
       responses:
         "200":
-          description: Signup validated successfully
+          description: Successful validation
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  is_valid:
-                    type: boolean
-                    description: Indicates if the signup identifier is valid
-                    example: true
+                $ref: "#/components/schemas/ValidateSignupResponse"
+        "500":
+          description: We are having system-level issues. Please bear with us
+
+  /auth/login:
+    post:
+      summary: User Login
+      tags:
+        - Auths
+      description: Authenticates a user and starts a session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginDTO"
+      responses:
+        "200":
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegistrationDTOResponse"
+        "401":
+          description: Invalid login credentials
+        "500":
+          description: We are having system-level issues. Please bear with us
+
+  /auth/forgot-password:
+    post:
+      summary: Forgot Password
+      tags:
+        - Auths
+      description: Resets a user's password using OTP verification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordDTO"
+      responses:
+        "200":
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegistrationDTOResponse"
+        "401":
+          description: Invalid OTP or unauthorized access
+        "404":
+          description: User not found
+        "500":
+          description: We are having system-level issues. Please bear with us
+
+  /auth/reset-password:
+    put:
+      summary: Change Password
+      tags:
+        - Auths
+      description: Changes a user's password using OTP verification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordDTO"
+      responses:
+        "200":
+          description: Password changed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+        "401":
+          description: Invalid OTP
+        "500":
+          description: We are having system-level issues. Please bear with us
+
+  /auth/reset-pin:
+    put:
+      summary: Reset PIN
+      tags:
+        - Auths
+      description: Allows a user to reset their transaction PIN
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePINDTO"
+      responses:
+        "200":
+          description: PIN reset successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
         "400":
-          description: Invalid input
-    
+          description: OTP required
+        "401":
+          description: Invalid OTP
+        "500":
+          description: We are having system-level issues. Please bear with us
 
-
+  /auth/validate-otp:
+    post:
+      summary: Validate otp
+      tags:
+        - Auths
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ValidateOTPDTO"
+      responses:
+        "200":
+          description: Successful validation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidateSignupResponse"
+        "500":
+          description: We are having system-level issues. Please bear with us
 
 components:
   parameters:
@@ -1484,11 +1598,7 @@ components:
           type: object
           additionalProperties:
             $ref: "#/components/schemas/Composition"
-          example:
-            {
-              "9d6d3d58-c799-4147-a71e-3e5f59e239ea":
-                { asset_class: "etf", percentage: 100 },
-            }
+          example: { "9d6d3d58-c799-4147-a71e-3e5f59e239ea": { asset_class: "etf", percentage: 100 } }
 
     TransactionRequest:
       type: object
@@ -1632,16 +1742,7 @@ components:
               enum: [ngn]
             state:
               type: string
-              enum:
-                [
-                  "approved",
-                  "debitable",
-                  "rejected",
-                  "created",
-                  "paused",
-                  "canceled",
-                  "pending",
-                ]
+              enum: ["approved", "debitable", "rejected", "created", "paused", "canceled", "pending"]
             provider:
               type: string
               enum: [mono]
@@ -1806,6 +1907,307 @@ components:
         - gift
         - returns
 
+    RegistrationDTO:
+      type: object
+      required:
+        - email_address
+        - password
+        - phone_number
+        - address_metadata
+        - country
+        - country_of_residence
+      properties:
+        email_address:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        phone_number:
+          type: string
+        address_metadata:
+          $ref: "#/components/schemas/AddressMetadata"
+        country:
+          type: string
+          example: ngn
+        country_of_residence:
+          type: string
+          example: ngn
+        first_name:
+          type: string
+          example: John
+          nullable: true
+        last_name:
+          type: string
+          example: Doe
+          nullable: true
+        profile_picture:
+          type: string
+          format: uri
+          example: https://rise-verifications-identities.s3.eu-west-1.amazonaws.com/000999111.jpg
+          nullable: true
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        referral_code:
+          type: string
+          nullable: true
+          example: OKMHUIO8
+
+    ValidateSignupDTO:
+      type: object
+      required:
+        - identity_type
+        - identifier
+      properties:
+        identity_type:
+          $ref: "#/components/schemas/IdentifierType"
+        identifier:
+          type: string
+          example: bruce@test.com
+
+    ValidateOTPDTO:
+      type: object
+      required:
+        - otp
+      properties:
+        otp:
+          type: string
+          example: 234567
+
+    ValidateSignupResponse:
+      type: object
+      properties:
+        is_valid:
+          type: boolean
+
+    AddressMetadata:
+      type: object
+      required:
+        - street_name
+        - city
+        - state
+        - zip_code
+      properties:
+        street_name:
+          type: string
+          example: "yaba road"
+        city:
+          type: string
+          example: Lagos
+        house_number:
+          type: string
+          example: 50
+        zip_code:
+          type: string
+          example: 10001
+
+    RegistrationDTOResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
+        user_id:
+          type: string
+          format: uuid
+        first_name:
+          type: string
+          example: Paul
+        last_name:
+          type: string
+          example: Bruce
+        email_address:
+          type: string
+          example: bruce@test.com
+        location:
+          type: string
+        account_id:
+          type: string
+          format: uuid
+        account_type:
+          $ref: "#/components/schemas/AccountType"
+        platform:
+          oneOf:
+            - type: string
+              enum: [string]
+              example: mobile
+            - type: array
+              items:
+                type: string
+                enum: [string]
+        platform-os:
+          $ref: "#/components/schemas/PlatformOS"
+        current_app_version:
+          type: string
+          example: 3.0
+        device:
+          type: string
+          example: iPhone 16
+
+    IdentifierType:
+      type: string
+      enum:
+        - email
+        - phone_number
+        - referral_code
+      description: Type of user identity used for validation.
+
+    AccountType:
+      type: string
+      enum:
+        - individual
+        - bussiness
+        - group
+      description: Type of user identity used for validation.
+
+    PlatformOS:
+      type: string
+      enum:
+        - android
+        - ios
+
+    LoginDTO:
+      type: object
+      required:
+        - identifier
+        - secret
+        - mode
+      properties:
+        identifier:
+          type: string
+          example: bruce@gmail.com
+          description: "The user's identifier (email or username)"
+        secret:
+          type: string
+          example: seunmyg123$
+          description: "The user's password or PIN"
+        mode:
+          type: string
+          enum:
+            - password
+            - pin
+
+    ForgotPasswordDTO:
+      type: object
+      required:
+        - email_address
+        - password
+        - otp
+      properties:
+        email_address:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          example: "NewSecurePass123"
+        otp:
+          type: string
+          example: "123456"
+
+    ChangePasswordDTO:
+      type: object
+      required:
+        - otp
+        - password
+      properties:
+        otp:
+          type: string
+          example: "123456"
+        password:
+          type: string
+          format: password
+          example: "NewSecurePass123"
+
+    ChangePINDTO:
+      type: object
+      required:
+        - otp
+        - transaction_pin
+      properties:
+        otp:
+          type: string
+          example: "123456"
+        transaction_pin:
+          type: string
+          format: password
+          example: "123456"
+
+    UserDTO:
+      type: object
+      properties:
+        email_address:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        phone_number:
+          type: string
+        address_metadata:
+          $ref: "#/components/schemas/AddressMetadata"
+        country:
+          type: string
+          example: ngn
+        country_of_residence:
+          type: string
+          example: ngn
+        first_name:
+          type: string
+          example: John
+          nullable: true
+        last_name:
+          type: string
+          example: Doe
+          nullable: true
+        profile_picture:
+          type: string
+          format: uri
+          example: https://rise-verifications-identities.s3.eu-west-1.amazonaws.com/000999111.jpg
+          nullable: true
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        referral_id:
+          type: string
+          nullable: true
+          format: uuid
+        role:
+          type: string
+          example: investor
+        username:
+          type: string
+          example: "johndoe"
+        status:
+          type: string
+          example: "active"
+        full_name:
+          type: string
+          example: john doe
+        gender:
+          type: string
+          example: male
+        accound_id:
+          type: string
+          format: uuid
+        account_type:
+          $ref: "#/components/schemas/AccountType"
+        metadata:
+          $ref: "#/components/schemas/UserMetadata"
+
+    UserMetadata:
+      type: object
+      properties:
+        news_letter_subscribed:
+          type: boolean
+          example: true
+        auto_invest_configs:
+          $ref: "#/components/schemas/AutoInvestConfig"
+
     AUMStats:
       type: object
       properties:
@@ -1824,7 +2226,7 @@ components:
         portfolio_distribution:
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/AssetMix'
+            $ref: "#/components/schemas/AssetMix"
           example:
             {
               "9d6d3d58-c799-4147-a71e-3e5f59e239ea": { asset_class: "bond", value: 236.18 },
@@ -1908,150 +2310,6 @@ components:
         info:
           $ref: "#/components/schemas/AssetInfo"
           description: Additional information about the asset.
-
-
-    RegistrationDTO:
-      type: object
-      required:
-        - email_address
-        - password
-        - phone_number
-        - address_metadata
-        - country
-      properties:
-        email_address:
-          type: string
-          format: email
-        password:
-          type: string
-          format: password
-        phone_number:
-          type: string
-        address_metadata:
-          $ref: '#/components/schemas/AddressMetadata'
-        country:
-          type: string
-        country_of_residence:
-          type: string
-        first_name:
-          type: string
-        last_name:
-          type: string
-        profile_picture:
-          type: string
-          format: uri
-        date_of_birth:
-          type: string
-          format: date
-        referral_code:
-          type: string
-        referral_id:
-          type: string
-              
-        AddressMetadata:
-          type: object
-          required:
-            - street_address
-            - city
-            - state
-            - zip_code
-          properties:
-            street_address:
-              type: string
-              description: street address of a user
-            city:
-              type: string
-              description: city of that address
-            state:
-              type: string
-              description: state the city is in
-            zip_code:
-              type: string
-              description: zipcode of user's area
-
-        Session:
-          type: object
-          required:
-            - id
-            - user_id
-            - first_name
-            - last_name
-            - email_address
-            - location
-            - account_id
-            - account_type
-            - platform
-            - platform-os
-            - current_app_version
-          properties:
-            id:
-              type: string
-              description: a random uuid for the session
-            user_id:
-              type: string
-              description: the user's id
-            first_name:
-              type: string
-              description: first name of the user
-            last_name:
-              type: string
-              description: last name of the user
-            email_address:
-              type: string
-              format: email
-              description: email of the user
-            location:
-              type: string
-              description: where the user signed in from
-            account_id:
-              type: string
-              description: account the user is signed into
-            account_type:
-              type: string
-              description: type of account the user is signed in to
-            platform:
-              oneOf:
-                - type: string
-                - type: array
-                  items:
-                    type: string
-              description: platform the user signed in from
-            platform-os:
-              oneOf:
-                - type: string
-                - type: array
-                  items:
-                    type: string
-              description: platform os the user signed in from
-            current_app_version:
-              type: string
-              description: current app version
-
-      RegistrationResponse:
-        type: object
-        properties:
-          token:
-            type: string
-            description: authentication token returned after registration
-          session:
-            $ref: '#/components/schemas/Session'
-
-      ValidateSignupDTO:
-        type: object
-        required:
-          - identity_type
-          - identifier
-        properties:
-          identity_type:
-            type: string
-            enum:
-              - email
-              - phone
-            description: The type of identity provided (e.g., email, phone, etc.)
-          identifier:
-            type: string
-            description: The identifier value to be validated
-
 
   securitySchemes:
     headlessAuth:
