@@ -686,13 +686,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ExternalWallet"
+                $ref: "#/components/schemas/DirectDebitExternalWallet"
         "422":
           description: Unprocessable entity
         "500":
           description: Internal server error
     get:
-      summary: Create Direct Debit External
+      summary: Get direct debit external wallets
       tags:
         - Direct Debit
       parameters:
@@ -719,7 +719,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/ExternalWallet"
+                  $ref: "#/components/schemas/DirectDebitExternalWallet"
         "422":
           description: Unprocessable entity
         "500":
@@ -749,7 +749,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ExternalWallet"
+                $ref: "#/components/schemas/DirectDebitExternalWallet"
         "422":
           description: Unprocessable entity
         "500":
@@ -1736,7 +1736,7 @@ components:
                 city:
                   type: string
 
-    ExternalWallet:
+    DirectDebitExternalWallet:
       type: object
       properties:
         id:
