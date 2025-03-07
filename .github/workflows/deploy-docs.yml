@@ -1,12 +1,16 @@
 name: Deploy Swagger Docs to S3
 
+# on:
+#   pull_request:
+#     types: [closed]
+#     branches:
+#       - master
+#     paths:
+#       - "docs/**"
 on:
-  pull_request:
-    types: [closed]
-    branches:
+  push:
+    branches-ignore:
       - master
-    # paths:
-    #   - "docs/**"
 
 env:
   SWAGGER_FILE: docs/swagger.yaml
