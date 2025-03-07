@@ -1,0 +1,80 @@
+name: Deploy Swagger Docs to S3
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+    paths:
+      - "docs/**"
+
+env:
+  SWAGGER_FILE: docs/swagger.yaml
+  S3_BUCKET: rise-apidocs
+  CURRENT_VERSION: v1.1 # Default version
+
+jobs:
+  deploy-docs:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetch all history for changelog generation
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Install swagger-cli and other dependencies
+        run: |
+          npm install -g @apidevtools/swagger-cli
+          npm install -g swagger-changelog
+
+      - name: Calculate new version
+        id: version
+        run: |
+          # Extract major and minor version numbers
+          CURRENT_VERSION=$(cat docs/version.txt || echo "1.1")
+          MAJOR=$(echo $CURRENT_VERSION | cut -d. -f1)
+          MINOR=$(echo $CURRENT_VERSION | cut -d. -f2)
+
+          # Increment minor version
+          NEW_MINOR=$((MINOR + 1))
+          NEW_VERSION="${MAJOR}.${NEW_MINOR}"
+
+          echo "::set-output name=new_version::v${NEW_VERSION}"
+          echo "::set-output name=current_version::v${CURRENT_VERSION}"
+
+          # Update version file for next run
+          echo "${NEW_VERSION}" > docs/version.txt
+
+      - name: Generate changelog
+        run: |
+          # Generate changelog between current and previous version
+          swagger-changelog \
+            --current ${{ env.SWAGGER_FILE }} \
+            --previous "s3://${S3_BUCKET}/${{ steps.version.outputs.current_version }}/swagger.yaml" \
+            --output changelog.txt
+
+      - name: Deploy to S3
+        run: |
+          # Copy new version
+          aws s3 cp ${{ env.SWAGGER_FILE }} "s3://${S3_BUCKET}/${{ steps.version.outputs.new_version }}/swagger.yaml"
+          aws s3 cp changelog.txt "s3://${S3_BUCKET}/${{ steps.version.outputs.new_version }}/changelog.txt"
+
+          # Update latest version
+          aws s3 cp ${{ env.SWAGGER_FILE }} "s3://${S3_BUCKET}/latest/swagger.yaml"
+          aws s3 cp changelog.txt "s3://${S3_BUCKET}/latest/changelog.txt"
+
+      - name: Update version tracking
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add docs/version.txt
+          git commit -m "Bump API version to ${{ steps.version.outputs.new_version }}"
+          git push
