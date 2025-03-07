@@ -978,7 +978,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RegistrationDTOResponse"
+                $ref: "#/components/schemas/ClientSession"
         "400":
           description: Referral not found with that code ERTH20912
         "500":
@@ -1023,7 +1023,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RegistrationDTOResponse"
+                $ref: "#/components/schemas/ClientSession"
         "401":
           description: Invalid login credentials
         "500":
@@ -1106,7 +1106,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RegistrationDTOResponse"
+                $ref: "#/components/schemas/ClientSession"
         "404":
           description: We could not find any account for bruce@test.com
         "500":
@@ -2522,7 +2522,7 @@ components:
           type: string
           example: 10001
 
-    RegistrationDTOResponse:
+    ClientSession:
       type: object
       properties:
         token:
