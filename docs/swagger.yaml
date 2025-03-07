@@ -1299,6 +1299,79 @@ paths:
         "500":
           description: Internal server error
 
+  /notifications:
+    get:
+      summary: Get notifications for the authenticated user
+      tags:
+        - Notifications
+      parameters:
+        - in: query
+          name: section
+          schema:
+            type: string
+            enum: [general, personal]
+            example: general
+          description: Filter notifications by section.
+        - in: query
+          name: is_read
+          schema:
+            type: boolean
+            example: false
+          description: Filter notifications by read status.
+        - in: query
+          name: sequence
+          schema:
+            type: string
+            enum: [asc, desc]
+            example: desc
+          description: Order notifications by creation time.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            example: 10
+          description: Number of notifications to retrieve per page.
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            example: 0
+          description: Offset for pagination.
+      responses:
+        "200":
+          description: Successfully retrieved notifications
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationResponse"
+        "500":
+          description: We are having system-level issues. Please bear with us
+
+    patch:
+      summary: Mark notifications as read
+      tags:
+        - Notifications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: string
+                    example: "123e4567-e89b-12d3-a456-426614174000"
+                  description: List of notification IDs to mark as read.
+      responses:
+        "200":
+          description: Notifications marked as read successfully
+        "400":
+          description: Invalid request format
+        "500":
+          description: We are having system-level issues. Please bear with us
+
 components:
   parameters:
     offsetParam:
@@ -2642,6 +2715,137 @@ components:
           example: true
         auto_invest_configs:
           $ref: "#/components/schemas/AutoInvestConfig"
+
+    NotificationResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Notification"
+        item_count:
+          type: number
+          example: 25
+          description: Total number of notifications available.
+
+    Notification:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Your subscription has been updated"
+        type:
+          type: string
+          enum: ["plan", "gift", "system", "feed", "transaction"]
+          example: "plan"
+        section:
+          type: string
+          enum: ["general", "personal"]
+          example: "general"
+        is_read:
+          type: boolean
+          example: false
+        owner_id:
+          type: string
+          example: "user_12345"
+        metadata:
+          oneOf:
+            - $ref: "#/components/schemas/PlanNotificationMetadata"
+            - $ref: "#/components/schemas/GiftNotificationMetadata"
+            - $ref: "#/components/schemas/FeedNotificationMetadata"
+            - $ref: "#/components/schemas/NotificationMetadata"
+          nullable: true
+
+    NotificationMetadata:
+      type: object
+      properties:
+        amount:
+          type: number
+          example: 50
+        description:
+          type: string
+          example: "Special offer on your plan"
+
+    PlanNotificationMetadata:
+      allOf:
+        - $ref: "#/components/schemas/NotificationMetadata"
+        - type: object
+          properties:
+            plan_id:
+              type: string
+              example: "plan_001"
+            plan_name:
+              type: string
+              example: "Premium Plan"
+            image_url:
+              type: string
+              example: "https://example.com/images/plan.png"
+      example:
+        plan_id: "plan_001"
+        plan_name: "Premium Plan"
+        image_url: "https://example.com/images/plan.png"
+        amount: 50
+        description: "Your premium plan has been updated"
+
+    GiftNotificationMetadata:
+      allOf:
+        - $ref: "#/components/schemas/NotificationMetadata"
+        - type: object
+          properties:
+            gift_id:
+              type: string
+              example: "gift_123"
+            gift_name:
+              type: string
+              example: "Birthday Gift"
+            sender_name:
+              type: string
+              example: "Alice"
+            receiver_name:
+              type: string
+              example: "Bob"
+            status:
+              type: string
+              example: "delivered"
+            source:
+              type: string
+              example: "event_promo"
+            transaction_ref:
+              type: string
+              nullable: true
+              example: "txn_456"
+            sender_image_url:
+              type: string
+              nullable: true
+              example: "https://example.com/images/alice.png"
+            receiver_image_url:
+              type: string
+              nullable: true
+              example: "https://example.com/images/bob.png"
+      example:
+        gift_id: "gift_123"
+        gift_name: "Birthday Gift"
+        sender_name: "Alice"
+        receiver_name: "Bob"
+        status: "delivered"
+        source: "event_promo"
+        transaction_ref: "txn_456"
+        sender_image_url: "https://example.com/images/alice.png"
+        receiver_image_url: "https://example.com/images/bob.png"
+        description: "Alice sent you a birthday gift!"
+
+    FeedNotificationMetadata:
+      allOf:
+        - $ref: "#/components/schemas/NotificationMetadata"
+        - type: object
+          properties:
+            image_url:
+              type: string
+              example: "https://example.com/images/feed.png"
+      example:
+        image_url: "https://example.com/images/feed.png"
+        amount: 10
+        description: "New update in your feed"
 
     AUMStats:
       type: object
