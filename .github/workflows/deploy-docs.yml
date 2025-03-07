@@ -9,7 +9,7 @@ name: Deploy Swagger Docs to S3
 #       - "docs/**"
 on:
   push:
-    branches-ignore:
+    branches:
       - master
 
 env:
