@@ -30,10 +30,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Install swagger-cli and other dependencies
+      - name: Install Redocly CLI and other dependencies
         run: |
-          npm install -g @apidevtools/swagger-cli
           npm install -g swagger-changelog
+          npm install -g @redocly/cli
 
       - name: Calculate new version
         id: version
@@ -52,6 +52,10 @@ jobs:
 
           # Update version file for next run
           echo "${NEW_VERSION}" > docs/version.txt
+
+      - name: Validate OpenAPI definition
+        run: |
+          npx @redocly/cli lint ${{ env.SWAGGER_FILE }}
 
       - name: Generate changelog
         run: |
