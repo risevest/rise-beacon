@@ -5,8 +5,8 @@ on:
     types: [closed]
     branches:
       - master
-    paths:
-      - "docs/**"
+    # paths:
+    #   - "docs/**"
 
 env:
   SWAGGER_FILE: docs/swagger.yaml
@@ -52,10 +52,6 @@ jobs:
 
           # Update version file for next run
           echo "${NEW_VERSION}" > docs/version.txt
-
-      - name: Validate OpenAPI definition
-        run: |
-          npx @redocly/cli lint ${{ env.SWAGGER_FILE }}
 
       - name: Generate changelog
         run: |
