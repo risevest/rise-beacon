@@ -668,6 +668,123 @@ paths:
           description: Unprocessable entity
         "500":
           description: Internal server error
+          
+  /users/generate-2fa-code:
+    post:
+      summary: Generates 2FA Code for user's actions e.g gift-plan
+      tags:
+        - Users
+      parameters:
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Platform"
+        - $ref: "#/components/parameters/PlatformOS"
+        - $ref: "#/components/parameters/AppVersion"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateTwoFA"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: string
+                example: null
+        "400":
+          description: Invalid identifier type
+        "500":
+          description: We are having system-level issues. Please bear with us
+          
+  /users/verify-2fa-code:
+    post:
+      summary: Verify 2FA code for a user's actions e.g gift-plan
+      tags:
+        - Users
+      parameters:
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Platform"
+        - $ref: "#/components/parameters/PlatformOS"
+        - $ref: "#/components/parameters/AppVersion"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyTwoFA"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Verify2FAResponse"
+        "422":
+          description: Invalid OTP
+        "500":
+          description: We are having system-level issues. Please bear with us
+          
+  
+  /users/set-2fa-action:
+    post:
+      summary: Enable or disbale 2FA for a user
+      tags:
+        - Users
+      parameters:
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Platform"
+        - $ref: "#/components/parameters/PlatformOS"
+        - $ref: "#/components/parameters/AppVersion"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetTwoFAAction"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: string
+                example: null
+        "422":
+          description: Invalid OTP
+        "404":
+          description: User not found
+        "400":
+          description: User not found
+        "500":
+          description: We are having system-level issues. Please bear with us
+          
+  /users/lets-know-you:
+    post:
+      summary: Collects User's personal info
+      tags:
+        - Users
+      parameters:
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Platform"
+        - $ref: "#/components/parameters/PlatformOS"
+        - $ref: "#/components/parameters/AppVersion"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LetsKnowYou"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+        "500":
+          description: We are having system-level issues. Please bear with us
   
   /users/create-pin:
     post:
@@ -707,6 +824,11 @@ paths:
         - $ref: "#/components/parameters/Platform"
         - $ref: "#/components/parameters/PlatformOS"
         - $ref: "#/components/parameters/AppVersion"
+        - in: query
+          name: x-rise-authorization-token
+          schema:
+            type: string
+            example: e520dfe5cec7812a7f4f18a297c83351949ccae6bf45c5f895d178909ce1c4f9
       description: Allows users chnage their password
       requestBody:
         required: true
@@ -722,36 +844,8 @@ paths:
               schema:
                 type: string
                 example: null
-        "500":
-          description: We are having system-level issues. Please bear with us
-          
-  /users/request-secured-otp:
-    post:
-      summary: Request Secured OTP
-      tags:
-        - Users
-      parameters:
-        - $ref: "#/components/parameters/Device"
-        - $ref: "#/components/parameters/Platform"
-        - $ref: "#/components/parameters/PlatformOS"
-        - $ref: "#/components/parameters/AppVersion"
-      description: Allows users request otp while in the app
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/RequestSecuredOTP"
-      responses:
-        "200":
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: string
-                example: null
-        "400":
-          description: Invalid request type
+        "403":       
+          description: This password is the same as the current password. Kindly provide a new password to proceed.
         "500":
           description: We are having system-level issues. Please bear with us
           
@@ -765,13 +859,12 @@ paths:
         - $ref: "#/components/parameters/Platform"
         - $ref: "#/components/parameters/PlatformOS"
         - $ref: "#/components/parameters/AppVersion"
+        - in: query
+          name: x-rise-authorization-token
+          schema:
+            type: string
+            example: e520dfe5cec7812a7f4f18a297c83351949ccae6bf45c5f895d178909ce1c4f9
       description: Allows users verify their email
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/VerifyEmail"
       responses:
         "200":
           description: Successful response
@@ -780,8 +873,6 @@ paths:
               schema:
                 type: string
                 example: null
-        "400":
-          description: Invalid request type
         "500":
           description: We are having system-level issues. Please bear with us
 
@@ -1116,17 +1207,17 @@ paths:
         "500":
           description: We are having system-level issues. Please bear with us
 
-  /auth/request-otp:
+  /verifications/request-otp:
     post:
-      summary: Request OTP used in password or pin reset
+      summary: Request OTP
       tags:
-        - Auths
+        - Verifications
       parameters:
         - $ref: "#/components/parameters/Device"
         - $ref: "#/components/parameters/Platform"
         - $ref: "#/components/parameters/PlatformOS"
         - $ref: "#/components/parameters/AppVersion"
-      description: Generates an OTP using the verification service and emails the user the generated OTP
+      description: Generates an OTP using the verification service
       requestBody:
         required: true
         content:
@@ -1135,11 +1226,48 @@ paths:
               $ref: "#/components/schemas/RequestOTP"
       responses:
         "200":
-          description: OTP Sent succesfully
-        "401":
-          description: Invalid OTP or unauthorized access
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: string
+                example: null
+                  
+        "400":
+          description: Invalid request type
         "404":
-          description: User not found
+          description: We could not find any account for user@example.com
+        "500":
+          description: We are having system-level issues. Please bear with us
+    
+  /verifications/verify-otp:
+    post:
+      summary: Verify OTP
+      tags:
+        - Verifications
+      parameters:
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Platform"
+        - $ref: "#/components/parameters/PlatformOS"
+        - $ref: "#/components/parameters/AppVersion"
+      description: Allows users verify otp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyOTP"
+      responses:
+        "200":
+          description: Successful validation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyOTPResponse"
+        "422":
+          description: Your OTP has either expired or is invalid
+        "404":
+          description: We could not find any account for user@example.com
         "500":
           description: We are having system-level issues. Please bear with us
 
@@ -1153,7 +1281,12 @@ paths:
         - $ref: "#/components/parameters/Platform"
         - $ref: "#/components/parameters/PlatformOS"
         - $ref: "#/components/parameters/AppVersion"
-      description: Changes a user's password using OTP verification
+        - in: query
+          name: x-rise-authorization-token
+          schema:
+            type: string
+            example: e520dfe5cec7812a7f4f18a297c83351949ccae6bf45c5f895d178909ce1c4f9
+      description: Resets a user's password
       requestBody:
         required: true
         content:
@@ -1167,8 +1300,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RegistrationDTOResponse"
-        "422":
-          description: Invalid OTP
+        "404":
+          description: We could not find any account for bruce@test.com
         "500":
           description: We are having system-level issues. Please bear with us
 
@@ -1182,6 +1315,11 @@ paths:
         - $ref: "#/components/parameters/Platform"
         - $ref: "#/components/parameters/PlatformOS"
         - $ref: "#/components/parameters/AppVersion"
+        - in: query
+          name: x-rise-authorization-token
+          schema:
+            type: string
+            example: e520dfe5cec7812a7f4f18a297c83351949ccae6bf45c5f895d178909ce1c4f9
       description: Allows a user to reset their transaction PIN
       requestBody:
         required: true
@@ -1195,17 +1333,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RegistrationDTOResponse"
-        "400":
-          description: OTP required
-        "401":
-          description: Invalid OTP
+                type: string
+                example: null
+        "404":
+          description: We could not find any account for bruce@test.com
         "500":
           description: We are having system-level issues. Please bear with us
 
   /auth/confirm-password:
     post:
-      summary: Validate otp
+      summary: Confirm Password
       tags:
         - Auths
       parameters:
@@ -1226,6 +1363,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidateSignupResponse"
+        "404":
+          description: We could not find any account for bruce@test.com
         "500":
           description: We are having system-level issues. Please bear with us
   
@@ -1352,6 +1491,46 @@ paths:
           description: No ID found"
         "500":
           description: We are having system-level issues. Please bear with us
+  
+  /quotes:
+    get:
+      summary: Fetch quote for the day
+      tags:
+        - Quotes
+      parameters:
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Platform"
+        - $ref: "#/components/parameters/PlatformOS"
+        - $ref: "#/components/parameters/AppVersion"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Quote"
+        "500":
+          description: Internal server error
+          
+  /campaigns:
+    get:
+      summary: Fetch campaigns
+      tags:
+        - Campaigns
+      parameters:
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Platform"
+        - $ref: "#/components/parameters/PlatformOS"
+        - $ref: "#/components/parameters/AppVersion"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Campaign"
+        "500":
+          description: Internal server error
 
 components:
   parameters:
@@ -1929,6 +2108,75 @@ components:
         auth_action:
           type: string
           enum: ["gift-plan", "wallet-transfer", "bank-withdrawal"]
+          
+    GenerateTwoFA:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          enum: ["gift-plan", "wallet-transfer", "bank-withdrawal"]
+          
+    VerifyTwoFA:
+      type: object
+      required:
+        - action
+        - otp
+      properties:
+        action:
+          type: string
+          enum: ["gift-plan", "wallet-transfer", "bank-withdrawal"]
+        otp:
+          type: string
+          example: 123456
+          
+    
+    SetTwoFAAction:
+      type: object
+      required:
+        - action
+        - otp
+      properties:
+        action:
+          type: string
+          enum: ["enable", "disable"]
+        identifier_type:
+          type: string
+          enum: ["email", "phone"]
+        otp:
+          type: string
+          example: 123456
+          
+          
+    LetsKnowYou:
+      type: object
+      required:
+        - gender
+        - monthly_income_range
+        - employment_status
+        - job_sector
+        - marital_status
+        - how_did_you_hear_about_us
+      properties:
+        gender:
+          type: string
+          enum: ["Male", "Female", "Prefer not to say"]
+        monthly_income_range:
+          type: string
+          enum: ["50k", "50k - 100k", "100k - 200k", "200k - 350k", "350k - 500k", "500k+"]
+        employment_status:
+          type: string
+          enum: [ "Self employed", "Gov-sector employed", "Private sector employed", "Unemployed", "Retired"]
+        job_sector:
+          type: string
+          enum: ["Agriculture / Agro Allied", "Advertisement / Media / Publishing", "Art / Design", "Automotive / Car Services", "Beverages / Drinks", "Consulting", "Ecommerce / Retail / Wholesales"]
+        marital_status:
+          type: string
+          enum: ["Single", "Married", "Divorce", "Others"]
+        how_did_you_hear_about_us:
+          type: string
+          enum: ["From family or friends", "Instagram", "Twitter", "Facebook", "Others"]
 
     UserAutoInvestConfigDTO:
       type: object
@@ -2395,13 +2643,17 @@ components:
       required:
         - email_address
         - password
+        - confirm_password
       properties:
         email_address:
           type: string
-          example: 234567
+          example: bruce@test.com
         password:
           type: string
-          example: "NewPassword"
+          example: "verLongPassword"
+        confirm_password:
+          type: string
+          example: "verLongPassword"
 
     ValidateSignupResponse:
       type: object
@@ -2509,43 +2761,25 @@ components:
         request_type:
           type: string
           enum:
-            - forgot-password
+            - reset-password
             - reset-pin
-          example: "forgot-password"
-          
-    ForgotPasswordDTO:
-      type: object
-      required:
-        - email_address
-        - password
-        - otp
-      properties:
-        email_address:
-          type: string
-          format: email
-          example: user@example.com
-        password:
-          type: string
-          format: password
-          example: "NewSecurePass123"
-        otp:
-          type: string
-          example: "123456"
+            - verify-email
+            - change-password
+            - verify-phone
+            - 2fa-email
+            - 2fa-phone
+          example: "reset-password"
 
     ResetPasswordDTO:
       type: object
       required:
-        - otp
         - email_address
         - password
         - confirm_password
       properties:
-        otp:
-          type: string
-          example: "123456"
         email_address:
           type: string
-          example: "test@doe.com"
+          example: "bruce@test.com"
         password:
           type: string
           format: password
@@ -2564,14 +2798,12 @@ components:
       properties:
         email_address:
           type: string
-          example: "john@doe.com"
+          example: "bruce@test.com"
         transaction_pin:
           type: string
-          format: password
           example: "123456"
         confirm_pin:
           type: string
-          format: password
           example: "123456"
 
     UserDTO:
@@ -2585,6 +2817,7 @@ components:
           format: password
         phone_number:
           type: string
+          example: +2348182763456
         address_metadata:
           $ref: "#/components/schemas/Address"
         country:
@@ -2844,38 +3077,57 @@ components:
     ChangePasswordDTO:
       type: object
       properties:
-        otp:
-          type: string
-          example: 123456
         password:
           type: string
           example: longPassword
+        confirm_password:
+          type: string
+          example: longPassword
     
-    RequestSecuredOTP:
+    VerifyOTP:
       type: object
       required:
-        - request_type
+        - action
         - identifier
-      properties:
-        destination:
-          type: string
-          example: user@example.com
-        request_type:
-          type: string
-          enum:
-            - change-password
-            - verify-email
-          example: "verify-email" 
-          
-    VerifyEmail:
-      type: object
-      required:
         - otp
       properties:
+        identifier:
+          type: string
+          example: user@example.com
+        action:
+          type: string
+          enum:
+            - reset-password
+            - reset-pin
+            - verify-email
+            - change-password
+            - verify-phone
+            - 2fa-email
+            - 2fa-phone
+          example: "verify-email" 
         otp:
           type: string
           example: 123456
-          
+      
+    VerifyOTPResponse:
+      type: object
+      properties:
+        is_valid:
+          type: boolean
+          example: true
+        token:
+          type: string
+          example: 82f065f0c8733a71721620c2301f5de3282177a679eccdbdf9fcfe60da5a22f4
+    
+    Verify2FAResponse:
+      type: object
+      properties:
+        is_valid:
+          type: boolean
+          example: true
+        token:
+          type: string
+          example: 82f065f0c8733a71721620c2301f5de3282177a679eccdbdf9fcfe60da5a22f4
     
     CreateTransactionPin:
       type: object
@@ -2885,6 +3137,73 @@ components:
         pin:
           type: string
           example: 789234
+          
+    Quote:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: number
+          example: 2
+        quote:
+          type: string
+          example: "Please leave me alone"
+        author:
+          type: string
+          example: "John Doe"
+        showDate:
+          type: string
+          format: date
+          example: "2025-03-07"
+          
+    
+    Campaign:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "Spring Promo"
+        description:
+          type: string
+          example: "A special discount campaign for spring."
+        type:
+          type: string
+          enum: [link, media]
+          example: "media"
+        url:
+          type: string
+          format: uri
+          example: "https://example.com/campaign"
+        thumbnailUrl:
+          type: string
+          format: uri
+          example: "https://example.com/thumbnail.jpg"
+        slot:
+          type: integer
+          example: 2
+        displayDuration:
+          type: integer
+          default: 5
+          example: 10
+        showStartDate:
+          type: string
+          format: date
+          example: "2025-03-01"
+        showEndDate:
+          type: string
+          format: date
+          example: "2025-03-31"
+        mimetype:
+          type: string
+          example: "image/png"
+        uuid:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+
     
   securitySchemes:
     headlessAuth:
@@ -2892,3 +3211,4 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: Authentication for headless operations
+      
