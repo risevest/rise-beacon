@@ -1,17 +1,12 @@
 name: Deploy Swagger Docs to S3
 
-# on:
-#   pull_request:
-#     types: [closed]
-#     branches:
-#       - master
-#     paths:
-#       - "docs/**"
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches:
       - master
-      - feat/ci-automation
+    paths:
+      - "docs/**"
 
 env:
   SWAGGER_FILE: docs/swagger.yaml
@@ -20,7 +15,7 @@ env:
 
 jobs:
   deploy-docs:
-    # if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
