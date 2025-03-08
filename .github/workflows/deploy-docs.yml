@@ -11,6 +11,7 @@ on:
   push:
     branches:
       - master
+      - feat/ci-automation
 
 env:
   SWAGGER_FILE: docs/swagger.yaml
@@ -51,29 +52,60 @@ jobs:
           NEW_MINOR=$((MINOR + 1))
           NEW_VERSION="${MAJOR}.${NEW_MINOR}"
 
-          echo "::set-output name=new_version::v${NEW_VERSION}"
-          echo "::set-output name=current_version::v${CURRENT_VERSION}"
+          echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
+          echo "current_version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
 
           # Update version file for next run
           echo "${NEW_VERSION}" > docs/version.txt
 
-      - name: Generate changelog
+      - name: Download previous version for comparison
         run: |
-          # Generate changelog between current and previous version
-          swagger-changelog \
-            --current ${{ env.SWAGGER_FILE }} \
-            --previous "s3://${S3_BUCKET}/${{ steps.version.outputs.current_version }}/swagger.yaml" \
-            --output changelog.txt
+          # Download previous version if it exists
+          aws s3 cp "s3://${S3_BUCKET}/${{ steps.version.outputs.current_version }}/swagger.yaml" previous-swagger.yaml || echo "No previous version found, this must be the first deployment."
+
+      - name: Generate changelog using openapi-diff
+        run: |
+          # Install openapi-diff for changelog generation
+          npm install -g openapi-diff
+
+          # If previous version exists, generate changelog
+          if [ -f "previous-swagger.yaml" ]; then
+            echo "Generating changelog between versions..."
+            openapi-diff previous-swagger.yaml ${{ env.SWAGGER_FILE }} > changelog_raw.json
+            
+            # Format the JSON output to a more readable text format
+            echo "# API Changes from ${{ steps.version.outputs.current_version }} to ${{ steps.version.outputs.new_version }}" > changelog.txt
+            echo "Generated on $(date)" >> changelog.txt
+            echo "" >> changelog.txt
+            
+            # Extract breaking changes
+            echo "## Breaking Changes" >> changelog.txt
+            jq -r '.breakingChanges[] | "- " + .location + ": " + .action' changelog_raw.json 2>/dev/null | grep -v "null" >> changelog.txt || echo "No breaking changes" >> changelog.txt
+            
+            # Extract non-breaking changes
+            echo "" >> changelog.txt
+            echo "## Non-Breaking Changes" >> changelog.txt
+            jq -r '.nonBreakingChanges[] | "- " + .location + ": " + .action' changelog_raw.json 2>/dev/null | grep -v "null" >> changelog.txt || echo "No non-breaking changes" >> changelog.txt
+            
+            echo "" >> changelog.txt
+            echo "## Details" >> changelog.txt
+            jq -r '.unmatchDiffs[] | "- " + .location + ": " + .type' changelog_raw.json 2>/dev/null | grep -v "null" >> changelog.txt || echo "No detailed differences" >> changelog.txt
+          else
+            # Create initial changelog for first deployment
+            echo "# Initial API Documentation - ${{ steps.version.outputs.new_version }}" > changelog.txt
+            echo "Generated on $(date)" >> changelog.txt
+            echo "" >> changelog.txt
+            echo "This is the first version of the API documentation." >> changelog.txt
+          fi
 
       - name: Deploy to S3
         run: |
-          # Copy new version
-          aws s3 cp ${{ env.SWAGGER_FILE }} "s3://${S3_BUCKET}/${{ steps.version.outputs.new_version }}/swagger.yaml"
-          aws s3 cp changelog.txt "s3://${S3_BUCKET}/${{ steps.version.outputs.new_version }}/changelog.txt"
+          # Copy new version with public-read ACL
+          aws s3 cp ${{ env.SWAGGER_FILE }} "s3://${S3_BUCKET}/${{ steps.version.outputs.new_version }}/swagger.yaml" --acl public-read
+          aws s3 cp changelog.txt "s3://${S3_BUCKET}/${{ steps.version.outputs.new_version }}/changelog.txt" --acl public-read
 
-          # Update latest version
-          aws s3 cp ${{ env.SWAGGER_FILE }} "s3://${S3_BUCKET}/latest/swagger.yaml"
-          aws s3 cp changelog.txt "s3://${S3_BUCKET}/latest/changelog.txt"
+          # Update latest version with public-read ACL
+          aws s3 cp ${{ env.SWAGGER_FILE }} "s3://${S3_BUCKET}/latest/swagger.yaml" --acl public-read
 
       - name: Update version tracking
         run: |
