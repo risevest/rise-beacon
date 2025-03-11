@@ -92,11 +92,7 @@ paths:
           schema:
             type: string
             format: uuid
-        - in: header
-          name: Content-Type
-          schema:
-            type: string
-            enum: [multipart/form-data, application/json]
+        - $ref: "#/components/parameters/ContentType"
       requestBody:
         required: true
         content:
@@ -441,12 +437,7 @@ paths:
       tags:
         - Gifts
       parameters:
-        - name: x-rise-authorization-token
-          in: header
-          description: Authorization token for 2fa actions
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/Auth2FA"
       requestBody:
         required: true
         content:
@@ -715,12 +706,8 @@ paths:
       tags:
         - Users
       parameters:
-        - in: query
-          name: x-rise-authorization-token
-          schema:
-            type: string
-            example: e520dfe5cec7812a7f4f18a297c83351949ccae6bf45c5f895d178909ce1c4f9
-      description: Allows users chnage their password
+        - $ref: "#/components/parameters/Auth2FA"
+      description: Allows users change their password
       requestBody:
         required: true
         content:
@@ -746,11 +733,7 @@ paths:
       tags:
         - Users
       parameters:
-        - in: query
-          name: x-rise-authorization-token
-          schema:
-            type: string
-            example: e520dfe5cec7812a7f4f18a297c83351949ccae6bf45c5f895d178909ce1c4f9
+        - $ref: "#/components/parameters/Auth2FA"
       description: Allows users verify their email
       responses:
         "200":
@@ -978,11 +961,7 @@ paths:
   /auth/register:
     post:
       parameters:
-        - in: header
-          name: Content-Type
-          schema:
-            type: string
-            enum: [multipart/form-data, application/json]
+        - $ref: "#/components/parameters/ContentType"
       summary: Register a new user
       tags:
         - Auths
@@ -1014,14 +993,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ValidateSignupDTO"
+              type: array
+              items:
+                $ref: "#/components/schemas/ValidateSignupDTO"
+
       responses:
         "200":
           description: Successful validation
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ValidateSignupResponse"
+                type: array
+                items:
+                  $ref: "#/components/schemas/ValidateSignupResponse"
         "500":
           description: We are having system-level issues. Please bear with us
 
@@ -1049,7 +1033,7 @@ paths:
         "500":
           description: We are having system-level issues. Please bear with us
 
-  /verifications/request-otp:
+  /users/verifications/request-otp:
     post:
       summary: Request OTP
       tags:
@@ -1077,7 +1061,7 @@ paths:
         "500":
           description: We are having system-level issues. Please bear with us
 
-  /verifications/verify-otp:
+  /users/verifications/verify-otp:
     post:
       summary: Verify OTP
       tags:
@@ -1109,11 +1093,7 @@ paths:
       tags:
         - Auths
       parameters:
-        - in: query
-          name: x-rise-authorization-token
-          schema:
-            type: string
-            example: e520dfe5cec7812a7f4f18a297c83351949ccae6bf45c5f895d178909ce1c4f9
+        - $ref: "#/components/parameters/Auth2FA"
       description: Resets a user's password
       requestBody:
         required: true
@@ -1138,12 +1118,6 @@ paths:
       summary: Reset PIN
       tags:
         - Auths
-      parameters:
-        - in: query
-          name: x-rise-authorization-token
-          schema:
-            type: string
-            example: e520dfe5cec7812a7f4f18a297c83351949ccae6bf45c5f895d178909ce1c4f9
       description: Allows a user to reset their transaction PIN
       requestBody:
         required: true
@@ -1417,6 +1391,21 @@ components:
         type: string
         enum: [asc, desc]
         default: asc
+
+    Auth2FA:
+      name: x-rise-authorization-token
+      in: header
+      required: true
+      description: Authorization token for 2fa actions
+      schema:
+        type: string
+
+    ContentType:
+      name: Content-Type
+      in: header
+      schema:
+        type: string
+        enum: [multipart/form-data, application/json]
 
     PlanId:
       name: id
@@ -2516,15 +2505,11 @@ components:
       required:
         - email_address
         - password
-        - confirm_password
       properties:
         email_address:
           type: string
           example: bruce@test.com
         password:
-          type: string
-          example: "verLongPassword"
-        confirm_password:
           type: string
           example: "verLongPassword"
 
@@ -2648,16 +2633,11 @@ components:
       required:
         - email_address
         - password
-        - confirm_password
       properties:
         email_address:
           type: string
           example: "bruce@test.com"
         password:
-          type: string
-          format: password
-          example: "NewSecurePass123"
-        confirm_password:
           type: string
           format: password
           example: "NewSecurePass123"
@@ -2667,15 +2647,11 @@ components:
       required:
         - email_address
         - transaction_pin
-        - confirm_pin
       properties:
         email_address:
           type: string
           example: "bruce@test.com"
         transaction_pin:
-          type: string
-          example: "123456"
-        confirm_pin:
           type: string
           example: "123456"
 
@@ -3082,9 +3058,6 @@ components:
       type: object
       properties:
         password:
-          type: string
-          example: longPassword
-        confirm_password:
           type: string
           example: longPassword
 
