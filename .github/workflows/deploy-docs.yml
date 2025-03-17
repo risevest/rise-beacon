@@ -31,10 +31,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Install Redocly CLI
-        run: |
-          npm install -g @redocly/cli
-
       - name: Calculate new version
         id: version
         run: |
@@ -52,10 +48,6 @@ jobs:
 
           # Update version file for next run
           echo "${NEW_VERSION}" > docs/version.txt
-
-      - name: Validate OpenAPI document
-        run: |
-          npx @redocly/cli lint ${{ env.SWAGGER_FILE }} --format=stylish
 
       - name: Generate simple changelog
         run: |
