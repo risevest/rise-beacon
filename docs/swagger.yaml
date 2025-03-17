@@ -677,8 +677,8 @@ paths:
         "500":
           description: We are having system-level issues. Please bear with us
 
-  /users/create-pin:
-    post:
+  /users/set-pin:
+    patch:
       summary: Create Pin
       tags:
         - Users
@@ -745,7 +745,150 @@ paths:
                 example: null
         "500":
           description: We are having system-level issues. Please bear with us
+          
+  
+  /users/edit-details:
+    patch:
+      summary: Edit details such as next of kin, address, username
+      tags:
+        - Users
+      description: Allows users edit their details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/NextOfKinDetailsDTO"
+                - $ref: "#/components/schemas/Address"
+                - $ref: "#/components/schemas/UsernameDetailsDTO"
+            examples:
+                next_of_kin:
+                  summary: an exmaple of next of kin details
+                  value:
+                    next_of_kin:
+                      first_name: Agent
+                      last_name: Smith
+                      email_address: matrix@test.com
+                      phone_number: +255098726365
+                      date_of_birth: 2001-12-12
+                      relationship: Brother
+                bio_data.address:
+                  summary: An example of an address
+                  value:
+                    bio_data:
+                      address:
+                        house_number: "123"
+                        street_name: "Main Street"
+                        city: "New York"
+                        zip_code: "10001"
+                bio_data.username:
+                  summary: An example of a username
+                  value:
+                    bio_data:
+                      username: "neo"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+        "404":
+          description: User not found
+        "500":
+          description: We are having system-level issues. Please bear with us
 
+  /users/change-email:
+    patch:
+      summary: Change Email
+      tags:
+        - Users
+      parameters:
+        - $ref: "#/components/parameters/Auth2FA"
+      description: Allows users change their email address
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeEmailDTO"
+              
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+        "404":
+          description: User not found.
+        "500":
+          description: We are having system-level issues. Please bear with us
+          
+  /users/change-phone:
+    patch:
+      summary: Change Phone
+      tags:
+        - Users
+      parameters:
+        - $ref: "#/components/parameters/Auth2FA"
+      description: Allows users change their phone number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePhoneDTO"
+              
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+        "404":
+          description: User not found.
+        "500":
+          description: We are having system-level issues. Please bear with us
+          
+  /users/compliances:
+    get:
+      summary: Get all compliances for a user
+      tags:
+        - Users
+      description: Fetches all compliances for a user such as; create transaction pin, verify your email, verify your identity, tell us about you, secure your account
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Compliances"
+              examples:
+                complianceExample:
+                  summary: Example of compliances
+                  value:
+                    compliances:
+                      - type: "transaction_pin"
+                        status: true
+                        title: "Create transaction PIN"
+                      - type: "verify_email"
+                        status: false
+                        title: "Verify your email"
+                      - type: "verify_identity"
+                        status: false
+                        title: "Verify your identity"
+                      - type: "about_you"
+                        status: false
+                        title: "Tell us about you"
+                      - type: "secure_account"
+                        status: true
+                        title: "Secure your Account"
+        "500":
+          description: We are having system-level issues. Please bear with us
+          
   /plans/transaction-requests:
     post:
       summary: Fund or withdraw from a plan
@@ -1118,6 +1261,8 @@ paths:
       summary: Reset PIN
       tags:
         - Auths
+      parameters:
+        - $ref: "#/components/parameters/Auth2FA"
       description: Allows a user to reset their transaction PIN
       requestBody:
         required: true
@@ -1134,13 +1279,13 @@ paths:
                 type: string
                 example: null
         "404":
-          description: We could not find any account for bruce@test.com
+          description: User not found
         "500":
           description: We are having system-level issues. Please bear with us
 
-  /auth/confirm-password:
+  /auth/confirm-credential:
     post:
-      summary: Confirm Password
+      summary: Confirm user credential using login mode either password or pin
       tags:
         - Auths
       requestBody:
@@ -1148,7 +1293,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ConfirmPasswordDTO"
+              $ref: "#/components/schemas/ConfirmCredentialDTO"
       responses:
         "200":
           description: Successful validation
@@ -1157,7 +1302,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidateSignupResponse"
         "404":
-          description: We could not find any account for bruce@test.com
+          description: User not found
+        "400":
+          description: Invalid auth mode
         "500":
           description: We are having system-level issues. Please bear with us
 
@@ -2500,18 +2647,20 @@ components:
           type: string
           example: bruce@test.com
 
-    ConfirmPasswordDTO:
+    ConfirmCredentialDTO:
       type: object
       required:
-        - email_address
-        - password
+        - mode
+        - credential
       properties:
-        email_address:
+        credential:
           type: string
-          example: bruce@test.com
-        password:
+          example: verLongPassword
+        mode:
           type: string
-          example: "verLongPassword"
+          enum:
+            - password
+            - pin
 
     ValidateSignupResponse:
       type: object
@@ -2570,6 +2719,7 @@ components:
         - email
         - phone_number
         - referral_code
+        - username
       description: Type of user identity used for validation.
 
     AccountType:
@@ -2645,12 +2795,8 @@ components:
     ChangePINDTO:
       type: object
       required:
-        - email_address
         - transaction_pin
       properties:
-        email_address:
-          type: string
-          example: "bruce@test.com"
         transaction_pin:
           type: string
           example: "123456"
@@ -2667,7 +2813,7 @@ components:
         phone_number:
           type: string
           example: +2348182763456
-        address_metadata:
+        address:
           $ref: "#/components/schemas/Address"
         country:
           type: string
@@ -2722,8 +2868,18 @@ components:
         news_letter_subscribed:
           type: boolean
           example: true
+        two_fa_enabled:
+          type: boolean
+          example: true
+        two_fa_identity_type:
+          type: string
+          enum: ["phone_number", "email"]
         auto_invest_configs:
           $ref: "#/components/schemas/AutoInvestConfig"
+        next_of_kin:
+          $ref: "#/components/schemas/NextOfKinDetailsDTO"
+        lets_know_you:
+          $ref: "#/components/schemas/LetsKnowYou"
 
     NotificationResponse:
       type: object
@@ -3060,6 +3216,20 @@ components:
         password:
           type: string
           example: longPassword
+    
+    ChangeEmailDTO:
+      type: object
+      properties:
+        email_address:
+          type: string
+          example: user@test.com
+          
+    ChangePhoneDTO:
+      type: object
+      properties:
+        phone_number:
+          type: string
+          example: 2349178902345
 
     VerifyOTP:
       type: object
@@ -3081,6 +3251,8 @@ components:
             - verify-phone
             - 2fa-email
             - 2fa-phone
+            - change-email
+            - change-phone
           example: "verify-email"
         otp:
           type: string
@@ -3109,9 +3281,9 @@ components:
     CreateTransactionPin:
       type: object
       required:
-        - pin
+        - transaction_pin
       properties:
-        pin:
+        transaction_pin:
           type: string
           example: 789234
 
@@ -3179,6 +3351,82 @@ components:
           type: string
           format: uuid
           example: "550e8400-e29b-41d4-a716-446655440000"
+    
+    NextOfKinDetailsDTO:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - email_address
+        - phone_number
+        - date_of_birth
+        - relationship
+      properties:
+        first_name:
+          type: string
+          example: "John"
+        last_name:
+          type: string
+          example: "Doe"
+        email_address:
+          type: string
+          format: email
+          example: "johndoe@example.com"
+        phone_number:
+          type: string
+          example: "+1234567890"
+        date_of_birth:
+          type: string
+          format: date
+          example: "1990-01-01"
+        relationship:
+          type: string
+          enum:
+            - "Child"
+            - "Sibling"
+            - "Spouse"
+            - "Niece/Cousin"
+            - "Other Relative"
+            - "Friend/Colleague"
+          example: "Sibling"
+
+    UsernameDetailsDTO:
+      type: object
+      required:
+        - username
+      properties:
+        username:
+          type: string
+          example: neo
+     
+    Compliances:
+      type: object
+      properties:
+        compliances:
+          type: array
+          description: "List of compliance tasks and their statuses"
+          items:
+            $ref: "#/components/schemas/Compliance"     
+          
+    Compliance:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - transaction_pin
+            - verify_email
+            - verify_identity
+            - about_you
+            - secure_account
+          example: transaction_pin
+        status:
+          type: boolean
+          example: false
+        title:
+          type: string
+          example: "Create transaction PIN"
+
 
   securitySchemes:
     headlessAuth:
