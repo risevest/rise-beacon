@@ -17,6 +17,7 @@ jobs:
   deploy-docs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v3
@@ -30,16 +31,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Install Redocly CLI and other dependencies
+      - name: Install Redocly CLI
         run: |
-          npm install -g swagger-changelog
           npm install -g @redocly/cli
 
       - name: Calculate new version
         id: version
         run: |
           # Extract major and minor version numbers
-          CURRENT_VERSION=$(cat docs/version.txt || echo "1.1")
+          CURRENT_VERSION=$(cat docs/version.txt 2>/dev/null || echo "1.1")
           MAJOR=$(echo $CURRENT_VERSION | cut -d. -f1)
           MINOR=$(echo $CURRENT_VERSION | cut -d. -f2)
 
@@ -53,47 +53,27 @@ jobs:
           # Update version file for next run
           echo "${NEW_VERSION}" > docs/version.txt
 
-      - name: Download previous version for comparison
+      - name: Validate OpenAPI document
         run: |
-          # Download previous version if it exists
-          aws s3 cp "s3://${S3_BUCKET}/${{ steps.version.outputs.current_version }}/swagger.yaml" previous-swagger.yaml || echo "No previous version found, this must be the first deployment."
+          npx @redocly/cli lint ${{ env.SWAGGER_FILE }} --format=stylish
 
-      - name: Generate changelog using openapi-diff
+      - name: Generate simple changelog
         run: |
-          # Install openapi-diff for changelog generation
-          npm install -g openapi-diff
+          # Create a simple changelog based on git commits
+          echo "# API Documentation Update - ${{ steps.version.outputs.new_version }}" > changelog.txt
+          echo "Generated on $(date)" >> changelog.txt
+          echo "" >> changelog.txt
 
-          # If previous version exists, generate changelog
-          if [ -f "previous-swagger.yaml" ]; then
-            echo "Generating changelog between versions..."
-            openapi-diff previous-swagger.yaml ${{ env.SWAGGER_FILE }} > changelog_raw.json
-            
-            # Format the JSON output to a more readable text format
-            echo "# API Changes from ${{ steps.version.outputs.current_version }} to ${{ steps.version.outputs.new_version }}" > changelog.txt
-            echo "Generated on $(date)" >> changelog.txt
-            echo "" >> changelog.txt
-            
-            # Extract breaking changes
-            echo "## Breaking Changes" >> changelog.txt
-            jq -r '.breakingChanges[] | "- " + .location + ": " + .action' changelog_raw.json 2>/dev/null | grep -v "null" >> changelog.txt || echo "No breaking changes" >> changelog.txt
-            
-            # Extract non-breaking changes
-            echo "" >> changelog.txt
-            echo "## Non-Breaking Changes" >> changelog.txt
-            jq -r '.nonBreakingChanges[] | "- " + .location + ": " + .action' changelog_raw.json 2>/dev/null | grep -v "null" >> changelog.txt || echo "No non-breaking changes" >> changelog.txt
-            
-            echo "" >> changelog.txt
-            echo "## Details" >> changelog.txt
-            jq -r '.unmatchDiffs[] | "- " + .location + ": " + .type' changelog_raw.json 2>/dev/null | grep -v "null" >> changelog.txt || echo "No detailed differences" >> changelog.txt
-          else
-            # Create initial changelog for first deployment
-            echo "# Initial API Documentation - ${{ steps.version.outputs.new_version }}" > changelog.txt
-            echo "Generated on $(date)" >> changelog.txt
-            echo "" >> changelog.txt
-            echo "This is the first version of the API documentation." >> changelog.txt
-          fi
+          # Get commit messages related to the Swagger file
+          echo "## Recent Changes" >> changelog.txt
+          git log -n 10 --pretty=format:"- %s" --grep="swagger\|api\|docs\|documentation" >> changelog.txt || echo "- Initial documentation version" >> changelog.txt
 
-      - name: Deploy to S3
+          echo "" >> changelog.txt
+          echo "## How to Use" >> changelog.txt
+          echo "This API documentation is available in OpenAPI (Swagger) format." >> changelog.txt
+          echo "You can view it with any OpenAPI/Swagger compatible viewer." >> changelog.txt
+
+      - name: Deploy to S3 with public read access
         run: |
           # Copy new version with public-read ACL
           aws s3 cp ${{ env.SWAGGER_FILE }} "s3://${S3_BUCKET}/${{ steps.version.outputs.new_version }}/swagger.yaml" --acl public-read
@@ -101,6 +81,7 @@ jobs:
 
           # Update latest version with public-read ACL
           aws s3 cp ${{ env.SWAGGER_FILE }} "s3://${S3_BUCKET}/latest/swagger.yaml" --acl public-read
+          aws s3 cp changelog.txt "s3://${S3_BUCKET}/latest/changelog.txt" --acl public-read
 
       - name: Update version tracking
         run: |
