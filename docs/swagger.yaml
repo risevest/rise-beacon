@@ -1442,7 +1442,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Campaign"
+                type: array
+                items:
+                  $ref: "#/components/schemas/Campaign"
         "500":
           description: Internal server error
 
