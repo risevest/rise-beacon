@@ -745,8 +745,7 @@ paths:
                 example: null
         "500":
           description: We are having system-level issues. Please bear with us
-          
-  
+
   /users/edit-details:
     patch:
       summary: Edit details such as next of kin, address, username
@@ -763,30 +762,30 @@ paths:
                 - $ref: "#/components/schemas/Address"
                 - $ref: "#/components/schemas/UsernameDetailsDTO"
             examples:
-                next_of_kin:
-                  summary: an exmaple of next of kin details
-                  value:
-                    next_of_kin:
-                      first_name: Agent
-                      last_name: Smith
-                      email_address: matrix@test.com
-                      phone_number: +255098726365
-                      date_of_birth: 2001-12-12
-                      relationship: Brother
-                bio_data.address:
-                  summary: An example of an address
-                  value:
-                    bio_data:
-                      address:
-                        house_number: "123"
-                        street_name: "Main Street"
-                        city: "New York"
-                        zip_code: "10001"
-                bio_data.username:
-                  summary: An example of a username
-                  value:
-                    bio_data:
-                      username: "neo"
+              next_of_kin:
+                summary: an exmaple of next of kin details
+                value:
+                  next_of_kin:
+                    first_name: Agent
+                    last_name: Smith
+                    email_address: matrix@test.com
+                    phone_number: +255098726365
+                    date_of_birth: 2001-12-12
+                    relationship: Brother
+              bio_data.address:
+                summary: An example of an address
+                value:
+                  bio_data:
+                    address:
+                      house_number: "123"
+                      street_name: "Main Street"
+                      city: "New York"
+                      zip_code: "10001"
+              bio_data.username:
+                summary: An example of a username
+                value:
+                  bio_data:
+                    username: "neo"
       responses:
         "200":
           description: Successful response
@@ -794,6 +793,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserDTO"
+        "404":
+          description: User not found
+        "500":
+          description: We are having system-level issues. Please bear with us
+
+  /delete-account:
+    delete:
+      summary: Delete user account
+      tags:
+        - Users
+      parameters:
+        - name: password
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "mySecretPassword123"
+      responses:
         "404":
           description: User not found
         "500":
@@ -813,7 +830,6 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/ChangeEmailDTO"
-              
       responses:
         "200":
           description: Successful response
@@ -825,7 +841,7 @@ paths:
           description: User not found.
         "500":
           description: We are having system-level issues. Please bear with us
-          
+
   /users/change-phone:
     patch:
       summary: Change Phone
@@ -840,7 +856,7 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/ChangePhoneDTO"
-              
+
       responses:
         "200":
           description: Successful response
@@ -852,7 +868,7 @@ paths:
           description: User not found.
         "500":
           description: We are having system-level issues. Please bear with us
-          
+
   /users/compliances:
     get:
       summary: Get all compliances for a user
@@ -888,7 +904,7 @@ paths:
                         title: "Secure your Account"
         "500":
           description: We are having system-level issues. Please bear with us
-          
+
   /plans/transaction-requests:
     post:
       summary: Fund or withdraw from a plan
@@ -1354,6 +1370,238 @@ paths:
         "401":
           description: Unauthorized - Invalid or missing token
         "500":
+          description: We are having system-level issues. Please bear with us
+
+  /wallets/vaults/{id}:
+    get:
+      summary: Fetch a specific vault
+      tags:
+        - Wallets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the vault
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vault"
+        "404":
+          description: Vault not found
+        "500":
+          description: We are having system-level issues. Please bear with us
+
+    patch:
+      summary: Edit a vault
+      tags:
+        - Wallets
+      description: Updates the name or duration of an existing vault.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the vault to edit.
+          schema:
+            type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VaultEditDTO"
+      responses:
+        200:
+          description: Vault updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vault"
+        404:
+          description: Vault not found.
+        500:
+          description: We are having system-level issues. Please bear with us
+
+  /wallets/vaults:
+    post:
+      summary: Create a new vault
+      tags:
+        - Wallets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVaultDTO"
+      responses:
+        "200":
+          description: Vault successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vault"
+        "404":
+          description: Wallet not found
+        "500":
+          description: We are having system-level issues. Please bear with us
+
+  /wallets/vaults/{id}/fund:
+    post:
+      summary: Fund an existing vault
+      tags:
+        - Wallets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the vault
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VaultFundDTO"
+      responses:
+        "200":
+          description: Vault successfully funded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vault"
+        "404":
+          description: Vault not found
+        "422":
+          description: Unprocessable entity - Insufficient balance or invalid duration
+        "500":
+          description: We are having system-level issues. Please bear with us
+
+  /wallets/vaults/{id}/withdraw:
+    post:
+      summary: Withdraw funds from a vault
+      tags:
+        - Wallets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the vault
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VaultWithdrawalDTO"
+      responses:
+        "200":
+          description: Withdrawal successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vault"
+        "403":
+          description: Forbidden - User does not have permission to withdraw
+        "404":
+          description: Vault not found
+        "422":
+          description: Unprocessable entity - Insufficient vault balance
+        "500":
+          description: We are having system-level issues. Please bear with us
+
+  /wallets/vaults/{id}/estimate:
+    post:
+      summary: Estimate future vault amount
+      tags:
+        - Wallets
+      description: Calculates the expected vault amount based on the interest rate and duration.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the vault for which the estimate is being made.
+          schema:
+            type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstimatedAmountDTO"
+      responses:
+        200:
+          description: Estimated future vault amount.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  expected_amount:
+                    type: number
+                    example: 7500.00
+        404:
+          description: Vault not found.
+        500:
+          description: We are having system-level issues. Please bear with us
+
+  /wallets/vaults/:
+    get:
+      summary: List all vaults
+      tags:
+        - Wallets
+      description: Fetch all vaults owned by the authenticated user.
+      parameters:
+        - name: currency
+          in: query
+          required: false
+          description: Filter vaults by currency.
+          schema:
+            type: string
+            enum: ["usd", "ngn"]
+          example: "usd"
+      responses:
+        200:
+          description: List of vaults retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vault"
+
+  /wallets/vaults/interest-payout:
+    post:
+      summary: Payout interest for vaults in a wallet
+      tags:
+        - Wallets
+      description: Processes and pays out interest for all vaults associated with a given wallet.
+      parameters:
+        - name: wallet_id
+          in: query
+          required: false
+          description: The ID of the wallet for which vault interest should be paid out.
+          schema:
+            type: string
+          example: "wallet-456"
+        - name: is_matured
+          in: query
+          required: false
+          description: If true, only matured vaults will be processed for interest payout.
+          schema:
+            type: boolean
+          example: true
+      responses:
+        200:
+          description: Interest payout process completed successfully.
+        500:
           description: We are having system-level issues. Please bear with us
 
   /identities/verified-verifications:
@@ -3014,6 +3262,59 @@ components:
         amount: 10
         description: "New update in your feed"
 
+    UserDetailsDTO:
+      type: object
+      properties:
+        bio_data:
+          $ref: "#/components/schemas/BiodataDTO"
+        next_of_kin:
+          $ref: "#/components/schemas/NextOfKin"
+
+    BiodataDTO:
+      type: object
+      properties:
+        address:
+          $ref: "#/components/schemas/Address"
+        username:
+          type: string
+          example: "john_doe"
+        email_address:
+          type: string
+          example: "john@example.com"
+        phone_number:
+          type: string
+          example: "+1234567890"
+
+    NextOfKin:
+      type: object
+      properties:
+        first_name:
+          type: string
+          example: "Jane"
+        last_name:
+          type: string
+          example: "Doe"
+        email_address:
+          type: string
+          example: "jane@example.com"
+        phone_number:
+          type: string
+          example: "+1234567891"
+        date_of_birth:
+          type: string
+          format: date
+          example: "1985-06-15"
+        relationship:
+          type: string
+          enum:
+            - Child
+            - Sibling
+            - Spouse
+            - Niece/Cousin
+            - Other Relative
+            - Friend/Colleague
+          example: "Sibling"
+
     AUMStats:
       type: object
       properties:
@@ -3218,14 +3519,14 @@ components:
         password:
           type: string
           example: longPassword
-    
+
     ChangeEmailDTO:
       type: object
       properties:
         email_address:
           type: string
           example: user@test.com
-          
+
     ChangePhoneDTO:
       type: object
       properties:
@@ -3353,7 +3654,7 @@ components:
           type: string
           format: uuid
           example: "550e8400-e29b-41d4-a716-446655440000"
-    
+
     NextOfKinDetailsDTO:
       type: object
       required:
@@ -3400,7 +3701,7 @@ components:
         username:
           type: string
           example: neo
-     
+
     Compliances:
       type: object
       properties:
@@ -3408,8 +3709,8 @@ components:
           type: array
           description: "List of compliance tasks and their statuses"
           items:
-            $ref: "#/components/schemas/Compliance"     
-          
+            $ref: "#/components/schemas/Compliance"
+
     Compliance:
       type: object
       properties:
@@ -3429,6 +3730,173 @@ components:
           type: string
           example: "Create transaction PIN"
 
+    Vault:
+      type: object
+      required:
+        - id
+        - owner_id
+        - wallet_id
+        - name
+        - capital
+        - currency
+        - interest
+        - duration
+        - maturity_date
+        - metadata
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the vault
+        owner_id:
+          type: string
+          description: The user's account ID who owns the vault
+        wallet_id:
+          type: string
+          description: The associated wallet ID
+        name:
+          type: string
+          example: Fex vault
+          description: Name of the vault
+        currency:
+          type: string
+          enum: ["usd", "ngn"]
+          description: The currency of the vault
+        capital:
+          type: number
+          example: 30
+          description: The vault's capital
+        interest:
+          type: number
+          example: 5
+          description: The interest accumulated in the vault
+        duration:
+          type: integer
+          example: 3
+          description: The duration of the vault in months
+        maturity_date:
+          type: string
+          format: date-time
+          description: The maturity date of the vault
+        metadata:
+          type: object
+          nullable: true
+          properties:
+            custom_daily_rate:
+              type: number
+              example: 4
+              description: The custom daily rate
+            estimated_amount:
+              type: number
+              example: 10
+              description: The estimated amount at maturity
+            total_interest_paid:
+              type: number
+              example: 59
+              description: The total interest paid out
+            portfolio_rates:
+              type: array
+              items:
+                $ref: "#/components/schemas/DynamicRate"
+          description: Additional metadata for the vault
+
+    DynamicRate:
+      type: object
+      properties:
+        is_default:
+          type: boolean
+          description: Whether this is the default rate
+        rate:
+          type: number
+          example: 0.5
+          format: float
+          description: The interest rate
+        floor:
+          type: number
+          example: 0
+          format: float
+          description: The minimum threshold for the rate
+        ceil:
+          type: number
+          example: 500000
+          format: float
+          nullable: true
+          description: The maximum threshold for the rate (if applicable)
+
+    CreateVaultDTO:
+      type: object
+      properties:
+        owner_id:
+          type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        wallet_id:
+          type: string
+          example: "987e6543-b21a-34d2-c456-426614179999"
+        name:
+          type: string
+          example: "My Savings Vault"
+        currency:
+          type: string
+          enum: ["usd", "ngn"]
+          example: "usd"
+        duration:
+          type: integer
+          example: 12
+        maturity_date:
+          type: string
+          format: date-time
+          example: "2025-12-31T23:59:59Z"
+        initial_capital:
+          type: number
+          example: 5000.00
+        custom_daily_rate:
+          type: number
+          nullable: true
+          example: 0.02
+
+    VaultFundDTO:
+      type: object
+      properties:
+        amount:
+          type: number
+          example: 1000.00
+        duration:
+          type: integer
+          nullable: true
+          example: 6
+
+    VaultWithdrawalDTO:
+      type: object
+      properties:
+        amount:
+          type: number
+          example: 250.00
+        description:
+          type: string
+          nullable: true
+          example: "Emergency withdrawal"
+
+    VaultEditDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "New Vault Name"
+        duration:
+          type: integer
+          example: 18
+
+    EstimatedAmountDTO:
+      type: object
+      properties:
+        new_capital:
+          type: number
+          example: 5000.00
+        duration:
+          type: integer
+          example: 6
+        rate:
+          type: number
+          example: 0.02
 
   securitySchemes:
     headlessAuth:
