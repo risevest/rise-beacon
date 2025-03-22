@@ -10,6 +10,14 @@ export const ERROR_SYSTEM: ErrorSystem = {
     severity: "medium"
   },
 
+  "4001": {
+    category: "business-logic",
+    description: {
+      en: "Account is inactive."
+    },
+    severity: "medium"
+  },
+
   // validation errors...
   "1000": {
     category: "validation",
@@ -19,11 +27,27 @@ export const ERROR_SYSTEM: ErrorSystem = {
     severity: "medium"
   },
 
+  "1001": {
+    category: "validation",
+    description: {
+      en: "Your OTP has either expired or is invalid"
+    },
+    severity: "medium"
+  },
+
   //authentication errors...
   "2000": {
     category: "authentication",
     description: {
       en: "We could not verify your authentication"
+    },
+    severity: "medium"
+  },
+
+  "2001": {
+    category: "authentication",
+    description: {
+      en: "Invalid login credentials"
     },
     severity: "medium"
   },
