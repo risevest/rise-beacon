@@ -1604,6 +1604,420 @@ paths:
         500:
           description: We are having system-level issues. Please bear with us
 
+  /wallets/toggle-interest:
+    patch:
+      summary: Toggle Wallet Interest
+      description: Enable or disable interest earning on a user's wallet.
+      tags:
+        - Wallets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ToggleInterestDTO"
+      responses:
+        "200":
+          description: Successfully updated wallet interest status.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Wallet"
+        "404":
+          description: Wallet not found.
+        "500":
+          description: We are having system-level issues. Please bear with us.
+
+  /wallets/{id}/locks:
+    post:
+      summary: Acquire Wallet Lock
+      description: Locks a specified amount in a wallet.
+      tags:
+        - Wallets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID of the wallet to lock funds in.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WalletLockDTO"
+      responses:
+        "200":
+          description: Successfully locked funds in the wallet.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WalletLock"
+        "404":
+          description: Wallet not found.
+        "500":
+          description: We are having system-level issues. Please bear with us.
+
+  /wallets/{id}/locks/{transaction}:
+    delete:
+      summary: Release Wallet Lock
+      description: Releases a locked amount from a wallet.
+      tags:
+        - Wallets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID of the wallet.
+        - name: transaction
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Transaction ID of the locked amount.
+      responses:
+        "200":
+          description: Successfully released wallet lock.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WalletLock"
+        "404":
+          description: No existing lock found for this transaction.
+        "500":
+          description: We are having system-level issues. Please bear with us.
+
+  /wallets/payout:
+    post:
+      summary: Payout Wallet Interest
+      description: Pays out interest earnings for a specific wallet or all wallets.
+      tags:
+        - Wallets
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: (Optional) ID of the wallet to payout interest.
+      responses:
+        "200":
+          description: Successfully processed interest payout.
+          content:
+            application/json:
+              schema:
+                type: object
+        "404":
+          description: Wallet not found.
+        "500":
+          description: We are having system-level issues. Please bear with us.
+
+  /wallet/all:
+    get:
+      summary: Get all wallets (Admin only)
+      description: Retrieve all wallets if the user is an admin. Otherwise, return only the wallets of the authenticated user.
+      tags:
+        - Wallets
+      parameters:
+        - name: owner_id
+          in: query
+          required: false
+          schema:
+            type: string
+          description: ID of the wallet owner (Required for admins)
+        - name: currency
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [usd, ngn]
+          description: Filter by wallet currency
+      responses:
+        200:
+          description: Successful response with list of wallets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Wallet"
+        403:
+          description: Forbidden - User is not authorized to access all wallets
+
+  /wallet/aum:
+    get:
+      summary: Get total wallet Assets Under Management (AUM)
+      description: Retrieve the total AUM of a specific wallet owner.
+      tags:
+        - Wallets
+      parameters:
+        - name: owner_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The ID of the wallet owner
+      responses:
+        200:
+          description: Total AUM in USD
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  usd_aum:
+                    type: number
+        400:
+          description: Bad request - Owner ID is required
+
+  /wallet/{id}:
+    get:
+      summary: Get wallet details
+      description: Retrieve details of a specific wallet by ID.
+      tags:
+        - Wallets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Wallet ID
+        - name: currency
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [usd, ngn]
+          description: Currency type (Default is "usd")
+      responses:
+        200:
+          description: Successful response with wallet details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Wallet"
+        403:
+          description: Forbidden - User does not have permission to view this wallet
+        404:
+          description: Wallet not found
+
+  /wallet/transactions:
+    post:
+      summary: Credit or Debit a Wallet
+      description: Allows crediting or debiting a wallet.
+      tags:
+        - Wallets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WalletUpdateDTO"
+      responses:
+        200:
+          description: Wallet updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Wallet"
+        404:
+          description: Wallet not found
+        422:
+          description: Insufficient balance or invalid transaction
+
+  /wallet/admin/transactions:
+    post:
+      summary: Credit or Debit a Wallet (Admin only)
+      description: Allows an admin to manually credit or debit a wallet.
+      tags:
+        - Wallets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminWalletUpdateDTO"
+      responses:
+        200:
+          description: Wallet updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Wallet"
+        403:
+          description: Forbidden - Admin does not have permission to perform this transaction
+        404:
+          description: Wallet not found
+        422:
+          description: Insufficient balance or invalid transaction
+
+  /wallet/simulate/transactions:
+    post:
+      summary: Simulate Wallet Transaction (Non-production)
+      description: Simulates a wallet credit or debit transaction. This endpoint is disabled in production.
+      tags:
+        - Wallets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SimulateCreditOrDebitDTO"
+      responses:
+        200:
+          description: Simulated transaction successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Wallet"
+        403:
+          description: Forbidden - Cannot simulate in production
+
+  /wallet/{id}/default:
+    patch:
+      summary: Set Default Wallet
+      description: Sets the specified wallet as the default wallet.
+      tags:
+        - Wallets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Wallet ID
+      responses:
+        200:
+          description: Default wallet updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Wallet"
+        403:
+          description: Forbidden - User does not own this wallet
+        404:
+          description: Wallet not found
+
+  /wallet/transfer:
+    post:
+      summary: Transfer funds between wallets
+      description: Transfers funds from one wallet to another.
+      tags:
+        - Wallets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WalletTransferDTO"
+      responses:
+        200:
+          description: Transfer successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WalletTransferResponse"
+        404:
+          description: Wallet not found
+        422:
+          description: Transfer error - insufficient funds, unverified sender, etc.
+
+  /wallets/transaction-requests:
+    get:
+      summary: Search transaction requests
+      description: Retrieve a list of transaction requests based on query parameters.
+      tags:
+        - Wallets
+      parameters:
+        - $ref: "#/components/parameters/TransactionRequestFilters"
+      responses:
+        200:
+          description: Successfully retrieved transaction requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedTransactionRequestResult"
+        400:
+          description: Invalid query parameters
+        500:
+          description: Internal server error
+
+  /wallets/transaction-requests/sum:
+    get:
+      summary: Get sum of transactions
+      description: Retrieve the total sum of transactions based on query filters.
+      tags:
+        - Wallets
+      parameters:
+        - $ref: "#/components/parameters/TransactionSumFilters"
+      responses:
+        200:
+          description: Successfully retrieved transaction sum
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SumByResponse"
+        400:
+          description: Invalid query parameters
+        500:
+          description: Internal server error
+
+  /wallets/transaction-requests/{id}:
+    get:
+      summary: Get transaction request by ID
+      description: Retrieve a single transaction request by its unique ID.
+      tags:
+        - Wallets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique ID of the transaction request
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successfully retrieved transaction request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionRequestResponse"
+        404:
+          description: Transaction request not found
+        422:
+          description: Unauthorized access to transaction request
+
+  /wallets/transaction-requests/{id}/cancel:
+    patch:
+      summary: Cancel a transaction request
+      description: Cancel a transaction request if it is still pending.
+      tags:
+        - Wallets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique ID of the transaction request
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successfully canceled transaction request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionRequestResponse"
+        404:
+          description: Transaction request not found
+        422:
+          description: Transaction cannot be canceled
+
   /identities/verified-verifications:
     get:
       summary: Get all verified identities for a user
@@ -1788,6 +2202,68 @@ components:
         type: string
         enum: [asc, desc]
         default: asc
+
+    TransactionRequestFilters:
+      name: filters
+      in: query
+      required: false
+      description: Filters for searching transaction requests
+      schema:
+        type: object
+        properties:
+          owner_id:
+            type: string
+          wallet_id:
+            type: string
+          start_date:
+            type: string
+            format: date
+          end_date:
+            type: string
+            format: date
+          sequence:
+            type: string
+            enum: [asc, desc]
+          sort_by:
+            type: string
+            enum: [amount, created_at]
+          request_type:
+            type: string
+            enum: [funding, withdrawal]
+          status:
+            type: string
+            enum: [initiated, pending, processing, successful, failed, canceled]
+
+    TransactionSumFilters:
+      name: filters
+      in: query
+      required: false
+      description: Filters for calculating transaction sum
+      schema:
+        type: object
+        properties:
+          owner_id:
+            type: string
+          source:
+            type: string
+          request_type:
+            type: string
+            enum: [funding, withdrawal]
+          destination:
+            type: string
+          start_date:
+            type: string
+            format: date
+          end_date:
+            type: string
+            format: date
+          currency:
+            type: string
+          status:
+            type: string
+            enum: [initiated, pending, processing, successful, failed, canceled]
+          include_swap:
+            type: boolean
 
     Auth2FA:
       name: x-rise-authorization-token
@@ -3897,6 +4373,577 @@ components:
         rate:
           type: number
           example: 0.02
+
+    WalletLock:
+      type: object
+      description: Represents a locked amount in a user's wallet.
+      properties:
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp of when the lock was created.
+          example: "2024-03-24T12:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp of the last update.
+          example: "2024-03-25T15:30:00Z"
+        wallet_id:
+          type: string
+          format: uuid
+          description: Unique identifier of the user's wallet.
+          example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        transaction_id:
+          type: string
+          format: uuid
+          description: Unique identifier of the transaction tied to this lock.
+          example: "b23c4d5e-6789-0123-abcd-ef9876543210"
+        amount:
+          type: number
+          format: float
+          description: Amount locked from the user's balance.
+          example: 500.00
+        status:
+          type: string
+          enum: [active, released, failed]
+          description: Current status of the lock.
+          example: "active"
+        recipient_account:
+          type: string
+          description: The recipient's account (e.g., plan, vendor name, etc.).
+          example: "investment_plan_123"
+        recipient_account_type:
+          type: string
+          description: Type of the recipient account.
+          example: "savings"
+
+    SumByResponse:
+      type: object
+      properties:
+        total:
+          type: number
+
+    AdminWalletUpdateDTO:
+      type: object
+      properties:
+        transaction_id:
+          type: string
+          nullable: true
+          example: "txn_abc123"
+        owner_id:
+          type: string
+          example: "user_56789"
+        transaction_type:
+          type: string
+          enum: ["credit", "debit"]
+          example: "credit"
+        currency:
+          type: string
+          enum: ["usd", "ngn"]
+          example: "usd"
+        amount:
+          type: number
+          minimum: 0.01
+          example: 500.75
+        description:
+          type: string
+          nullable: true
+          example: "Manual adjustment by admin"
+      required:
+        - owner_id
+        - transaction_type
+        - currency
+        - amount
+
+    ToggleInterestDTO:
+      type: object
+      required:
+        - value
+      properties:
+        value:
+          type: boolean
+          description: Boolean value indicating whether interest should be enabled or disabled.
+          example: true
+
+    WalletLockDTO:
+      type: object
+      properties:
+        transaction_id:
+          type: string
+          format: uuid
+          description: (Optional) Unique identifier for the transaction.
+          example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        recipient_account:
+          type: string
+          format: uuid
+          description: The account that will receive the locked amount.
+          example: "f98b5f6e-1d27-4b29-b72c-0e4a8a5c8f3a"
+        recipient_account_type:
+          type: string
+          description: Type of the recipient account.
+          example: "savings"
+        amount:
+          type: number
+          format: float
+          description: The amount to be locked in the wallet.
+          example: 1000.00
+
+    WalletUpdateDTO:
+      type: object
+      required:
+        - owner_id
+        - transaction_type
+        - currency
+        - amount
+        - metadata
+      properties:
+        transaction_id:
+          type: string
+          nullable: true
+          description: "The unique identifier for the transaction (optional)."
+        wallet_transaction_id:
+          type: string
+          nullable: true
+          description: "The unique identifier for the wallet transaction (optional)."
+        owner_id:
+          type: string
+          description: "The unique identifier of the wallet owner."
+        transaction_type:
+          type: string
+          enum:
+            - deposit
+            - withdrawal
+            - transfer
+          description: "The type of transaction being performed."
+        currency:
+          type: string
+          enum:
+            - usd
+            - ngn
+          description: "The currency of the wallet."
+        amount:
+          type: number
+          format: float
+          description: "The transaction amount."
+        metadata:
+          $ref: "#/components/schemas/WalletUpdateMetadata"
+      example:
+        transaction_id: "tx_123456"
+        wallet_transaction_id: "wallet_tx_789012"
+        owner_id: "user_56789"
+        transaction_type: "deposit"
+        currency: "usd"
+        amount: 500
+        metadata:
+          source: "bank"
+          destination: "wallet"
+          source_id: "bank_tx_23456"
+          destination_id: "wallet_789"
+          exchange_rate: 1.2
+          reason: "Salary payment"
+          description: "Monthly salary deposit"
+          initiated_by: "admin_001"
+
+    WalletUpdateMetadata:
+      type: object
+      required:
+        - source
+        - destination
+        - source_id
+        - destination_id
+      properties:
+        source:
+          type: string
+          enum:
+            - bank
+            - card
+            - crypto
+          description: "The source of the transaction."
+        destination:
+          type: string
+          enum:
+            - wallet
+            - external
+          description: "The destination of the transaction."
+        source_id:
+          type: string
+          description: "The unique identifier of the transaction source."
+        destination_id:
+          type: string
+          description: "The unique identifier of the transaction destination."
+        parent_id:
+          type: string
+          nullable: true
+          description: "The parent transaction ID if applicable (optional)."
+        exchange_rate:
+          type: number
+          format: float
+          nullable: true
+          description: "The exchange rate applied if applicable (optional)."
+        transaction_request_id:
+          type: string
+          nullable: true
+          description: "The ID of the associated transaction request if applicable (optional)."
+        transaction_request_amount:
+          type: number
+          format: float
+          nullable: true
+          description: "The original amount of the transaction request (optional)."
+        local_currency:
+          type: string
+          nullable: true
+          description: "The local currency of the transaction (optional)."
+        reason:
+          type: string
+          nullable: true
+          description: "The reason for withdrawal if applicable (optional)."
+        description:
+          type: string
+          nullable: true
+          description: "Additional description for the transaction (optional)."
+        initiated_by:
+          type: string
+          nullable: true
+          description: "The identifier of the user who initiated the transaction (optional)."
+      example:
+        source: "bank"
+        destination: "wallet"
+        source_id: "bank_tx_23456"
+        destination_id: "wallet_789"
+        exchange_rate: 1.2
+        reason: "Salary payment"
+        description: "Monthly salary deposit"
+        initiated_by: "admin_001"
+
+    SimulateCreditOrDebitDTO:
+      type: object
+      properties:
+        transaction_type:
+          type: string
+          enum: [credit, debit]
+        amount:
+          type: number
+        currency:
+          type: string
+          enum: [usd, ngn]
+
+    WalletTransferDTO:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [internal, external]
+        source_currency:
+          type: string
+          enum: [usd, ngn]
+        destination_currency:
+          type: string
+          enum: [usd, ngn]
+        amount:
+          type: number
+          minimum: 0.01
+        recipient:
+          type: string
+          nullable: true
+        wallet_domain:
+          type: string
+          enum: [domain1, domain2] # Replace with actual wallet domains
+          nullable: true
+        credential:
+          type: string
+          nullable: true
+        source_transaction_request_id:
+          type: string
+          nullable: true
+        destination_transaction_request_id:
+          type: string
+          nullable: true
+        source_transaction_id:
+          type: string
+          nullable: true
+        destination_transaction_id:
+          type: string
+          nullable: true
+      required:
+        - type
+        - source_currency
+        - destination_currency
+        - amount
+
+    WalletTransferResponse:
+      type: object
+      properties:
+        sender_wallet:
+          $ref: "#/components/schemas/Wallet"
+        recipient_wallet:
+          $ref: "#/components/schemas/Wallet"
+        source_transaction:
+          $ref: "#/components/schemas/Transaction"
+        destination_transaction:
+          $ref: "#/components/schemas/Transaction"
+        source_transaction_request:
+          $ref: "#/components/schemas/TransactionRequestResponse"
+        destination_transaction_request:
+          $ref: "#/components/schemas/TransactionRequestResponse"
+      required:
+        - sender_wallet
+        - source_transaction
+        - source_transaction_request
+
+    TransactionRequestResponse:
+      type: object
+      properties:
+        wallet_id:
+          type: string
+          example: "wallet_12345"
+        owner_id:
+          type: string
+          example: "user_67890"
+        transaction_id:
+          type: string
+          nullable: true
+          example: "txn_abcdef"
+        request_type:
+          type: string
+          enum: ["funding", "withdrawal"]
+          example: "funding"
+        status:
+          type: string
+          enum: ["initiated", "pending", "processing", "successful", "failed", "canceled"]
+          example: "processing"
+        currency:
+          type: string
+          enum: ["usd", "ngn"]
+          example: "usd"
+        amount:
+          type: number
+          minimum: 0.01
+          example: 100.50
+        provider:
+          type: string
+          enum:
+            [
+              "lazerpay",
+              "flutterwave",
+              "paystack",
+              "bitnob",
+              "fincra",
+              "volume",
+              "blockchainradar",
+              "bridgecard",
+              "assetbase"
+            ]
+          example: "flutterwave"
+        local_amount:
+          type: number
+          minimum: 0.01
+          example: 50000
+        local_currency:
+          type: string
+          example: "ngn"
+        provider_metadata:
+          type: object
+          example: { transaction_ref: "xyz123", provider_fee: 1.5 }
+        screening:
+          type: object
+          nullable: true
+          example: { risk_score: 0.8 }
+        metadata:
+          $ref: "#/components/schemas/TransactionMetadatas"
+      required:
+        - wallet_id
+        - owner_id
+        - request_type
+        - status
+        - currency
+        - amount
+        - provider
+        - local_amount
+        - local_currency
+        - metadata
+
+    Transaction:
+      type: object
+      properties:
+        amount:
+          type: number
+          minimum: 0.01
+          example: 200.75
+        previous_balance:
+          type: number
+          minimum: 0
+          example: 1500.00
+        current_balance:
+          type: number
+          minimum: 0
+          example: 1700.75
+        owner_id:
+          type: string
+          example: "user_67890"
+        wallet_id:
+          type: string
+          example: "wallet_12345"
+        transaction_type:
+          type: string
+          enum: ["credit", "debit"]
+          example: "credit"
+        currency:
+          type: string
+          enum: ["usd", "ngn"]
+          example: "usd"
+        metadata:
+          $ref: "#/components/schemas/TransactionMetadatas"
+      required:
+        - amount
+        - previous_balance
+        - current_balance
+        - owner_id
+        - wallet_id
+        - transaction_type
+        - currency
+        - metadata
+
+    TransactionRequestFeeDTO:
+      type: object
+      required:
+        - fee_transaction_id
+        - fee
+        - description
+      properties:
+        fee_transaction_id:
+          type: string
+          description: Transaction ID for the fee
+          example: "fee_trx_9876"
+        owner_id:
+          type: string
+          nullable: true
+          description: Owner ID of the fee
+          example: "usr_001"
+        wallet_id:
+          type: string
+          nullable: true
+          description: Wallet ID associated with the fee
+          example: "wallet_abc123"
+        fee:
+          type: number
+          format: float
+          description: Fee amount
+          minimum: 0.01
+          example: 150
+        status:
+          type: string
+          nullable: true
+          enum: [initiated, pending, processing, successful, failed, canceled]
+          description: Status of the fee transaction
+          example: "successful"
+        description:
+          type: string
+          description: Description of the fee transaction
+          example: "Transaction processing fee"
+        destination_id:
+          type: string
+          nullable: true
+          description: Destination ID for the fee transaction
+          example: "dest_fee_123"
+        destination:
+          $ref: "#/components/schemas/TransactionDestination"
+
+    TransactionMetadatas:
+      type: object
+      required:
+        - source
+        - destination
+        - source_id
+        - destination_id
+      properties:
+        source:
+          $ref: "#/components/schemas/TransactionSource"
+        destination:
+          $ref: "#/components/schemas/TransactionDestination"
+        source_id:
+          type: string
+          description: Unique identifier for the source
+          example: "src_123456"
+        destination_id:
+          type: string
+          description: Unique identifier for the destination
+          example: "dest_654321"
+        sender_user_id:
+          type: integer
+          format: int64
+          nullable: true
+          description: Sender user ID for W2W transfers
+          example: 1001
+        recipient_user_id:
+          type: integer
+          format: int64
+          nullable: true
+          description: Recipient user ID for W2W transfers
+          example: 2002
+        sender_account_id:
+          type: string
+          nullable: true
+          description: Sender account UUID for W2W transfers
+          example: "acc_abc123"
+        recipient_account_id:
+          type: string
+          nullable: true
+          description: Recipient account UUID for W2W transfers
+          example: "acc_def456"
+        exchange_rate:
+          type: number
+          format: float
+          nullable: true
+          description: Exchange rate for currency conversion
+          example: 1.2
+        transaction_request_id:
+          type: string
+          nullable: true
+          description: Reference to the transaction request
+          example: "trx_req_789"
+        transaction_request_amount:
+          type: number
+          format: float
+          nullable: true
+          description: Amount associated with the transaction request
+          minimum: 0.01
+          example: 50000
+        local_currency:
+          type: string
+          nullable: true
+          description: The local currency of the transaction
+          example: "NGN"
+        reason:
+          type: string
+          nullable: true
+          description: Withdrawal reason
+          example: "Bill payment"
+        parent_id:
+          type: string
+          nullable: true
+          description: Reference to the original transaction ID for a reversal
+          example: "trx_45678"
+        description:
+          type: string
+          nullable: true
+          description: Transaction description
+          example: "Payment for online services"
+        fee_config:
+          $ref: "#/components/schemas/TransactionRequestFeeDTO"
+        type:
+          type: string
+          enum: [swap, transfer]
+          description: Transaction type, either swap or transfer
+          example: "transfer"
+
+    PayoutInterestQuery:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: (Optional) ID of the wallet to payout interest for.
+          example: "b123f8e6-9d27-4b79-b92c-0f4a8a5c8f3b"
 
   securitySchemes:
     headlessAuth:
