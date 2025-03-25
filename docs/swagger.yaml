@@ -886,7 +886,6 @@ paths:
                 complianceExample:
                   summary: Example of compliances
                   value:
-                    compliances:
                       - type: "transaction_pin"
                         status: true
                         title: "Create transaction PIN"
@@ -2887,31 +2886,22 @@ components:
       properties:
         gender:
           type: string
-          enum: ["Male", "Female", "Prefer not to say"]
+          example: "Male"
         monthly_income_range:
           type: string
-          enum: ["50k", "50k - 100k", "100k - 200k", "200k - 350k", "350k - 500k", "500k+"]
+          example: "50k - 100k"
         employment_status:
           type: string
-          enum: ["Self employed", "Gov-sector employed", "Private sector employed", "Unemployed", "Retired"]
+          example: Self employed
         job_sector:
           type: string
-          enum:
-            [
-              "Agriculture / Agro Allied",
-              "Advertisement / Media / Publishing",
-              "Art / Design",
-              "Automotive / Car Services",
-              "Beverages / Drinks",
-              "Consulting",
-              "Ecommerce / Retail / Wholesales"
-            ]
+          example: "Agriculture / Agro Allied"
         marital_status:
           type: string
-          enum: ["Single", "Married", "Divorce", "Others"]
+          example: "Divorced"
         how_did_you_hear_about_us:
           type: string
-          enum: ["From family or friends", "Instagram", "Twitter", "Facebook", "Others"]
+          example: "Facebook"
 
     UserAutoInvestConfigDTO:
       type: object
@@ -4160,13 +4150,6 @@ components:
           example: "1990-01-01"
         relationship:
           type: string
-          enum:
-            - "Child"
-            - "Sibling"
-            - "Spouse"
-            - "Niece/Cousin"
-            - "Other Relative"
-            - "Friend/Colleague"
           example: "Sibling"
 
     UsernameDetailsDTO:
@@ -4179,16 +4162,17 @@ components:
           example: neo
 
     Compliances:
-      type: object
-      properties:
-        compliances:
-          type: array
-          description: "List of compliance tasks and their statuses"
-          items:
-            $ref: "#/components/schemas/Compliance"
+      type: array
+      description: "List of compliance tasks and their statuses"
+      items:
+        $ref: "#/components/schemas/Compliance"
 
     Compliance:
       type: object
+      required:
+        - type
+        - status
+        - title
       properties:
         type:
           type: string
