@@ -3622,7 +3622,7 @@ components:
         section:
           type: string
           enum: ["general", "personal"]
-          example: "general"
+          example: "personal"
         is_read:
           type: boolean
           example: false
@@ -3634,6 +3634,8 @@ components:
             - $ref: "#/components/schemas/PlanNotificationMetadata"
             - $ref: "#/components/schemas/GiftNotificationMetadata"
             - $ref: "#/components/schemas/FeedNotificationMetadata"
+            - $ref: "#/components/schemas/InterestNotificationMetadata"
+            - $ref: "#/components/schemas/TransactionNotificationMetadata"
             - $ref: "#/components/schemas/NotificationMetadata"
           nullable: true
 
@@ -3661,12 +3663,21 @@ components:
             image_url:
               type: string
               example: "https://example.com/images/plan.png"
+            type:
+              enum: ["funding", "withdrawal", "matured"]
+              example: "funding"
+            status:
+              type: string
+              example: "successful"
       example:
         plan_id: "plan_001"
         plan_name: "Premium Plan"
         image_url: "https://example.com/images/plan.png"
         amount: 50
-        description: "Your premium plan has been updated"
+        description: "Plan funding successful"
+        type: "funding"
+        status: "successful"
+
 
     GiftNotificationMetadata:
       allOf:
@@ -3703,6 +3714,9 @@ components:
               type: string
               nullable: true
               example: "https://example.com/images/bob.png"
+            type:
+              enum: ["new-gift-sender", "new-gift-receiver", "gift-accepted", "gift-rejected","gift-cancelled"]
+              example: "new-gift-sender"
       example:
         gift_id: "gift_123"
         gift_name: "Birthday Gift"
@@ -3714,6 +3728,7 @@ components:
         sender_image_url: "https://example.com/images/alice.png"
         receiver_image_url: "https://example.com/images/bob.png"
         description: "Alice sent you a birthday gift!"
+        type: "new-gift-sender"
 
     FeedNotificationMetadata:
       allOf:
@@ -3727,6 +3742,38 @@ components:
         image_url: "https://example.com/images/feed.png"
         amount: 10
         description: "New update in your feed"
+
+    InterestNotificationMetadata:
+      allOf:
+        - $ref: "#/components/schemas/NotificationMetadata"
+        - type: object
+          properties:
+            source:
+              type: string
+              enum: ["plan", "wallet", "vault"]
+            source_id:
+              type: string
+              example: "plan_123"
+      example:
+        source: "plan"
+        source_id: "plan_123"
+        description: "Your plan has a new interest"
+
+    TransactionNotificationMetadata:
+      allOf:
+        - $ref: "#/components/schemas/NotificationMetadata"
+        - type: object
+          properties:
+            type:
+              type: string
+            status:
+              type: string
+            reference:
+              type: string
+      example:
+        type: "funding"
+        status: "successful"
+        reference: "txn_123"
 
     UserDetailsDTO:
       type: object
