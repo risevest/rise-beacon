@@ -886,6 +886,7 @@ paths:
                 complianceExample:
                   summary: Example of compliances
                   value:
+                    compliances:
                       - type: "transaction_pin"
                         status: true
                         title: "Create transaction PIN"
@@ -2081,14 +2082,16 @@ paths:
     get:
       summary: Fetch quote for the day
       tags:
-        - Quotes
+        - Feeds
       responses:
         "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Quote"
+                type: array
+                items:
+                  $ref: "#/components/schemas/Quote"
         "500":
           description: Internal server error
 
@@ -2096,7 +2099,7 @@ paths:
     get:
       summary: Fetch campaigns
       tags:
-        - Campaigns
+        - Feeds
       responses:
         "200":
           description: Successful response
@@ -2182,6 +2185,301 @@ paths:
         "500":
           description: We are having system-level issues. Please bear with us
 
+  /banks:
+    get:
+      summary: Fetch banks
+      tags:
+        - Banks
+      parameters:
+        - in: query
+          name: country
+          required: true
+          schema:
+            type: string
+            example: "ng"
+          description: The country of the banks to be retrieved.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Banks"
+        "500":
+          description: Internal server error
+          
+  
+  /external-wallets/verify:    
+    post:
+      summary: Verify external wallet
+      tags:
+        - External Wallets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyExternalWallet"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyExternalWalletResponse"
+        "500":
+          description: Internal server error
+          
+          
+  /external-wallets/:    
+    post:
+      summary: Create external wallet
+      tags:
+        - External Wallets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateExternalWallet"
+            examples:
+              mobile_money:
+                summary: Mobile Money Wallet
+                value:
+                  wallet_type: mobile_money
+                  metadata:
+                    name: "John Doe"
+                    phone_number: "+233541234567"
+                    network: "mtn"
+                    network_name: "MTN Mobile Money"
+                  owner_id: "123e4567-e89b-12d3-a456-426614174000"
+              bank_account:
+                summary: Bank Account Wallet
+                value:
+                  wallet_type: bank_account
+                  owner_id: "987e6543-a89b-45d3-c456-123456789000"
+                  metadata:
+                    token: "secure-bank-token-123"
+              virtual_account:
+                summary: Virtual Account Wallet
+                value:
+                  wallet_type: virtual_account
+                  metadata:
+                    currency: "usd"
+                    wallet_currency: "ngn"
+                  owner_id: "321e4567-e89b-12d3-a456-426614174111"
+              crypto_wallet:
+                summary: Crypto Wallet
+                value:
+                  wallet_type: crypto_wallet
+                  metadata:
+                    currency: "usdt"
+                    network: "eth"
+                    wallet_address: "0x123456789abcdef"
+                  owner_id: "231e4567-e89b-12d3-a456-426614174222"
+              direct_debit:
+                summary: Direct Debit Wallet
+                value:
+                  wallet_type: direct_debit
+                  metadata:
+                    external_wallet_id: "ext-wallet-987654321"
+                    address:
+                      house_number: "12"
+                      street_name: "Main Street"
+                      city: "Lagos"
+                  owner_id: "456e7890-e89b-12d3-a456-426614174333"
+            
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExternalWallet"
+        "500":
+          description: Internal server error
+  
+    get:
+      summary: Get external wallets
+      tags:
+        - External Wallets
+      parameters:
+        - $ref: "#/components/parameters/ExternalWalletQueryCurrency"
+        - $ref: "#/components/parameters/ExternalWalletQueryWalletType"
+        - $ref: "#/components/parameters/ExternalWalletQueryWalletCurrency"
+        - $ref: "#/components/parameters/ExternalWalletQueryStatus"
+        
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ExternalWallet"
+        "500":
+          description: Internal server error
+          
+          
+  /external-wallets/{id}:
+    delete:
+      summary: Delete external wallet
+      tags:
+        - External Wallets
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            type: string
+            example: "be13df65-dac0-4c68-800f-205eeebffc2a"
+          description: The ID of the external wallet.
+        
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+        "500":
+          description: Internal server error
+          
+    get:
+      summary: Get external wallet by Id
+      tags:
+        - External Wallets
+      parameters:
+        - in: path
+          required: true
+          name: id
+          schema:
+            type: string
+            example: "be13df65-dac0-4c68-800f-205eeebffc2a"
+          description: The ID of the external wallet.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExternalWallet"
+          
+              examples:
+                crypto_wallet_example:
+                  summary: Example Crypto Wallet
+                  value:
+                    owner_id: "3a13df65-dac0-4c68-800f-205eeebffc1e"
+                    status: "active"
+                    wallet_type: "crypto_wallet"
+                    is_visible: true
+                    details:
+                      label: "money-bag"
+                      network: "eth"
+                      wallet_address: "366207243720113708AWG5gOTppVaj"
+                      wallet_memo: "crypto"
+                      currency: "usdc"
+                      provider: "blockchainradar"
+
+                virtual_account_example:
+                  summary: Example Virtual Account
+                  value:
+                    owner_id: "4b13df65-dac0-4c68-800f-205eeebffc2b"
+                    status: "active"
+                    wallet_type: "virtual_account"
+                    is_visible: true
+                    details:
+                      account_name: "James Smit"
+                      account_number: "0007890023"
+                      currency: "usd"
+                      wallet_currency: "usd"
+                      provider_reference: "ae13df65-dac0-4c68-800f-205eeebffc4a"
+                      bank_name: "South West Bank of Africa"
+                      bank_code: "00456"
+                      swift_code: "ACHBNK"
+                      routing_number: "021000021"
+                      bank_address: "41 Allen Avenue"
+                      account_type: "savings"
+                      provider: "flutterwave"
+                      state: "approved"
+
+                bank_account_example:
+                  summary: Example Bank Account
+                  value:
+                    owner_id: "5c13df65-dac0-4c68-800f-205eeebffc3c"
+                    status: "active"
+                    wallet_type: "bank_account"
+                    is_visible: true
+                    details:
+                      account_name: "John Doe"
+                      account_number: "9876543210"
+                      currency: "usd"
+                      provider_reference: "ba13df65-dac0-4c68-800f-205eeebffc5d"
+                      bank_name: "Bank of America"
+                      bank_code: "00457"
+                      swift_code: "BOFAUS3N"
+                      routing_number: "121000358"
+                      bank_address: "123 Wall Street, NY"
+                      network_id: "ycard-5678"
+                      memo: "Memo for transaction"
+                      instructions:
+                        - instruction_type: "SWIFT"
+                          memo: "Bank transfer instruction"
+                      address:
+                        country: "USA"
+                        state: "New York"
+                        city: "New York"
+                        house_number: "12A"
+                        street_name: "Wall Street"
+                        postal_code: "10005"
+                      owner_address:
+                        country: "NG"
+                        state: "Lagos"
+                        city: "Lagos"
+                        house_number: "55"
+                        street_name: "Idowu Taloy"
+                        postal_code: "10001"
+
+                mobile_money_example:
+                  summary: Example Mobile Money Wallet
+                  value:
+                    owner_id: "6d13df65-dac0-4c68-800f-205eeebffc4d"
+                    status: "active"
+                    wallet_type: "mobile_money"
+                    is_visible: true
+                    details:
+                      name: "Jane Doe"
+                      phone_number: "08181856789"
+                      network: "mtn"
+                      network_name: "MTN"
+
+                direct_debit_example:
+                  summary: Example Direct Debit
+                  value:
+                    owner_id: "7e13df65-dac0-4c68-800f-205eeebffc5e"
+                    status: "active"
+                    wallet_type: "direct_debit"
+                    is_visible: true
+                    details:
+                      state: "approved"
+                      external_wallet_bank_account_id: "abc123xyz"
+                      provider_reference: "ddeb-7896-1234-5678"
+                      provider: "mono"
+                      currency: "ngn"
+                      reference: "mandate-2025-001"
+                      account_name: "John Doe"
+                      account_number: "1234567890"
+                      bank_name: "Bank of America"
+                      provider_account_id: "cust-98765"
+                      start_date: "2025-01-01T00:00:00Z"
+                      end_date: "2026-01-01T00:00:00Z"
+                      provider_action:
+                        type: "transfer"
+                      can_relink: true
+        "500":
+          description: Internal server error
+          
 components:
   parameters:
     offsetParam:
@@ -2333,6 +2631,63 @@ components:
       schema:
         type: string
         example: "3.21.34"
+        
+    ExternalWalletQueryCurrency:
+      name: currency
+      in: query
+      description: Currency of the wallet
+      schema:
+        type: string
+        enum:
+          - ngn
+          - usd
+          - gbp
+          - eur
+          - bwp
+          - tzs
+          - rwf
+          - mwk
+          - zmw
+        example: usd
+
+    ExternalWalletQueryWalletType:
+      name: wallet_type
+      in: query
+      description: Type of the wallet
+      schema:
+        type: string
+        enum:
+          - crypto_wallet
+          - virtual_account
+          - bank_account
+          - mobile_money
+          - card
+          - api_vendor
+          - system
+          - direct_debit
+        example: bank_account
+
+    ExternalWalletQueryWalletCurrency:
+      name: wallet_currency
+      in: query
+      description: Wallet currency type
+      schema:
+        type: string
+        enum:
+          - usd
+          - ngn
+        example: ngn
+
+    ExternalWalletQueryStatus:
+      name: status
+      in: query
+      description: Status of the wallet
+      schema:
+        type: string
+        enum:
+          - active
+          - inactive
+        example: active
 
   schemas:
     CreatePlanDTO:
@@ -2886,22 +3241,31 @@ components:
       properties:
         gender:
           type: string
-          example: "Male"
+          enum: ["Male", "Female", "Prefer not to say"]
         monthly_income_range:
           type: string
-          example: "50k - 100k"
+          enum: ["50k", "50k - 100k", "100k - 200k", "200k - 350k", "350k - 500k", "500k+"]
         employment_status:
           type: string
-          example: Self employed
+          enum: ["Self employed", "Gov-sector employed", "Private sector employed", "Unemployed", "Retired"]
         job_sector:
           type: string
-          example: "Agriculture / Agro Allied"
+          enum:
+            [
+              "Agriculture / Agro Allied",
+              "Advertisement / Media / Publishing",
+              "Art / Design",
+              "Automotive / Car Services",
+              "Beverages / Drinks",
+              "Consulting",
+              "Ecommerce / Retail / Wholesales"
+            ]
         marital_status:
           type: string
-          example: "Divorced"
+          enum: ["Single", "Married", "Divorce", "Others"]
         how_did_you_hear_about_us:
           type: string
-          example: "Facebook"
+          enum: ["From family or friends", "Instagram", "Twitter", "Facebook", "Others"]
 
     UserAutoInvestConfigDTO:
       type: object
@@ -4150,6 +4514,13 @@ components:
           example: "1990-01-01"
         relationship:
           type: string
+          enum:
+            - "Child"
+            - "Sibling"
+            - "Spouse"
+            - "Niece/Cousin"
+            - "Other Relative"
+            - "Friend/Colleague"
           example: "Sibling"
 
     UsernameDetailsDTO:
@@ -4162,17 +4533,16 @@ components:
           example: neo
 
     Compliances:
-      type: array
-      description: "List of compliance tasks and their statuses"
-      items:
-        $ref: "#/components/schemas/Compliance"
+      type: object
+      properties:
+        compliances:
+          type: array
+          description: "List of compliance tasks and their statuses"
+          items:
+            $ref: "#/components/schemas/Compliance"
 
     Compliance:
       type: object
-      required:
-        - type
-        - status
-        - title
       properties:
         type:
           type: string
@@ -4928,6 +5298,558 @@ components:
           format: uuid
           description: (Optional) ID of the wallet to payout interest for.
           example: "b123f8e6-9d27-4b79-b92c-0f4a8a5c8f3b"
+
+    Banks:
+      type: array
+      description: "Returns list"
+      items:
+        $ref: "#/components/schemas/Bank"
+
+    Bank:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Access Bank
+        currency:
+          type: string
+          example: "NGN"
+        code:
+          type: string
+          example: 044
+        country:
+          type: string
+          example: "Nigeria"
+        image: 
+          type: string
+          example: "access-bank.png"
+          
+          
+    VerifyExternalWallet:
+      type: object
+      required:
+        - wallet_type
+        - owner_id
+        - details
+      properties:
+        wallet_type:
+          type: string
+          enum: ["crypto_wallet", "virtual_account", "bank_account", "mobile_money", "card", "api_vendor", "system", "direct_debit"]
+          example: "bank_account"
+        owner_id:
+          type: string
+          format: uuid
+          example: 3a13df65-dac0-4c68-800f-205eeebffc1e 
+        details:
+          $ref: "#/components/schemas/BankAccountVerification"
+          
+    
+    BankAccountVerification:
+      type: object
+      required:
+        - account_number
+        - bank_name
+        - account_name
+        - bank_code
+        - currency
+        - metadata
+      properties:
+        account_number:
+          type: string
+          example: "0007890023"
+        bank_name:
+          type: string
+          example: "South West Bank of Africa"
+        bank_code:
+          type: string
+          example: "00456"
+        currency:
+          type: string
+          enum: ["ngn", "usd", "gbp", "eur", "bwp", "tzs", "rwf", "mwk", "zmw"]
+        metadata:
+          $ref: "#/components/schemas/BankAccountVerificationMetadata"
+          
+      
+    BankAccountVerificationMetadata:
+      type: object
+      required:
+        - address
+        - swift_code
+        - routing_number
+        - country
+      properties:
+        address:
+          $ref: "#/components/schemas/EURGBPAccountVerificationAddress"
+        swift_code:
+          type: string
+          example: "ACHBNK"
+        routing_number:
+          type: string
+          example: "021000021"
+        country:
+          type: string
+          example: "ng"
+          
+    EURGBPAccountVerificationAddress:
+      type: object
+      required:
+        - street_name
+        - city
+        - postal_code
+        - house_number
+      properties:
+        street_name:
+          type: string
+          example: "Anfield Avenue"
+        city:
+          type: string
+          example: "New Yorlk"
+        postal_code:
+          type: string
+          example: "00010"
+        house_number:
+          type: string
+          example: "41"
+          
+          
+    VerifyExternalWalletResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30"
+        details:
+          $ref: "#/components/schemas/VerifyExternalWalletResponseDetails"
+          
+    VerifyExternalWalletResponseDetails:
+      type: object
+      properties:
+        account_number:
+          type: string
+          example: "0007890023"
+        account_name:
+          type: string
+          example: "James Smith"
+        bank_code:
+          type: string
+          example: "00456"
+        bank_name:
+          type: string
+          example: "South West Bank of Africa"
+        currency:
+          type: string
+          enum: ["ngn","usd","gbp","eur"]
+        direct_debit:
+          type: object
+          properties:
+            exists: 
+              type: boolean
+              example: true
+            id: 
+              type: string
+              example: "be13df65-dac0-4c68-800f-205eeebffc2a"
+              
+    ExternalWallet:
+      type: object
+      properties:
+        owner_id:
+          type: string
+          example: "3a13df65-dac0-4c68-800f-205eeebffc1e"
+        status:
+          type: string
+          enum: ["active", "inactive"]
+        wallet_type:
+          type: string
+          enum: ["crypto_wallet", "virtual_account", "bank_account", "mobile_money", "card", "api_vendor", "system", "direct_debit"]
+        is_visible:
+          type: boolean
+          example: true
+        details:
+          $ref: "#/components/schemas/ExternalWalletDetails"
+
+    ExternalWalletDetails:       
+      oneOf:
+        - $ref: "#/components/schemas/CryptoWalletInfo"
+        - $ref: "#/components/schemas/VirtualAccount"
+        - $ref: "#/components/schemas/Card"
+        - $ref: "#/components/schemas/MobileMoney"
+        - $ref: "#/components/schemas/BankAccount"
+        - $ref: "#/components/schemas/APIVendor"
+        - $ref: "#/components/schemas/DirectDebit"
+    
+    CryptoWalletInfo:
+      type: object
+      properties:
+        label:
+          type: string
+          example: "money-bag"
+        network:
+          type: string
+          enum: ["eth", "bsc", "polygon"]
+        wallet_address:
+          type: string
+          example: "366207243720113708AWG5gOTppVaj"
+        wallet_memo:
+          type: string
+          example: "crypto"
+        currency:
+          type: string
+          enum: ["usdc", "busd", "usdt"] 
+        provider:
+          type: string
+          example: "blockchainradar"
+    
+    VirtualAccount:
+      type: object
+      properties:
+        account_details:
+          $ref: "#/components/schemas/AccountDetails"
+        bank_details:
+          $ref: "#/components/schemas/BankDetails"
+        account_type:
+          type: string
+          example: "savings"
+        provider:
+          type: string
+          enum: ["flutterwave", "monnify", "keyrails"]
+        state:
+          type: string
+          enum: ["approved", "deactivated", "declined", "update"]
+          
+    Card:
+      type: object
+      properties:
+        currency:
+          type: string
+          enum: ["ngn", "usd", "ghs", "kes", "ugx"]
+        provider:
+          type: string
+          example: "flutterwave"
+        provider_reference:
+          type: string
+          example: "1a13df65-dac0-4c68-800f-205eeebffc1b"
+        expiry_month:
+          type: string
+          example: "01/01"
+        expiry_year:
+          type: string
+          example: "2029"
+        last_digits:
+          type: string
+          example: "9823"
+        brand:
+          type: string
+          enum: ["ngn", "usd", "ghs", "kes", "ugx"]
+
+    MobileMoney:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "James Smith"
+        phone_number:
+          type: string
+          example: "08181856789"
+        network:
+          type: string
+          enum: ["mtn", "airtel", "tigo", "vodafone", "mps", "mpx", "safaricom", "tnm"]
+        network_name:
+          type: string
+          example: "MTN"
+          
+    BankAccount:
+      type: object
+      properties:
+        account_details:
+          $ref: "#/components/schemas/AccountDetails"
+        bank_details:
+          $ref: "#/components/schemas/BankDetails"
+        network_id:
+          type: string
+          description: "network id string required from YellowCard"
+        memo:
+          type: string
+          description: "memo required for some providers (miden) to track inflow"
+        instructions:
+          type: array
+          items:
+            $ref: "#/components/schemas/BankInstruction"
+          description: "settlement system that characterizes a bank account"
+        address:
+          $ref: "#/components/schemas/BankAccountAddress"
+    
+    BankAccountAddress:
+      type: object
+      properties:
+        country:
+          type: string
+          description: "The user's country"
+        state:
+          type: string
+          description: "The user's state"
+        city:
+          type: string
+          description: "The user's city"
+        house_number:
+          type: string
+          description: "The user's house number"
+        street_name:
+          type: string
+          description: "The user's street name"
+        postal_code:
+          type: string
+          description: "The user's postal code"
+    
+    BankInstruction:
+      type: object
+      properties:
+        instruction_type:
+          type: string
+          enum: ["FEDWIRE", "ACH", "SWIFT"]
+        memo:
+          type: string
+          example: "A test memo"
+          
+    
+    APIVendor:
+      type: object
+      properties:
+        vendor_name:
+          type: string
+          example: "assetbase"
+        vendor_id:
+          type: string
+          example: "5a13df65-dac0-4c68-800f-205eeebffc2c"
+          
+    
+    DirectDebit:
+      type: object
+      properties:
+        state:
+          type: string
+          description: "State of the direct debit"
+          enum: ["approved","debitable","rejected","created","paused","cancelled","pending"]
+        external_wallet_bank_account_id:
+          type: string
+          description: "External Wallet used in generating the mandate"
+          example: "abc123xyz"
+        provider_reference:
+          type: string
+          description: "Unique provider token that represents each direct debit"
+          example: "ddeb-7896-1234-5678"
+        provider:
+          type: string
+          description: "Service provider for direct debit"
+          example: "mono"
+        currency:
+          type: string
+          description: "Currency of the direct debit"
+          example: "ngn"
+        reference:
+          type: string
+          description: "Unique reference for the mandate that was sent to the provider"
+          example: "mandate-2025-001"
+        account_name:
+          type: string
+          description: "Name attached to the account"
+          example: "John Doe"
+        account_number:
+          type: string
+          description: "Bank account number"
+          example: "1234567890"
+        bank_name:
+          type: string
+          description: "Name of the bank hosting the account"
+          example: "Bank of America"
+        provider_account_id:
+          type: string
+          description: "Customer identifier that the mandate is tied to on the provider's system"
+          example: "cust-98765"
+        start_date:
+          type: string
+          format: date-time
+          description: "Start date of the mandate"
+          example: "2025-01-01T00:00:00Z"
+        end_date:
+          type: string
+          format: date-time
+          description: "End date of the mandate"
+          example: "2026-01-01T00:00:00Z"
+        provider_action:
+          type: string
+          enum: ["transfer", "redirect"]
+        can_relink:
+          type: boolean
+          description: "Indicates if the mandate should be relinked if it was previously linked as in the state was either debitable or approved"
+          example: true
+    
+    BankDetails:
+      type: object
+      properties:
+        bank_name:
+          type: string
+          example: "South West Bank of Africa"
+        bank_code:
+          type: string
+          example: "00456"
+        swift_code:
+          type: string
+          example: "ACHBNK"
+        routing_number:
+          type: string
+          example: "021000021"
+        bank_address:
+          type: string
+          example: "41 Allen Avenue"
+    
+    AccountDetails:
+      type: object
+      properties:
+        account_name:
+          type: string
+          example: "James Smit"
+        account_number:
+          type: string
+          example: "0007890023"
+        currency:
+          type: string
+          enum: ["ngn", "usd", "gbp", "eur"]
+        wallet_currency:
+          type: string
+          enum: ["usd", "ngn"]
+        provider_reference:
+          type: string
+          example: "ae13df65-dac0-4c68-800f-205eeebffc4a"
+          
+    
+    CreateExternalWallet:
+      oneOf:
+        - $ref: "#/components/schemas/MomoDTO"
+        - $ref: "#/components/schemas/BankAccountDTO"
+        - $ref: "#/components/schemas/VirtualAccountDTO"
+        - $ref: "#/components/schemas/CryptoWalletDTO"
+        - $ref: "#/components/schemas/ExternalWalletDirectDebitDTO"
+      required:
+        - owner_id
+      properties:
+        owner_id:
+          type: string
+          description: ID of the wallet owner
+          example: "123e4567-e89b-12d3-a456-426614174000"
+
+    MomoDTO:
+      type: object
+      properties:
+        wallet_type:
+          type: string
+          enum: [mobile_money]
+          example: mobile_money
+        metadata:
+          $ref: "#/components/schemas/MomoMetadata"
+
+    BankAccountDTO:
+      type: object
+      properties:
+        wallet_type:
+          type: string
+          enum: [bank_account]
+          example: bank_account
+        owner_id:
+          type: string
+          description: Optional owner ID
+          example: "987e6543-a89b-45d3-c456-123456789000"
+        metadata:
+          $ref: "#/components/schemas/BankAccountMetadata"
+
+    VirtualAccountDTO:
+      type: object
+      properties:
+        wallet_type:
+          type: string
+          enum: [virtual_account]
+          example: virtual_account
+        metadata:
+          $ref: "#/components/schemas/VirtualAccountMetadata"
+
+    CryptoWalletDTO:
+      type: object
+      properties:
+        wallet_type:
+          type: string
+          enum: [crypto_wallet]
+          example: crypto_wallet
+        metadata:
+          $ref: "#/components/schemas/CryptoMetadata"
+
+    ExternalWalletDirectDebitDTO:
+      type: object
+      properties:
+        wallet_type:
+          type: string
+          enum: [direct_debit]
+          example: direct_debit
+        metadata:
+          $ref: "#/components/schemas/DirectDebitMetadata"
+
+    VirtualAccountMetadata:
+      type: object
+      properties:
+        currency:
+          type: string
+          enum: [ngn, usd, gbp, eur, bwp, tzs, rwf, mwk, zmw]
+          example: usd
+        wallet_currency:
+          type: string
+          enum: [usd, ngn]
+          example: ngn
+
+    CryptoMetadata:
+      type: object
+      properties:
+        currency:
+          type: string
+          enum: [usdc, busd, usdt]
+          example: usdt
+        network:
+          type: string
+          enum: [eth, bsc, polygon]
+          example: eth
+        wallet_address:
+          type: string
+          example: "0x123456789abcdef"
+
+    MomoMetadata:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "John Doe"
+        phone_number:
+          type: string
+          example: "+233541234567"
+        network:
+          type: string
+          enum: [mtn, airtel, tigo, vodafone, mps, mpx, safaricom, tnm]
+          example: mtn
+        network_name:
+          type: string
+          example: "MTN Mobile Money"
+
+    BankAccountMetadata:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "secure-bank-token-123"
+
+    DirectDebitMetadata:
+      type: object
+      properties:
+        external_wallet_id:
+          type: string
+          example: "ext-wallet-987654321"
+        address:
+          $ref: "#/components/schemas/Address"
 
   securitySchemes:
     headlessAuth:
