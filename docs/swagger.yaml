@@ -343,6 +343,27 @@ paths:
         "500":
           description: Internal server error
 
+  /plans/{id}/toggle-monthly-reinvest:
+    post:
+      summary: Toggle plan reinvestment
+      tags:
+        - Plans
+      parameters:
+        - $ref: "#/components/parameters/PlanId"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Plan"
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "500":
+          description: Internal server error
+
   /plans/{id}/reinvest:
     post:
       summary: Reinvest matured plan
