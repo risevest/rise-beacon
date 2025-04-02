@@ -401,26 +401,45 @@ paths:
           name: entity
           schema:
             type: string
-            default: custom_plan
+            enum:
+              - custom_plan
+              - identity_type
+          description: The type of entity to filter by
+          example: custom_plan
+            
         - in: query
           name: filter_key
           schema:
             type: string
-            enum: [category, is_live, pure]
-            example: category
+            enum: 
+              - category
+              - is_live 
+              - pure 
+              - code 
+              - country
+          description: The field to filter by
+          example: category
+          
         - in: query
           name: filter_value
           schema:
             type: string
-            enum: [goal, pure]
-            example: goal
+          description: |
+            The filter value depends on filter_key:
+            * category: [goal, pure]
+            * country: [gh, ng, ae, gb, us, ca, za, zm, mw, tz, rz, bw, ug, ke]
+            * code: [bvn, national_id, passport, driver_license, voter_id, ssnit, phone_number]
+          example: goal
+
       responses:
         "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CustomPlans"
+                oneOf:
+                  - $ref: "#/components/schemas/CustomPlans"
+                  - $ref:   "#/components/schemas/IdentityDocument"
         "403":
           description: Forbidden
         "404":
@@ -3067,6 +3086,36 @@ components:
         - Travel
         - Fixed Dividend Income
 
+    IdentityCode:
+      type: string
+      enum: 
+        - bvn
+        - national_id 
+        - passport 
+        - driver_license 
+        - voter_id
+        - ssnit
+        - phone_number
+
+    IdentityCountry:
+      type: string
+      enum:
+        - gh
+        - ng
+        - ae
+        - gb
+        - us
+        - ca
+        - za
+        - zm
+        - mw
+        - tz
+        - rz
+        - bw
+        - ug
+        - ke
+
+
     Plan:
       type: object
       properties:
@@ -3428,6 +3477,44 @@ components:
           additionalProperties:
             $ref: "#/components/schemas/Composition"
           example: { "9d6d3d58-c799-4147-a71e-3e5f59e239ea": { asset_class: "etf", percentage: 100 } }
+
+    IdentityType:
+      type: object
+      properties:
+        code: 
+          type: string
+        country:
+          type: string
+
+
+    IdentityDocument:
+      type: object
+      properties:
+        code:
+          $ref: "#/components/schemas/IdentityCountry"
+          example: "voter_id"
+        name:
+          type: string
+          example: "Voter ID"
+        country:
+          $ref: "#/components/schemas/IdentityType"
+          example: "ke"
+        country_name:
+          type: string
+          example: "Kenya"
+        requires_ocr:
+          type: boolean
+          example: true
+        provider:
+          type: string
+          example: "metamap"
+        metamap_flow_id:
+          type: string
+          example: "67ca08746b1a6d001cbd3854"
+        is_identity_card:
+          type: boolean
+          example: true
+
 
     TransactionRequest:
       type: object
