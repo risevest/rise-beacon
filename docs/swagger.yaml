@@ -907,21 +907,21 @@ paths:
                 complianceExample:
                   summary: Example of compliances
                   value:
-                      - type: "transaction_pin"
-                        status: true
-                        title: "Create transaction PIN"
-                      - type: "verify_email"
-                        status: false
-                        title: "Verify your email"
-                      - type: "verify_identity"
-                        status: false
-                        title: "Verify your identity"
-                      - type: "about_you"
-                        status: false
-                        title: "Tell us about you"
-                      - type: "secure_account"
-                        status: true
-                        title: "Secure your Account"
+                    - type: "transaction_pin"
+                      status: true
+                      title: "Create transaction PIN"
+                    - type: "verify_email"
+                      status: false
+                      title: "Verify your email"
+                    - type: "verify_identity"
+                      status: false
+                      title: "Verify your identity"
+                    - type: "about_you"
+                      status: false
+                      title: "Tell us about you"
+                    - type: "secure_account"
+                      status: true
+                      title: "Secure your Account"
         "500":
           description: We are having system-level issues. Please bear with us
 
@@ -2023,7 +2023,7 @@ paths:
           content:
             application/json:
               schema:
-                  $ref: "#/components/schemas/Quote"
+                $ref: "#/components/schemas/Quote"
         "500":
           description: Internal server error
 
@@ -2139,9 +2139,8 @@ paths:
                 $ref: "#/components/schemas/Banks"
         "500":
           description: Internal server error
-          
-  
-  /external-wallets/verify:    
+
+  /external-wallets/verify:
     post:
       summary: Verify external wallet
       tags:
@@ -2161,9 +2160,8 @@ paths:
                 $ref: "#/components/schemas/VerifyExternalWalletResponse"
         "500":
           description: Internal server error
-          
-          
-  /external-wallets:    
+
+  /external-wallets:
     post:
       summary: Create external wallet
       tags:
@@ -2220,7 +2218,7 @@ paths:
                       street_name: "Main Street"
                       city: "Lagos"
                   owner_id: "456e7890-e89b-12d3-a456-426614174333"
-            
+
       responses:
         "200":
           description: Successful response
@@ -2230,7 +2228,7 @@ paths:
                 $ref: "#/components/schemas/ExternalWallet"
         "500":
           description: Internal server error
-  
+
     get:
       summary: Get external wallets
       tags:
@@ -2240,7 +2238,7 @@ paths:
         - $ref: "#/components/parameters/ExternalWalletQueryWalletType"
         - $ref: "#/components/parameters/ExternalWalletQueryWalletCurrency"
         - $ref: "#/components/parameters/ExternalWalletQueryStatus"
-    
+
       responses:
         "200":
           description: Successful response
@@ -2262,7 +2260,7 @@ paths:
                     wallet_memo: "crypto"
                     currency: "usdc"
                     provider: "blockchainradar"
-    
+
                 - owner_id: "4b13df65-dac0-4c68-800f-205eeebffc2b"
                   status: "active"
                   wallet_type: "virtual_account"
@@ -2281,7 +2279,7 @@ paths:
                     account_type: "savings"
                     provider: "flutterwave"
                     state: "approved"
-    
+
                 - owner_id: "5c13df65-dac0-4c68-800f-205eeebffc3c"
                   status: "active"
                   wallet_type: "bank_account"
@@ -2315,7 +2313,7 @@ paths:
                       house_number: "55"
                       street_name: "Idowu Taloy"
                       postal_code: "10001"
-    
+
                 - owner_id: "6d13df65-dac0-4c68-800f-205eeebffc4d"
                   status: "active"
                   wallet_type: "mobile_money"
@@ -2325,7 +2323,7 @@ paths:
                     phone_number: "08181856789"
                     network: "mtn"
                     network_name: "MTN"
-    
+
                 - id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
                   owner_id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
                   wallet_type: "direct_debit"
@@ -2352,7 +2350,7 @@ paths:
                         fee: 50
         "500":
           description: Internal server error
-    
+
   /external-wallets/{externalWalletId}/{action}:
     post:
       summary: Update the state of an external external wallet
@@ -2381,8 +2379,8 @@ paths:
         "422":
           description: Unprocessable entity
         "500":
-          description: Internal server error        
-          
+          description: Internal server error
+
   /external-wallets/{id}:
     delete:
       summary: Delete external wallet
@@ -2396,7 +2394,7 @@ paths:
             type: string
             example: "be13df65-dac0-4c68-800f-205eeebffc2a"
           description: The ID of the external wallet.
-        
+
       responses:
         "200":
           description: Successful response
@@ -2406,7 +2404,7 @@ paths:
                 $ref: "#/components/schemas/UserDTO"
         "500":
           description: Internal server error
-          
+
     get:
       summary: Get external wallet by Id
       tags:
@@ -2426,7 +2424,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ExternalWallet"
-          
+
               examples:
                 crypto_wallet_example:
                   $ref: "#/components/examples/crypto_wallet_example"
@@ -2440,7 +2438,31 @@ paths:
                   $ref: "#/components/examples/direct_debit_example"
         "500":
           description: Internal server error
-          
+
+  /countries:
+    get:
+      summary: Get a list of countries
+      tags:
+        - Countries
+      parameters:
+        - in: query
+          name: country_code
+          schema:
+            type: string
+            example: "US"
+          description: Filter countries by country code.
+      responses:
+        "200":
+          description: Successfully retrieved the list of countries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Country"
+        "500":
+          description: We are having system-level issues. Please bear with us.
+
 components:
   examples:
     crypto_wallet_example:
@@ -2558,7 +2580,6 @@ components:
               account_number: "string"
               fee: 50
 
-          
   parameters:
     offsetParam:
       in: query
@@ -2709,7 +2730,7 @@ components:
       schema:
         type: string
         example: "3.21.34"
-        
+
     ExternalWalletQueryCurrency:
       name: currency
       in: query
@@ -4111,7 +4132,6 @@ components:
         type: "funding"
         status: "successful"
 
-
     GiftNotificationMetadata:
       allOf:
         - $ref: "#/components/schemas/NotificationMetadata"
@@ -4148,7 +4168,7 @@ components:
               nullable: true
               example: "https://example.com/images/bob.png"
             type:
-              enum: ["new-gift-sender", "new-gift-receiver", "gift-accepted", "gift-rejected","gift-cancelled"]
+              enum: ["new-gift-sender", "new-gift-receiver", "gift-accepted", "gift-rejected", "gift-cancelled"]
               example: "new-gift-sender"
       example:
         gift_id: "gift_123"
@@ -4642,10 +4662,10 @@ components:
           example: neo
 
     Compliances:
-        type: array
-        description: "List of compliance tasks and their statuses"
-        items:
-          $ref: "#/components/schemas/Compliance"
+      type: array
+      description: "List of compliance tasks and their statuses"
+      items:
+        $ref: "#/components/schemas/Compliance"
 
     Compliance:
       type: object
@@ -5430,11 +5450,10 @@ components:
         country:
           type: string
           example: "Nigeria"
-        image: 
+        image:
           type: string
           example: "access-bank.png"
-          
-          
+
     VerifyExternalWallet:
       type: object
       required:
@@ -5444,16 +5463,25 @@ components:
       properties:
         wallet_type:
           type: string
-          enum: ["crypto_wallet", "virtual_account", "bank_account", "mobile_money", "card", "api_vendor", "system", "direct_debit"]
+          enum:
+            [
+              "crypto_wallet",
+              "virtual_account",
+              "bank_account",
+              "mobile_money",
+              "card",
+              "api_vendor",
+              "system",
+              "direct_debit"
+            ]
           example: "bank_account"
         owner_id:
           type: string
           format: uuid
-          example: 3a13df65-dac0-4c68-800f-205eeebffc1e 
+          example: 3a13df65-dac0-4c68-800f-205eeebffc1e
         details:
           $ref: "#/components/schemas/BankAccountVerification"
-          
-    
+
     BankAccountVerification:
       type: object
       required:
@@ -5478,8 +5506,7 @@ components:
           enum: ["ngn", "usd", "gbp", "eur", "bwp", "tzs", "rwf", "mwk", "zmw"]
         metadata:
           $ref: "#/components/schemas/BankAccountVerificationMetadata"
-          
-      
+
     BankAccountVerificationMetadata:
       type: object
       required:
@@ -5499,7 +5526,7 @@ components:
         country:
           type: string
           example: "ng"
-          
+
     EURGBPAccountVerificationAddress:
       type: object
       required:
@@ -5520,8 +5547,7 @@ components:
         house_number:
           type: string
           example: "41"
-          
-          
+
     VerifyExternalWalletResponse:
       type: object
       properties:
@@ -5530,7 +5556,7 @@ components:
           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30"
         details:
           $ref: "#/components/schemas/VerifyExternalWalletResponseDetails"
-          
+
     VerifyExternalWalletResponseDetails:
       type: object
       properties:
@@ -5548,17 +5574,17 @@ components:
           example: "South West Bank of Africa"
         currency:
           type: string
-          enum: ["ngn","usd","gbp","eur"]
+          enum: ["ngn", "usd", "gbp", "eur"]
         direct_debit:
           type: object
           properties:
-            exists: 
+            exists:
               type: boolean
               example: true
-            id: 
+            id:
               type: string
               example: "be13df65-dac0-4c68-800f-205eeebffc2a"
-              
+
     ExternalWallet:
       type: object
       required:
@@ -5576,14 +5602,24 @@ components:
           enum: ["active", "inactive"]
         wallet_type:
           type: string
-          enum: ["crypto_wallet", "virtual_account", "bank_account", "mobile_money", "card", "api_vendor", "system", "direct_debit"]
+          enum:
+            [
+              "crypto_wallet",
+              "virtual_account",
+              "bank_account",
+              "mobile_money",
+              "card",
+              "api_vendor",
+              "system",
+              "direct_debit"
+            ]
         is_visible:
           type: boolean
           example: true
         details:
           $ref: "#/components/schemas/ExternalWalletDetails"
 
-    ExternalWalletDetails:       
+    ExternalWalletDetails:
       oneOf:
         - $ref: "#/components/schemas/CryptoWalletInfo"
         - $ref: "#/components/schemas/VirtualAccount"
@@ -5592,7 +5628,7 @@ components:
         - $ref: "#/components/schemas/BankAccount"
         - $ref: "#/components/schemas/APIVendor"
         - $ref: "#/components/schemas/DirectDebit"
-    
+
     CryptoWalletInfo:
       type: object
       properties:
@@ -5610,11 +5646,11 @@ components:
           example: "crypto"
         currency:
           type: string
-          enum: ["usdc", "busd", "usdt"] 
+          enum: ["usdc", "busd", "usdt"]
         provider:
           type: string
           example: "blockchainradar"
-    
+
     VirtualAccount:
       type: object
       properties:
@@ -5631,7 +5667,7 @@ components:
         state:
           type: string
           enum: ["approved", "deactivated", "declined", "update"]
-          
+
     Card:
       type: object
       properties:
@@ -5672,7 +5708,7 @@ components:
         network_name:
           type: string
           example: "MTN"
-          
+
     BankAccount:
       type: object
       properties:
@@ -5693,7 +5729,7 @@ components:
           description: "settlement system that characterizes a bank account"
         address:
           $ref: "#/components/schemas/BankAccountAddress"
-    
+
     BankAccountAddress:
       type: object
       properties:
@@ -5715,7 +5751,7 @@ components:
         postal_code:
           type: string
           description: "The user's postal code"
-    
+
     BankInstruction:
       type: object
       properties:
@@ -5725,8 +5761,7 @@ components:
         memo:
           type: string
           example: "A test memo"
-          
-    
+
     APIVendor:
       type: object
       properties:
@@ -5736,15 +5771,14 @@ components:
         vendor_id:
           type: string
           example: "5a13df65-dac0-4c68-800f-205eeebffc2c"
-          
-    
+
     DirectDebit:
       type: object
       properties:
         state:
           type: string
           description: "State of the direct debit"
-          enum: ["approved","debitable","rejected","created","paused","cancelled","pending"]
+          enum: ["approved", "debitable", "rejected", "created", "paused", "cancelled", "pending"]
         external_wallet_bank_account_id:
           type: string
           description: "External Wallet used in generating the mandate"
@@ -5798,7 +5832,7 @@ components:
           type: boolean
           description: "Indicates if the mandate should be relinked if it was previously linked as in the state was either debitable or approved"
           example: true
-    
+
     BankDetails:
       type: object
       properties:
@@ -5817,7 +5851,7 @@ components:
         bank_address:
           type: string
           example: "41 Allen Avenue"
-    
+
     AccountDetails:
       type: object
       properties:
@@ -5836,8 +5870,7 @@ components:
         provider_reference:
           type: string
           example: "ae13df65-dac0-4c68-800f-205eeebffc4a"
-          
-    
+
     CreateExternalWallet:
       oneOf:
         - $ref: "#/components/schemas/MomoDTO"
@@ -5966,6 +5999,30 @@ components:
           example: "ext-wallet-987654321"
         address:
           $ref: "#/components/schemas/Address"
+
+    Country:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "United States"
+        code:
+          type: string
+          example: "US"
+        states:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "California"
+              code:
+                type: string
+                example: "CA"
+              type:
+                type: string
+                example: "State"
 
   securitySchemes:
     headlessAuth:
