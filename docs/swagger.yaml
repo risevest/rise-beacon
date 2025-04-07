@@ -3489,7 +3489,7 @@ components:
     IdentityDocuments:
       type: array
       items:
-        $ref: "#/components/schemas/IdentityDocuments"
+        $ref: "#/components/schemas/IdentityDocument"
 
 
     IdentityDocument:
