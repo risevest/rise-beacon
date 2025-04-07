@@ -395,7 +395,7 @@ paths:
     get:
       summary: Get custom plans from oracle
       tags:
-        - Plans
+        - Oracle
       parameters:
         - in: query
           name: entity
@@ -439,7 +439,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/CustomPlans"
-                  - $ref:   "#/components/schemas/IdentityDocument"
+                  - $ref:   "#/components/schemas/IdentityDocuments"
         "403":
           description: Forbidden
         "404":
@@ -3486,6 +3486,11 @@ components:
         country:
           type: string
 
+    IdentityDocuments:
+      type: array
+      items:
+        $ref: "#/components/schemas/IdentityDocuments"
+
 
     IdentityDocument:
       type: object
@@ -3507,6 +3512,9 @@ components:
           example: true
         provider:
           type: string
+          example: "smileid"
+        provider_primary:
+          type: string
           example: "metamap"
         metamap_flow_id:
           type: string
@@ -3514,6 +3522,13 @@ components:
         is_identity_card:
           type: boolean
           example: true
+        smileid_job_id: 
+          type: number
+          example: 6
+        smileid_id_type: 
+          type: string
+          example: VOTER_ID
+        
 
 
     TransactionRequest:
