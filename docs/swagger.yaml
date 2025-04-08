@@ -143,9 +143,9 @@ paths:
         - Plans
       parameters:
         - $ref: "#/components/parameters/PlanId"
-        - $ref: "#/components/parameters/offsetParam"
-        - $ref: "#/components/parameters/limitParam"
-        - $ref: "#/components/parameters/orderParam"
+        - $ref: "#/components/parameters/OffsetParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/OrderParam"
       responses:
         "200":
           description: Successful response
@@ -167,9 +167,9 @@ paths:
         - Plans
       parameters:
         - $ref: "#/components/parameters/PlanId"
-        - $ref: "#/components/parameters/offsetParam"
-        - $ref: "#/components/parameters/limitParam"
-        - $ref: "#/components/parameters/orderParam"
+        - $ref: "#/components/parameters/OffsetParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/OrderParam"
       responses:
         "200":
           description: Successful response
@@ -191,9 +191,9 @@ paths:
         - Plans
       parameters:
         - $ref: "#/components/parameters/PlanId"
-        - $ref: "#/components/parameters/offsetParam"
-        - $ref: "#/components/parameters/limitParam"
-        - $ref: "#/components/parameters/orderParam"
+        - $ref: "#/components/parameters/OffsetParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/OrderParam"
         - in: query
           name: type
           required: true
@@ -2463,6 +2463,29 @@ paths:
         "500":
           description: We are having system-level issues. Please bear with us.
 
+  /transactions-requests:
+    post:
+      summary: Initiate a transaction request (Funding or Withdrawal)
+      tags:
+        - Transactions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionRequestDTO"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/FundingResponse"
+                  - $ref: "#/components/schemas/WithdrawalResponse"
+        "500":
+          description: We are having system-level issues. Please bear with us.
+
 components:
   examples:
     crypto_wallet_example:
@@ -2581,17 +2604,17 @@ components:
               fee: 50
 
   parameters:
-    offsetParam:
+    OffsetParam:
       in: query
       name: offset
       schema:
         type: integer
-    limitParam:
+    LimitParam:
       in: query
       name: limit
       schema:
         type: integer
-    orderParam:
+    OrderParam:
       in: query
       name: order
       schema:
@@ -6036,6 +6059,181 @@ components:
               type:
                 type: string
                 example: "State"
+
+    TransactionRequestDTO:
+      type: object
+      description: Data required to initiate a transaction request
+      properties:
+        owner_id:
+          type: string
+          description: ID of the account making the transaction request
+          example: "user_12345"
+        request_type:
+          type: string
+          enum: [funding, withdrawal]
+          description: Type of transaction request
+          example: "funding"
+        currency:
+          type: string
+          enum: [usd, ngn]
+          description: The currency of the transaction
+          example: "usd"
+        amount:
+          type: number
+          description: Amount of the transaction
+          example: 100.50
+        wallet_type:
+          type: string
+          description: Type of wallet used (crypto_wallet, api_vendor, etc.)
+          example: "crypto_wallet"
+        external_wallet_id:
+          type: string
+          description: ID of the external wallet (if applicable)
+          example: "wallet_67890"
+        external_wallet:
+          oneOf:
+            - $ref: "#/components/schemas/RawMomoWallet"
+            - $ref: "#/components/schemas/CardMetadata"
+            - $ref: "#/components/schemas/APIVendor"
+          description: External wallet details if applicable
+          example:
+            network: "mtn"
+            phone_number: "+1234567890"
+            network_name: "MTN Mobile Money"
+        reason:
+          type: string
+          description: Reason for the transaction
+          example: "Payment for subscription"
+        credential:
+          type: string
+          description: User credential for authentication (PIN or password)
+          example: "secure_pin_123"
+        fee:
+          type: number
+          description: Transaction fee applied
+          example: 2.50
+        transaction_id:
+          type: string
+          description: Unique transaction identifier (if provided)
+          example: "txn_987654321"
+        screening:
+          type: object
+          description: Screening details for fraud prevention
+          example:
+            flags:
+              - flag_number: 1
+                title: "High Risk"
+                content: "This transaction is flagged for high-risk activity."
+            user:
+              full_name: "John Doe"
+              profile_picture: "https://example.com/profile.jpg"
+              email_address: "john@example.com"
+              phone_number: "+1234567890"
+        wallet_currency:
+          type: string
+          enum: [usd, ngn]
+          description: Currency of the wallet being used
+          example: "usd"
+
+    RawMomoWallet:
+      type: object
+      description: Mobile Money wallet metadata
+      properties:
+        network:
+          type: string
+          enum: [mtn, airtel, tigo, vodafone, mps, mpx, safaricom, tnm]
+          description: Mobile money network
+          example: "mtn"
+        phone_number:
+          type: string
+          description: Phone number associated with the wallet
+          example: "+1234567890"
+        network_name:
+          type: string
+          description: Human-readable name of the mobile money network
+          example: "MTN Mobile Money"
+
+    CardMetadata:
+      type: object
+      description: Metadata for card transactions
+      properties:
+        should_save:
+          type: boolean
+          description: Indicates if the card should be saved for future transactions
+          example: true
+
+    FundingResponse:
+      type: object
+      description: Response for funding transactions (TransactionRequest + PaymentConfig)
+      allOf:
+        - $ref: "#/components/schemas/TransactionRequestDTO"
+        - $ref: "#/components/schemas/PaymentConfig"
+
+    WithdrawalResponse:
+      type: object
+      description: Response for withdrawal transactions (TransactionRequest only)
+      allOf:
+        - $ref: "#/components/schemas/TransactionRequestDTO"
+
+    PaymentConfig:
+      oneOf:
+        - $ref: "#/components/schemas/MomoConfig"
+        - $ref: "#/components/schemas/MPesaConfig"
+        - $ref: "#/components/schemas/CardConfig"
+        - $ref: "#/components/schemas/CryptoConfig"
+
+    MomoConfig:
+      type: object
+      description: Mobile Money configuration
+      properties:
+        local_amount:
+          type: number
+          example: 100.00
+        reference:
+          type: string
+          example: "momo_ref_12345"
+        authentication_url:
+          type: string
+          example: "https://momo.example.com/auth"
+        confirmation_path:
+          type: string
+          example: "/confirm_momo"
+
+    MPesaConfig:
+      type: object
+      description: MPesa-specific payment configuration
+      properties:
+        reference:
+          type: string
+          example: "mpesa_ref_12345"
+        local_amount:
+          type: number
+          example: 200.00
+        payment_instruction:
+          type: string
+          example: "Proceed to MPesa payment page"
+
+    CardConfig:
+      type: object
+      description: Card payment configuration
+      properties:
+        reference:
+          type: string
+          example: "card_ref_12345"
+        flutterwave_key:
+          type: string
+          example: "flutterwave_key_abc123"
+
+    CryptoConfig:
+      type: object
+      description: Crypto payment configuration
+      properties:
+        fee:
+          type: number
+          example: 5.00
+        wallet_address:
+          type: string
+          example: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
 
   securitySchemes:
     headlessAuth:
