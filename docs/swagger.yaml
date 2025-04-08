@@ -3086,7 +3086,7 @@ components:
         - Real Estate
         - Home
         - Travel
-        - Fixed Dividend Income
+        - Dollar Vault
 
     Plan:
       type: object
@@ -3155,6 +3155,19 @@ components:
               type: string
             category:
               type: string
+            dividend_amount:
+              type: number
+            last_payout_date:
+              type: string
+            next_payout_date:
+              type: string
+            last_dividend_amount:
+              type: number
+            next_dividend_amount:
+              type: number
+            total_expected_returns: 
+              type: number
+
       required:
         - plan_name
         - owner_id
