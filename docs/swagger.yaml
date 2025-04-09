@@ -2652,6 +2652,22 @@ components:
           status:
             type: string
             enum: [initiated, pending, processing, successful, failed, canceled]
+          source:
+            type: string
+            enum: ["crypto_wallet","virtual_account","bank_account","mobile_money","card","virtual_card","api_vendor","plan","system","wallet","portfolio","revenue","vault","card_fee","paystack","flutterwave"]
+          destination:
+            type: string
+            enum: ["crypto_wallet","virtual_account","bank_account","mobile_money","card","virtual_card","api_vendor","plan","system","wallet","portfolio","revenue","vault","card_fee","paystack","flutterwave"]
+          source_id:
+            type: string
+          destination_id:
+            type: string
+          email_address:
+            type: string
+          full_name:
+            type: string
+          keyword:
+            type: string
 
     TransactionSumFilters:
       name: filters
