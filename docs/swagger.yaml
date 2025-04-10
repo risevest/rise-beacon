@@ -5492,19 +5492,19 @@ components:
       properties:
         name:
           type: string
-          example: Access Bank
+          example: Zenith Bank
         currency:
           type: string
           example: "NGN"
         code:
           type: string
-          example: 044
+          example: 057
         country:
           type: string
           example: "Nigeria"
-        image:
+        image_url:
           type: string
-          example: "access-bank.png"
+          example: "https://res.cloudinary.com/dsjxfieim/image/upload/v1743551252/rise-3/bank-icons/zenith-bank_jtoyef.png"
 
     VerifyExternalWallet:
       type: object
