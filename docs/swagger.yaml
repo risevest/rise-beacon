@@ -58,7 +58,7 @@ paths:
         "422":
           description: Unprocessable entity
         "500":
-          description: Internal server error
+          description: We are having system-level issues. Please bear with us
 
   /plans/{id}:
     get:
@@ -79,7 +79,7 @@ paths:
         "404":
           description: Not found
         "500":
-          description: Internal server error
+          description: We are having system-level issues. Please bear with us
 
     patch:
       summary: Edit a plan
@@ -111,7 +111,7 @@ paths:
         "404":
           description: Not found
         "500":
-          description: Internal server error
+          description: We are having system-level issues. Please bear with us
 
     delete:
       summary: Delete a plan
@@ -134,7 +134,7 @@ paths:
         "422":
           description: Unprocessable entity
         "500":
-          description: Internal server error
+          description: We are having system-level issues. Please bear with us
 
   /plans/{id}/history:
     get:
@@ -158,7 +158,7 @@ paths:
         "404":
           description: Not found
         "500":
-          description: Internal server error
+          description: We are having system-level issues. Please bear with us
 
   /plans/{id}/returns:
     get:
@@ -182,7 +182,7 @@ paths:
         "404":
           description: Not found
         "500":
-          description: Internal server error
+          description: We are having system-level issues. Please bear with us
 
   /plans/{id}/performances:
     get:
@@ -289,7 +289,7 @@ paths:
         "404":
           description: Not found
         "500":
-          description: Internal server error
+          description: We are having system-level issues. Please bear with us
 
   /plans/{id}/config:
     post:
@@ -341,7 +341,7 @@ paths:
         "404":
           description: Not found
         "500":
-          description: Internal server error
+          description: We are having system-level issues. Please bear with us
 
   /plans/{id}/toggle-monthly-reinvest:
     post:
@@ -362,7 +362,7 @@ paths:
         "404":
           description: Not found
         "500":
-          description: Internal server error
+          description: We are having system-level issues. Please bear with us
 
   /plans/{id}/reinvest:
     post:
@@ -389,7 +389,7 @@ paths:
         "404":
           description: Not found
         "500":
-          description: Internal server error
+          description: We are having system-level issues. Please bear with us
 
   /config:
     get:
@@ -426,7 +426,7 @@ paths:
         "404":
           description: Not found
         "500":
-          description: Internal server error
+          description: We are having system-level issues. Please bear with us
 
   /plans/stats:
     get:
@@ -450,7 +450,139 @@ paths:
         "404":
           description: Not found
         "500":
-          description: Internal server error
+          description: We are having system-level issues. Please bear with us
+
+  /plans/{id}/credit-returns:
+    post:
+      summary: Credit returns to a plan
+      tags:
+        - Plans
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the plan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreditReturnsDTO"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Plan"
+        "403":
+          description: Forbidden - User does not have access
+        "404":
+          description: Plan or Account not found
+        "500":
+          description: We are having system-level issues. Please bear with us
+
+  /plans/jobs/mature:
+    post:
+      summary: Process matured plans
+      tags:
+        - Plans
+      parameters:
+        - name: plan_id
+          in: query
+          required: false
+          schema:
+            type: string
+          description: The ID of a specific plan to process
+        - name: batch_size
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: The batch size for processing multiple matured plans
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Plan"
+        "403":
+          description: Forbidden - User is not an admin
+        "404":
+          description: Plan not found
+        "500":
+          description: We are having system-level issues. Please bear with us
+
+  /plans/jobs/commission:
+    post:
+      summary: Process matured commissions
+      tags:
+        - Plans
+      parameters:
+        - name: id
+          in: query
+          required: false
+          schema:
+            type: string
+          description: The ID of a specific commission to process
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Plan"
+        "403":
+          description: Forbidden - User is not an admin
+        "404":
+          description: Commission not found
+        "500":
+          description: We are having system-level issues. Please bear with us
+
+  /plans/jobs/reconcile-ownership:
+    post:
+      summary: Reconcile ownerships
+      tags:
+        - Plans
+      responses:
+        "200":
+          description: Successful operation
+        "403":
+          description: Forbidden - User is not an admin
+        "500":
+          description: We are having system-level issues. Please bear with us
+
+  /plans/jobs/debit:
+    post:
+      summary: Process plan debit or credit
+      tags:
+        - Plans
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProcessPlanDebitDTO"
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlanTransaction"
+        "400":
+          description: Invalid input
+        "403":
+          description: Forbidden - User does not have access
+        "500":
+          description: We are having system-level issues. Please bear with us
 
   /gifts:
     post:
@@ -2681,10 +2813,46 @@ components:
             enum: [initiated, pending, processing, successful, failed, canceled]
           source:
             type: string
-            enum: ["crypto_wallet","virtual_account","bank_account","mobile_money","card","virtual_card","api_vendor","plan","system","wallet","portfolio","revenue","vault","card_fee","paystack","flutterwave"]
+            enum:
+              [
+                "crypto_wallet",
+                "virtual_account",
+                "bank_account",
+                "mobile_money",
+                "card",
+                "virtual_card",
+                "api_vendor",
+                "plan",
+                "system",
+                "wallet",
+                "portfolio",
+                "revenue",
+                "vault",
+                "card_fee",
+                "paystack",
+                "flutterwave"
+              ]
           destination:
             type: string
-            enum: ["crypto_wallet","virtual_account","bank_account","mobile_money","card","virtual_card","api_vendor","plan","system","wallet","portfolio","revenue","vault","card_fee","paystack","flutterwave"]
+            enum:
+              [
+                "crypto_wallet",
+                "virtual_account",
+                "bank_account",
+                "mobile_money",
+                "card",
+                "virtual_card",
+                "api_vendor",
+                "plan",
+                "system",
+                "wallet",
+                "portfolio",
+                "revenue",
+                "vault",
+                "card_fee",
+                "paystack",
+                "flutterwave"
+              ]
           source_id:
             type: string
           destination_id:
@@ -3268,7 +3436,7 @@ components:
               type: number
             next_dividend_amount:
               type: number
-            total_expected_returns: 
+            total_expected_returns:
               type: number
 
       required:
@@ -3322,6 +3490,52 @@ components:
           type: string
         plan_type:
           $ref: "#/components/schemas/PlanType"
+
+    CreditReturnsDTO:
+      type: object
+      properties:
+        portfolio_id:
+          type: string
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        description:
+          type: string
+          example: "Refund due to overcharge"
+        amount:
+          type: number
+          example: 150.75
+        interest_date:
+          type: string
+          format: date-time
+          example: "2024-03-30T12:00:00Z"
+
+    ProcessPlanDebitDTO:
+      type: object
+      properties:
+        plan_id:
+          type: string
+          example: "987e6543-e21b-45d6-a789-123456789abc"
+        amount:
+          type: number
+          example: 500.00
+        description:
+          type: string
+          example: "Monthly subscription charge"
+        type:
+          type: string
+          enum: [credit, debit]
+          example: "debit"
+
+    PlanTransaction:
+      type: object
+      properties:
+        plan:
+          $ref: "#\/components\/schemas\/Plan"
+        transaction_request:
+          type: object
+          example:
+            transaction_id: "trx-789654"
+            amount: 250.50
+            type: "credit"
 
     Gift:
       type: object
