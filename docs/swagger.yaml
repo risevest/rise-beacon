@@ -3929,6 +3929,12 @@ components:
         email_address:
           type: string
           example: bruce@test.com
+        country_of_residence:
+          type: string
+          example: ng
+        country:
+          type: string
+          example: ng
         account_id:
           type: string
           format: uuid
