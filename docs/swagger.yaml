@@ -4199,6 +4199,14 @@ components:
           type: string
           enum: ["general", "personal"]
           example: "personal"
+        created_at:
+          type: string
+          format: date-time
+          example: "2023-09-25T12:00:00Z"
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426655440000"
         is_read:
           type: boolean
           example: false
