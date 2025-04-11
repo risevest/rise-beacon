@@ -2012,6 +2012,33 @@ paths:
         "500":
           description: We are having system-level issues. Please bear with us
 
+  /identities/initiate:
+    post:
+      summary: it initiates the verification
+      tags:
+        - Identities
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InitiateVerificationDTO"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Identity"
+        "422":
+          description: |
+            - You already have a verified BVN
+            - BVN details do not match. Please email hello@risevest.com for support.
+            - There's no support for this identity type.
+
+        "500":
+          description: We are having system-level issues. Please bear with us
+
   /quotes:
     get:
       summary: Fetch quote for the day
@@ -2867,6 +2894,19 @@ components:
             should_reinvest_dividends:
               type: boolean
 
+    InitiateVerificationDTO:
+      type: object
+      required:
+        - identity_type
+        - country
+      properties:
+        identity_type:
+          $ref: "#/components/schemas/IdentityType"
+        country:
+          $ref: "#/components/schemas/VerifiableCountries"
+        identifier:
+          type: string
+
     EditPlanDTO:
       type: object
       properties:
@@ -3126,6 +3166,30 @@ components:
         - Home
         - Travel
         - Dollar Vault
+
+    IdentityType:
+      type: string
+      enum:
+        - bvn
+        - national_id
+        - passport
+        - driver_license
+        - voter_id
+        - ssnit
+        - phone_number
+
+    VerifiableCountries:
+      type: string
+      enum:
+        - ng
+        - gh
+        - ke
+        - ug
+        - bw
+        - mw
+        - rw
+        - tz
+        - zm
 
     Plan:
       type: object
