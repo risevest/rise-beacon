@@ -911,9 +911,25 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: "#/components/schemas/NextOfKinDetailsDTO"
-                - $ref: "#/components/schemas/Address"
-                - $ref: "#/components/schemas/UsernameDetailsDTO"
+                - type: object
+                  required: [next_of_kin]
+                  properties:
+                    next_of_kin:
+                      $ref: "#/components/schemas/NextOfKinDetailsDTO"
+                - type: object
+                  required: [bio_data]
+                  properties:
+                    bio_data:
+                      type: object
+                      required: [address]
+                      properties:
+                        address:
+                          $ref: "#/components/schemas/Address"
+                - type: object
+                  required: [bio_data]
+                  properties:
+                    bio_data:
+                      $ref: "#/components/schemas/UsernameDetailsDTO"
             examples:
               next_of_kin:
                 summary: an exmaple of next of kin details
