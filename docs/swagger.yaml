@@ -2187,6 +2187,35 @@ paths:
         "500":
           description: We are having system-level issues. Please bear with us
 
+    
+  /identities/{id}/complete:
+    post:
+      summary: complete the verification
+      tags:
+        - Identities
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompleteVerificationDTO"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: "object"
+                nullable: true
+        "403": 
+          description: You don't have permission for this request.
+        "404": 
+          description: Identity does not exist
+        "422":
+          description: Your verification was not submitted
+        "500":
+          description: We are having system-level issues. Please bear with us
+
+
   /quotes:
     get:
       summary: Fetch quote for the day
@@ -3089,6 +3118,12 @@ components:
         country:
           $ref: "#/components/schemas/VerifiableCountries"
         identifier:
+          type: string
+
+    CompleteVerificationDTO:
+      type: object
+      properties:
+        comment:
           type: string
 
     EditPlanDTO:
