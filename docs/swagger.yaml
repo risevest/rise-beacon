@@ -2187,7 +2187,33 @@ paths:
         "500":
           description: We are having system-level issues. Please bear with us
 
-    
+  /identities/manual:
+    post:
+      summary: Perform manual identity verification
+      tags:
+        - Identities
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/ManualUploadDTO"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Identity"
+        "400": 
+          description:  BVN cannot be verified manually
+
+        "422":
+          description: You have a pending manual verification
+
+        "500":
+          description: We are having system-level issues. Please bear with us
+
   /identities/{id}/complete:
     post:
       summary: complete the verification
@@ -3119,6 +3145,23 @@ components:
         country:
           $ref: "#/components/schemas/VerifiableCountries"
         identifier:
+          type: string
+
+    ManualUploadDTO:
+      type: object
+      required: 
+        - id_image_url
+        - country
+        - identity_type
+        - identifier
+      properties:
+        identity_type:
+          $ref: "#/components/schemas/IdentityType"
+        country:
+          $ref: "#/components/schemas/VerifiableCountries"
+        identifier:
+          type: string
+        id_image_url: 
           type: string
 
     CompleteVerificationDTO:
