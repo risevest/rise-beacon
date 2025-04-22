@@ -1986,7 +1986,7 @@ paths:
         404:
           description: Wallet not found
 
-  /wallet/transfer:
+  /wallets/transfer:
     post:
       summary: Transfer funds between wallets
       description: Transfers funds from one wallet to another.
