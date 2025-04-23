@@ -2935,6 +2935,23 @@ components:
             type: string
           keyword:
             type: string
+          currency:
+            type: string
+            enum: [
+                    "usd",
+                    "ngn"
+                  ]
+          transaction_type:
+            type: string
+            enum: [
+                    "all_types", 
+                    "transfer_in", 
+                    "transfer_out", 
+                    "funding", 
+                    "withdrawal",  
+                    "interest", 
+                    "payout"
+                  ]
 
     TransactionSumFilters:
       name: filters
