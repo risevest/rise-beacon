@@ -3150,7 +3150,8 @@ components:
     ManualUploadDTO:
       type: object
       required: 
-        - id_image_url
+        - id_image
+        - selfie_image
         - country
         - identity_type
         - identifier
@@ -3161,7 +3162,9 @@ components:
           $ref: "#/components/schemas/VerifiableCountries"
         identifier:
           type: string
-        id_image_url: 
+        id_image: 
+          type: string
+        selfie_image: 
           type: string
 
     CompleteVerificationDTO:
