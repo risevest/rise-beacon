@@ -406,20 +406,20 @@ paths:
               - identity_type
           description: The type of entity to filter by
           example: custom_plan
-            
+
         - in: query
           name: filter_key
           schema:
             type: string
-            enum: 
+            enum:
               - category
-              - is_live 
-              - pure 
-              - code 
+              - is_live
+              - pure
+              - code
               - country
           description: The field to filter by
           example: category
-          
+
         - in: query
           name: filter_value
           schema:
@@ -439,7 +439,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/CustomPlans"
-                  - $ref:   "#/components/schemas/IdentityDocuments"
+                  - $ref: "#/components/schemas/IdentityDocuments"
         "403":
           description: Forbidden
         "404":
@@ -2224,8 +2224,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Identity"
-        "400": 
-          description:  BVN cannot be verified manually
+        "400":
+          description: BVN cannot be verified manually
 
         "422":
           description: You have a pending manual verification
@@ -2251,15 +2251,14 @@ paths:
               schema:
                 type: "object"
                 nullable: true
-        "403": 
+        "403":
           description: You don't have permission for this request.
-        "404": 
+        "404":
           description: Identity does not exist
         "422":
           description: Your verification was not submitted
         "500":
           description: We are having system-level issues. Please bear with us
-
 
   /quotes:
     get:
@@ -2956,21 +2955,10 @@ components:
             type: string
           currency:
             type: string
-            enum: [
-                    "usd",
-                    "ngn"
-                  ]
+            enum: ["usd", "ngn"]
           transaction_type:
             type: string
-            enum: [
-                    "all_types", 
-                    "transfer_in", 
-                    "transfer_out", 
-                    "funding", 
-                    "withdrawal",  
-                    "interest", 
-                    "payout"
-                  ]
+            enum: ["all_types", "transfer_in", "transfer_out", "funding", "withdrawal", "interest", "payout"]
 
     TransactionSumFilters:
       name: filters
@@ -3185,7 +3173,7 @@ components:
 
     ManualUploadDTO:
       type: object
-      required: 
+      required:
         - id_image
         - selfie_image
         - country
@@ -3198,9 +3186,9 @@ components:
           $ref: "#/components/schemas/VerifiableCountries"
         identifier:
           type: string
-        id_image: 
+        id_image:
           type: string
-        selfie_image: 
+        selfie_image:
           type: string
 
     CompleteVerificationDTO:
@@ -3495,11 +3483,11 @@ components:
 
     IdentityCode:
       type: string
-      enum: 
+      enum:
         - bvn
-        - national_id 
-        - passport 
-        - driver_license 
+        - national_id
+        - passport
+        - driver_license
         - voter_id
         - ssnit
         - phone_number
@@ -3521,7 +3509,6 @@ components:
         - bw
         - ug
         - ke
-
 
     Plan:
       type: object
@@ -3944,31 +3931,22 @@ components:
             $ref: "#/components/schemas/Composition"
           example: { "9d6d3d58-c799-4147-a71e-3e5f59e239ea": { asset_class: "etf", percentage: 100 } }
 
-    IdentityType:
-      type: object
-      properties:
-        code: 
-          type: string
-        country:
-          type: string
-
     IdentityDocuments:
       type: array
       items:
         $ref: "#/components/schemas/IdentityDocument"
 
-
     IdentityDocument:
       type: object
       properties:
         code:
-          $ref: "#/components/schemas/IdentityCountry"
+          $ref: "#/components/schemas/IdentityCode"
           example: "voter_id"
         name:
           type: string
           example: "Voter ID"
         country:
-          $ref: "#/components/schemas/IdentityType"
+          $ref: "#/components/schemas/IdentityCountry"
           example: "ke"
         country_name:
           type: string
@@ -3988,14 +3966,12 @@ components:
         is_identity_card:
           type: boolean
           example: true
-        smileid_job_id: 
+        smileid_job_id:
           type: number
           example: 6
-        smileid_id_type: 
+        smileid_id_type:
           type: string
           example: VOTER_ID
-        
-
 
     TransactionRequest:
       type: object
