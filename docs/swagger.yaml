@@ -2179,6 +2179,23 @@ paths:
         "500":
           description: We are having system-level issues. Please bear with us
 
+  /identities/recent-verifications:
+    get:
+      summary: Get recent verifications
+      tags:
+        - Identities
+      responses:
+        "200":
+          description: Recent verifications for a user
+          content:
+            application/json:
+              schema:
+               type: array
+               items:
+                  $ref: "#/components/schemas/RecentVerifications"
+        "500":
+          description: We are having system-level issues. Please bear with us
+
   /identities/initiate:
     post:
       summary: it initiates the verification
@@ -3456,6 +3473,7 @@ components:
         - Home
         - Travel
         - Dollar Vault
+        - 
 
     IdentityType:
       type: string
@@ -5015,6 +5033,28 @@ components:
           enum: ["verifiedng", "appruve", "identity-pass", "manual", "termii", "smileid"]
           description: The provider used for verification
           example: "appruve"
+
+    RecentVerifications: 
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - email
+            - bvn
+            - document_verification
+          description: Type of verification
+        status:
+          type: string
+          enum:
+            - verified
+            - unverified
+            - pending
+            - review
+            - rejected
+            - cancelled
+          description: Status of the verification
+
 
     ChangePasswordDTO:
       type: object
