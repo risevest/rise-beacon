@@ -2776,7 +2776,33 @@ paths:
                   - $ref: "#/components/schemas/WithdrawalResponse"
         "500":
           description: We are having system-level issues. Please bear with us.
-
+  
+  /devices:
+    post:
+      tags:
+        - devices
+      summary: Register a new device
+      description: Adds a new device for the authenticated user and subscribes it to a topic.
+      operationId: addDevice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceDTO'
+      responses:
+        '200':
+          description: Successfully registered device
+          content:
+            application/json:
+              schema:
+              $ref: '#/components/schemas/DeviceDTO'
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
 components:
   examples:
     crypto_wallet_example:
@@ -2893,7 +2919,7 @@ components:
               bank_name: "string"
               account_number: "string"
               fee: 50
-
+  
   parameters:
     OffsetParam:
       in: query
@@ -3247,7 +3273,28 @@ components:
       properties:
         comment:
           type: string
-
+    
+    DeviceDTO:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "sample_device_token_123"
+        os:
+          type: string
+          example: "iOS"
+        version:
+          type: string
+          example: "16.4"
+        model:
+          type: string
+          example: "iPhone 13"
+      required:
+        - token
+        - os
+        - version
+        - model
+  
     EditPlanDTO:
       type: object
       properties:
