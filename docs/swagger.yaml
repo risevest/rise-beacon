@@ -1194,6 +1194,31 @@ paths:
         "500":
           description: Internal server error
 
+  /transaction-requests/{reference}/complete:
+    put:
+      summary: Complete a transaction request
+      tags:
+        - Transaction Requests
+      parameters:
+        - $ref: "#/components/parameters/Device"
+        - $ref: "#/components/parameters/Platform"
+        - $ref: "#/components/parameters/PlatformOS"
+        - $ref: "#/components/parameters/AppVersion"
+        - $ref: "#/components/parameters/TransactionReference"
+
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionRequest"
+        "422":
+          description: Unprocessable entity
+        "500":
+          description: Internal server error
+  
+
   /portfolios/{id}/assets:
     get:
       summary: Fetch assets under a portfolio
@@ -3031,7 +3056,16 @@ components:
       schema:
         type: string
         format: uuid
-
+    
+    TransactionReference:
+      name: reference
+      in: path
+      required: true
+      description: The reference of the transaction
+      schema:
+        type: string
+        format: uuid
+  
     PortfolioId:
       name: id
       in: path
