@@ -801,7 +801,7 @@ paths:
           description: We are having system-level issues. Please bear with us
 
   /users/set-2fa-action:
-    post:
+    patch:
       summary: Enable or disbale 2FA for a user
       tags:
         - Users
@@ -1002,7 +1002,7 @@ paths:
         "404":
           description: User not found
         "500":
-          description: We are having system-level issues. Please bear with us
+          description: We are having system-level issues. Please bear with
 
   /users/change-email:
     patch:
@@ -1090,7 +1090,56 @@ paths:
                       status: true
                       title: "Secure your Account"
         "500":
-          description: We are having system-level issues. Please bear with us
+          description: We are having system-level issues. Please bear with
+
+  /users/referral:
+    get:
+      summary: Get user information by referral code
+      tags:
+        - Users
+      parameters:
+        - in: query
+          name: code
+          schema:
+            type: string
+            example: "ABC123"
+          description: Referral code to look up the user by.
+      responses:
+        "200":
+          description: Successfully retrieved user information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  first_name:
+                    type: string
+                    example: "John"
+        "500":
+          description: We are having system-level issues. Please bear with us.
+
+  /users/referral/affiliate/details:
+    get:
+      summary: Get affiliate details
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successfully retrieved affiliate details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Affiliate details retrieved successfully."
+        "401":
+          description: Unauthorized - Authentication required
+        "500":
+          description: We are having system-level issues. Please bear with us.
 
   /plans/transaction-requests:
     post:
