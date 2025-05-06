@@ -3252,7 +3252,6 @@ components:
         - plan_type
         - owner_id
         - portfolio_config
-        - duration
       properties:
         plan_name:
           type: string
