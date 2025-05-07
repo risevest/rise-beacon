@@ -3073,7 +3073,7 @@ components:
           currency:
             type: string
             enum: ["usd", "ngn"]
-          transaction_type:
+          transaction_types:
             type: string
             enum: ["all_types", "transfer_in", "transfer_out", "funding", "withdrawal", "interest", "payout"]
 
