@@ -1,5 +1,5 @@
-import { AppErrors } from "@app/internal/errors";
 import { StatusCodes } from "http-status-codes";
+import { ERROR_SYSTEM } from "./classification";
 
 export const ERROR_CODES = {
   InvalidOrExpiredOTP: "1001",
@@ -12,6 +12,64 @@ export const ERROR_CODES = {
   ExternalServiceError: "5000",
   InternalServerError: "6000"
 } as const;
+
+export class AppErrors extends Error {
+  errorCode: string;
+  category: string;
+  severity: string;
+  description: Record<string, any>;
+  details?: Record<string, any>;
+  httpStatusCode: number;
+
+  constructor(
+    errorCode: string,
+    httpStatusCode: number,
+    customMessage?: string,
+    details?: Record<string, any>,
+    params?: Record<string, any>
+  ) {
+    const error = ERROR_SYSTEM[errorCode] || {
+      category: "unknown",
+      description: { en: "Unknown error" },
+      severity: "high"
+    };
+
+    let description = { ...error.description };
+
+    if (customMessage) {
+      description.en = customMessage;
+    } else {
+      Object.keys(description).forEach(lang => {
+        description[lang] = description[lang];
+      });
+    }
+
+    super(description.en);
+
+    this.name = this.constructor.name;
+    this.errorCode = errorCode;
+    this.category = error.category;
+    this.severity = error.severity;
+    this.description = description;
+    this.details = details;
+    this.httpStatusCode = httpStatusCode;
+  }
+
+  toJSON() {
+    const json: any = {
+      errorCode: this.errorCode,
+      category: this.category,
+      description: this.description,
+      severity: this.severity
+    };
+
+    if (this.details && Object.keys(this.details).length > 0) {
+      json.details = this.details;
+    }
+
+    return json;
+  }
+}
 
 export function createErrorClass(errorCodeKey: keyof typeof ERROR_CODES, httpStatusCode: number) {
   const errorCode = ERROR_CODES[errorCodeKey];
