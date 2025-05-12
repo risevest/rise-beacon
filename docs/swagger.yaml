@@ -900,7 +900,7 @@ paths:
           description: We are having system-level issues. Please bear with us
 
   /users/verify-email:
-    post:
+    patch:
       summary: Verify Email
       tags:
         - Users
