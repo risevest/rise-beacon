@@ -9,8 +9,8 @@ export const ERROR_CODES = {
   Authenticate: "2000",
   NotFound: "4000",
   DuplicateError: "1002",
-  InternalServerError: "6000",
-  ExternalServiceError: "5000"
+  ExternalServiceError: "5000",
+  InternalServerError: "6000"
 } as const;
 
 export function createErrorClass(errorCodeKey: keyof typeof ERROR_CODES, httpStatusCode: number) {
