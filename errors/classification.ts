@@ -35,6 +35,14 @@ export const ERROR_SYSTEM: ErrorSystem = {
     severity: "medium"
   },
 
+  "1002": {
+    category: "validation",
+    description: {
+      en: "Duplicate error"
+    },
+    severity: "medium"
+  },
+
   //authentication errors...
   "2000": {
     category: "authentication",
