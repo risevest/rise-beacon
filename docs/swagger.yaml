@@ -899,7 +899,7 @@ paths:
         "500":
           description: We are having system-level issues. Please bear with us
 
-  /users/verify-email:
+  /auth/verify-email:
     patch:
       summary: Verify Email
       tags:
