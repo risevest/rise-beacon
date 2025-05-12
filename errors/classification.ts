@@ -18,6 +18,14 @@ export const ERROR_SYSTEM: ErrorSystem = {
     severity: "medium"
   },
 
+  "4002": {
+    category: "business-logic",
+    description: {
+      en: "Logical error."
+    },
+    severity: "medium"
+  },
+
   // validation errors...
   "1000": {
     category: "validation",
