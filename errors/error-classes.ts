@@ -118,3 +118,17 @@ export class DuplicateError extends AppErrors {
     super(ERROR_CODES.DuplicateError, StatusCodes.BAD_REQUEST, customMessage, details, params);
   }
 }
+
+export class WrapperError extends AppErrors {
+  constructor(message: string, err?: Error, details?: Record<string, any>) {
+    super(ERROR_CODES.InternalServerError, StatusCodes.UNAUTHORIZED, message, details);
+
+    if (err?.stack) {
+      this.stack = err.stack;
+    }
+
+    if (err) {
+      (this as any).originalError = err;
+    }
+  }
+}
