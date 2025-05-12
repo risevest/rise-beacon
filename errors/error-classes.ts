@@ -84,7 +84,7 @@ export function createErrorClass(errorCodeKey: keyof typeof ERROR_CODES, httpSta
 export const InvalidLoginCredentials = createErrorClass("InvalidLoginCredentials", StatusCodes.UNAUTHORIZED);
 export const AccountInactive = createErrorClass("AccountInactive", StatusCodes.UNAUTHORIZED);
 export const InvalidOrExpiredOTP = createErrorClass("InvalidOrExpiredOTP", StatusCodes.UNPROCESSABLE_ENTITY);
-export const UNAUTHORIZED = createErrorClass("Unauthorized", StatusCodes.UNAUTHORIZED);
+export const Unauthorized = createErrorClass("Unauthorized", StatusCodes.UNAUTHORIZED);
 export const DuplicateError = createErrorClass("DuplicateError", StatusCodes.BAD_REQUEST);
 export const InternalServerError = createErrorClass("InternalServerError", StatusCodes.INTERNAL_SERVER_ERROR);
 export const ExternalServiceError = createErrorClass("ExternalServiceError", StatusCodes.BAD_REQUEST);
