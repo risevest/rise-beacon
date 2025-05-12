@@ -89,27 +89,21 @@ export const DuplicateError = createErrorClass("DuplicateError", StatusCodes.BAD
 export const InternalServerError = createErrorClass("InternalServerError", StatusCodes.INTERNAL_SERVER_ERROR);
 export const ExternalServiceError = createErrorClass("ExternalServiceError", StatusCodes.BAD_REQUEST);
 
-export class ValidationFailed extends AppErrors {
-  constructor(customMessage?: string, fields?: Record<string, string>) {
-    super(ERROR_CODES.ValidationFailed, StatusCodes.BAD_REQUEST, customMessage, fields ? { fields } : undefined);
-  }
+type RequestDataSource = "params" | "query" | "body" | "header";
 
-  toJSON() {
-    return {
-      errorCode: this.errorCode,
-      category: this.category,
-      severity: this.severity,
-      description: {
-        en: this.message
-      },
-      ...(this.details && Object.keys(this.details).length > 0 ? { details: this.details } : {})
-    };
+export interface ValidationFailedMetadata {
+  fields: Record<string, string>;
+  where: RequestDataSource;
+}
+export class ValidationFailed extends AppErrors {
+  constructor(customMessage: string, details: ValidationFailedMetadata) {
+    super(ERROR_CODES.ValidationFailed, StatusCodes.BAD_REQUEST, customMessage, details);
   }
 }
 
 export interface NotFoundMetadata {
   field: string;
-  where: "params" | "query" | "body" | "header";
+  where: RequestDataSource;
 }
 
 export class NotFound extends AppErrors {
