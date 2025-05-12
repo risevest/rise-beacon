@@ -113,19 +113,7 @@ export interface NotFoundMetadata {
 }
 
 export class NotFound extends AppErrors {
-  details?: NotFoundMetadata
-
-  constructor(customMessage:string, details?: NotFoundMetadata) {
-    super(ERROR_CODES.NotFound, StatusCodes.NOT_FOUND, customMessage);
-  }
-
-  toJSON(){
-    errorCode: this.errorCode,
-    category: this.category,
-    severity: this.severity,
-    description: {
-      en: this.message
-    },
-    details: this.details
+  constructor(customMessage: string, details?: NotFoundMetadata, params?: Record<string, any>) {
+    super(ERROR_CODES.NotFound, StatusCodes.NOT_FOUND, customMessage, details, params);
   }
 }
