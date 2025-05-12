@@ -18,6 +18,14 @@ export const ERROR_SYSTEM: ErrorSystem = {
     severity: "medium"
   },
 
+  "4002": {
+    category: "business-logic",
+    description: {
+      en: "Logical error."
+    },
+    severity: "medium"
+  },
+
   // validation errors...
   "1000": {
     category: "validation",
@@ -31,6 +39,14 @@ export const ERROR_SYSTEM: ErrorSystem = {
     category: "validation",
     description: {
       en: "Your OTP has either expired or is invalid"
+    },
+    severity: "medium"
+  },
+
+  "1002": {
+    category: "validation",
+    description: {
+      en: "Duplicate error"
     },
     severity: "medium"
   },
