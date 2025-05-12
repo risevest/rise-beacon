@@ -85,7 +85,6 @@ export const InvalidLoginCredentials = createErrorClass("InvalidLoginCredentials
 export const AccountInactive = createErrorClass("AccountInactive", StatusCodes.UNAUTHORIZED);
 export const InvalidOrExpiredOTP = createErrorClass("InvalidOrExpiredOTP", StatusCodes.UNPROCESSABLE_ENTITY);
 export const Unauthorized = createErrorClass("Unauthorized", StatusCodes.UNAUTHORIZED);
-export const DuplicateError = createErrorClass("DuplicateError", StatusCodes.BAD_REQUEST);
 export const InternalServerError = createErrorClass("InternalServerError", StatusCodes.INTERNAL_SERVER_ERROR);
 export const ExternalServiceError = createErrorClass("ExternalServiceError", StatusCodes.BAD_REQUEST);
 
@@ -109,5 +108,13 @@ export interface NotFoundMetadata {
 export class NotFound extends AppErrors {
   constructor(customMessage: string, details?: NotFoundMetadata, params?: Record<string, any>) {
     super(ERROR_CODES.NotFound, StatusCodes.NOT_FOUND, customMessage, details, params);
+  }
+}
+
+export interface DuplicateErrorMetadata extends NotFoundMetadata {}
+
+export class DuplicateError extends AppErrors {
+  constructor(customMessage: string, details: DuplicateErrorMetadata, params?: Record<string, any>) {
+    super(ERROR_CODES.DuplicateError, StatusCodes.BAD_REQUEST, customMessage, details, params);
   }
 }
