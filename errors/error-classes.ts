@@ -109,7 +109,7 @@ export class ValidationFailed extends AppErrors {
 
 export interface NotFoundMetadata {
   field: string;
-  where: "path" | "query" | "body" | "header";
+  where: "params" | "query" | "body" | "header";
 }
 
 export class NotFound extends AppErrors {
