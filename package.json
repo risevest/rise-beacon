@@ -1,0 +1,5 @@
+{
+  "peerDependencies": {
+    "http-status-codes": ">=2.0.0"
+  }
+}
