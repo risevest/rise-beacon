@@ -1,5 +1,5 @@
-import { StatusCodes } from "http-status-codes";
 import { ERROR_SYSTEM } from "./classification";
+import { StatusCodes } from "http-status-codes";
 
 export const ERROR_CODES = {
   InvalidOrExpiredOTP: "1001",
@@ -14,21 +14,21 @@ export const ERROR_CODES = {
 } as const;
 
 export class AppErrors extends Error {
-  errorCode: string;
+  error_code: string;
   category: string;
   severity: string;
   description: Record<string, any>;
   details?: Record<string, any>;
-  httpStatusCode: number;
+  http_status_code: number;
 
   constructor(
-    errorCode: string,
-    httpStatusCode: number,
-    customMessage?: string,
+    error_code: string,
+    http_status_code: number,
+    custom_message?: string,
     details?: Record<string, any>,
     params?: Record<string, any>
   ) {
-    const error = ERROR_SYSTEM[errorCode] || {
+    const error = ERROR_SYSTEM[error_code] || {
       category: "unknown",
       description: { en: "Unknown error" },
       severity: "high"
@@ -36,8 +36,8 @@ export class AppErrors extends Error {
 
     let description = { ...error.description };
 
-    if (customMessage) {
-      description.en = customMessage;
+    if (custom_message) {
+      description.en = custom_message;
     } else {
       Object.keys(description).forEach(lang => {
         description[lang] = description[lang];
@@ -47,17 +47,17 @@ export class AppErrors extends Error {
     super(description.en);
 
     this.name = this.constructor.name;
-    this.errorCode = errorCode;
+    this.error_code = error_code;
     this.category = error.category;
     this.severity = error.severity;
     this.description = description;
     this.details = details;
-    this.httpStatusCode = httpStatusCode;
+    this.http_status_code = http_status_code;
   }
 
   toJSON() {
     const json: any = {
-      errorCode: this.errorCode,
+      error_code: this.error_code,
       category: this.category,
       description: this.description,
       severity: this.severity
@@ -71,12 +71,12 @@ export class AppErrors extends Error {
   }
 }
 
-export function createErrorClass(errorCodeKey: keyof typeof ERROR_CODES, httpStatusCode: number) {
-  const errorCode = ERROR_CODES[errorCodeKey];
+export function createErrorClass(error_codeKey: keyof typeof ERROR_CODES, http_status_code: number) {
+  const error_code = ERROR_CODES[error_codeKey];
 
   return class extends AppErrors {
-    constructor(customMessage?: string, details?: Record<string, any>, params?: Record<string, any>) {
-      super(errorCode, httpStatusCode, customMessage, details, params);
+    constructor(custom_message?: string, details?: Record<string, any>, params?: Record<string, any>) {
+      super(error_code, http_status_code, custom_message, details, params);
     }
   };
 }
@@ -95,8 +95,8 @@ export interface ValidationFailedMetadata {
   where: RequestDataSource;
 }
 export class ValidationFailed extends AppErrors {
-  constructor(customMessage: string, details: ValidationFailedMetadata) {
-    super(ERROR_CODES.ValidationFailed, StatusCodes.BAD_REQUEST, customMessage, details);
+  constructor(custom_message: string, details: ValidationFailedMetadata) {
+    super(ERROR_CODES.ValidationFailed, StatusCodes.BAD_REQUEST, custom_message, details);
   }
 }
 
@@ -106,16 +106,16 @@ export interface NotFoundMetadata {
 }
 
 export class NotFound extends AppErrors {
-  constructor(customMessage: string, details?: NotFoundMetadata, params?: Record<string, any>) {
-    super(ERROR_CODES.NotFound, StatusCodes.NOT_FOUND, customMessage, details, params);
+  constructor(custom_message: string, details?: NotFoundMetadata, params?: Record<string, any>) {
+    super(ERROR_CODES.NotFound, StatusCodes.NOT_FOUND, custom_message, details, params);
   }
 }
 
 export interface DuplicateErrorMetadata extends NotFoundMetadata {}
 
 export class DuplicateError extends AppErrors {
-  constructor(customMessage: string, details: DuplicateErrorMetadata, params?: Record<string, any>) {
-    super(ERROR_CODES.DuplicateError, StatusCodes.BAD_REQUEST, customMessage, details, params);
+  constructor(custom_message: string, details: DuplicateErrorMetadata, params?: Record<string, any>) {
+    super(ERROR_CODES.DuplicateError, StatusCodes.BAD_REQUEST, custom_message, details, params);
   }
 }
 
