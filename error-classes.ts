@@ -10,7 +10,8 @@ export const ERROR_CODES = {
   NotFound: "4000",
   DuplicateError: "1002",
   ExternalServiceError: "5000",
-  InternalServerError: "6000"
+  InternalServerError: "6000",
+  BusinessLogic: "4000"
 } as const;
 
 export class AppErrors extends Error {
@@ -130,5 +131,36 @@ export class WrapperError extends AppErrors {
     if (err) {
       (this as any).originalError = err;
     }
+  }
+}
+
+export class UnsupportedError extends AppErrors {
+  constructor(customMessage: string, details?: NotFoundMetadata, params?: Record<string, any>) {
+    super(ERROR_CODES.Unauthorized, StatusCodes.UNAUTHORIZED, customMessage, details, params);
+  }
+}
+
+export class IOMethodError extends AppErrors {
+  constructor(customMessage: string, details?: NotFoundMetadata, params?: Record<string, any>) {
+    super(ERROR_CODES.BusinessLogic, StatusCodes.BAD_REQUEST, customMessage, details, params);
+  }
+}
+
+export interface BusinessLogicMetadata {
+  field?: string;
+  where?: RequestDataSource;
+  context?: any;
+}
+
+export class BusinessLogic extends AppErrors {
+  constructor(customMessage: string, details?: BusinessLogicMetadata, params?: Record<string, any>) {
+    super(ERROR_CODES.BusinessLogic, StatusCodes.BAD_REQUEST, customMessage, details, params);
+  }
+}
+
+export class MethodNotImplemented extends AppErrors {
+  constructor(paymentType: string = "Mobile money", details?: BusinessLogicMetadata, params?: Record<string, any>) {
+    const message = `${paymentType} payment method not implemented`;
+    super(ERROR_CODES.BusinessLogic, StatusCodes.BAD_REQUEST, message, details, params);
   }
 }
