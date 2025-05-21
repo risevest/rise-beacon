@@ -29,7 +29,6 @@ export enum ERROR_CATEGORIES {
 }
 
 type RequestDataSource = "params" | "query" | "body" | "header";
-type MetadataKind = "field" | "multi-field" | "business-logic";
 
 export interface BaseErrorMetadata {
   where: RequestDataSource;
