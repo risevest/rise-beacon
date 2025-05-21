@@ -27,3 +27,18 @@ export enum ERROR_CATEGORIES {
   "external-service" = "5",
   "system-level" = "6"
 }
+
+type RequestDataSource = "params" | "query" | "body" | "header";
+type MetadataKind = "field" | "multi-field" | "business-logic";
+
+export interface BaseErrorMetadata {
+  where: RequestDataSource;
+  field?: string;
+  fields?: Record<string, string>;
+  context?: any;
+}
+
+export interface NotFoundMetadata extends BaseErrorMetadata {}
+export interface DuplicateErrorMetadata extends BaseErrorMetadata {}
+export interface ValidationFailedMetadata extends BaseErrorMetadata {}
+export interface BusinessLogicMetadata extends BaseErrorMetadata {}

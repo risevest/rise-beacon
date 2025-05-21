@@ -1,17 +1,28 @@
 import { ERROR_SYSTEM } from "./classification";
 import { StatusCodes } from "http-status-codes";
+import {
+  BusinessLogicMetadata,
+  DuplicateErrorMetadata,
+  NotFoundMetadata,
+  ValidationFailedMetadata
+} from "./error.model";
 
 export const ERROR_CODES = {
-  InvalidOrExpiredOTP: "1001",
-  InvalidLoginCredentials: "2001",
-  AccountInactive: "4001",
   ValidationFailed: "1000",
-  Unauthorized: "2000",
-  NotFound: "4000",
+  InvalidOrExpiredOTP: "1001",
   DuplicateError: "1002",
+
+  InvalidLoginCredentials: "2001",
+
+  Unauthorized: "3000",
+
+  BusinessLogic: "4000",
+  NotFound: "4001",
+  AccountInactive: "4002",
+
   ExternalServiceError: "5000",
+
   InternalServerError: "6000",
-  BusinessLogic: "4000"
 } as const;
 
 export class AppErrors extends Error {
@@ -21,6 +32,7 @@ export class AppErrors extends Error {
   description: Record<string, any>;
   details?: Record<string, any>;
   http_status_code: number;
+  name: string;
 
   constructor(
     error_code: string,
@@ -89,34 +101,33 @@ export const Unauthorized = createErrorClass("Unauthorized", StatusCodes.UNAUTHO
 export const InternalServerError = createErrorClass("InternalServerError", StatusCodes.INTERNAL_SERVER_ERROR);
 export const ExternalServiceError = createErrorClass("ExternalServiceError", StatusCodes.BAD_REQUEST);
 
-type RequestDataSource = "params" | "query" | "body" | "header";
-
-export interface ValidationFailedMetadata {
-  fields: Record<string, string>;
-  where: RequestDataSource;
-}
 export class ValidationFailed extends AppErrors {
-  constructor(custom_message: string, details: ValidationFailedMetadata) {
-    super(ERROR_CODES.ValidationFailed, StatusCodes.BAD_REQUEST, custom_message, details);
+  constructor(custom_message: string, details: ValidationFailedMetadata, status_code: number = StatusCodes.BAD_REQUEST) {
+    super(ERROR_CODES.ValidationFailed, status_code, custom_message, details);
   }
-}
-
-export interface NotFoundMetadata {
-  field: string;
-  where: RequestDataSource;
 }
 
 export class NotFound extends AppErrors {
-  constructor(custom_message: string, details?: NotFoundMetadata, params?: Record<string, any>) {
-    super(ERROR_CODES.NotFound, StatusCodes.NOT_FOUND, custom_message, details, params);
+  constructor(custom_message: string, details?: NotFoundMetadata, params?: Record<string, any>, status_code: number = StatusCodes.NOT_FOUND) {
+    super(ERROR_CODES.NotFound, status_code, custom_message, details, params);
   }
 }
 
-export interface DuplicateErrorMetadata extends NotFoundMetadata {}
-
 export class DuplicateError extends AppErrors {
-  constructor(custom_message: string, details: DuplicateErrorMetadata, params?: Record<string, any>) {
-    super(ERROR_CODES.DuplicateError, StatusCodes.BAD_REQUEST, custom_message, details, params);
+  constructor(custom_message: string, details: DuplicateErrorMetadata, params?: Record<string, any>, status_code: number = StatusCodes.BAD_REQUEST) {
+    super(ERROR_CODES.DuplicateError, status_code, custom_message, details, params);
+  }
+}
+
+export class UnsupportedError extends AppErrors {
+  constructor(custom_message: string, details?: NotFoundMetadata, params?: Record<string, any>) {
+    super(ERROR_CODES.Unauthorized, StatusCodes.UNAUTHORIZED, custom_message, details, params);
+  }
+}
+
+export class BusinessLogic extends AppErrors {
+  constructor(custom_message: string, details?: BusinessLogicMetadata, params?: Record<string, any>) {
+    super(ERROR_CODES.BusinessLogic, StatusCodes.BAD_REQUEST, custom_message, details, params);
   }
 }
 
@@ -131,36 +142,5 @@ export class WrapperError extends AppErrors {
     if (err) {
       (this as any).originalError = err;
     }
-  }
-}
-
-export class UnsupportedError extends AppErrors {
-  constructor(customMessage: string, details?: NotFoundMetadata, params?: Record<string, any>) {
-    super(ERROR_CODES.Unauthorized, StatusCodes.UNAUTHORIZED, customMessage, details, params);
-  }
-}
-
-export class IOMethodError extends AppErrors {
-  constructor(customMessage: string, details?: NotFoundMetadata, params?: Record<string, any>) {
-    super(ERROR_CODES.BusinessLogic, StatusCodes.BAD_REQUEST, customMessage, details, params);
-  }
-}
-
-export interface BusinessLogicMetadata {
-  field?: string;
-  where?: RequestDataSource;
-  context?: any;
-}
-
-export class BusinessLogic extends AppErrors {
-  constructor(customMessage: string, details?: BusinessLogicMetadata, params?: Record<string, any>) {
-    super(ERROR_CODES.BusinessLogic, StatusCodes.BAD_REQUEST, customMessage, details, params);
-  }
-}
-
-export class MethodNotImplemented extends AppErrors {
-  constructor(paymentType: string = "Mobile money", details?: BusinessLogicMetadata, params?: Record<string, any>) {
-    const message = `${paymentType} payment method not implemented`;
-    super(ERROR_CODES.BusinessLogic, StatusCodes.BAD_REQUEST, message, details, params);
   }
 }
