@@ -7,22 +7,47 @@ import {
   ValidationFailedMetadata
 } from "./error.model";
 
-export const ERROR_CODES = {
+// 1xxx – Validation Errors
+const VALIDATION_ERRORS = {
   ValidationFailed: "1000",
   InvalidOrExpiredOTP: "1001",
   DuplicateError: "1002",
+} as const;
 
+// 2xxx – Authentication Errors
+const AUTH_ERRORS = {
   InvalidLoginCredentials: "2001",
+} as const;
 
+// 3xxx – Authorization Errors
+const AUTHORIZATION_ERRORS = {
   Unauthorized: "3000",
+} as const;
 
+// 4xxx – Business Logic Errors
+const BUSINESS_LOGIC_ERRORS = {
   BusinessLogic: "4000",
   NotFound: "4001",
   AccountInactive: "4002",
+} as const;
 
+// 5xxx – External Service Errors
+const EXTERNAL_SERVICE_ERRORS = {
   ExternalServiceError: "5000",
+} as const;
 
+// 6xxx – Internal Errors
+const INTERNAL_ERRORS = {
   InternalServerError: "6000",
+} as const;
+
+export const ERROR_CODES = {
+  ...VALIDATION_ERRORS,
+  ...AUTH_ERRORS,
+  ...AUTHORIZATION_ERRORS,
+  ...BUSINESS_LOGIC_ERRORS,
+  ...EXTERNAL_SERVICE_ERRORS,
+  ...INTERNAL_ERRORS,
 } as const;
 
 export class AppErrors extends Error {
