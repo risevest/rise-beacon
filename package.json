@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "http-status-codes": "^2.3.0"
+<<<<<<< HEAD
   },
   "devDependencies": {
     "typescript": "^5.4.2"
@@ -13,5 +14,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "tsc"
+=======
+>>>>>>> 7544480 (refactor: Change System Design Impl of error sys feat (#2))
   }
 }
