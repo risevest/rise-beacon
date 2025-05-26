@@ -58,6 +58,9 @@ export interface BusinessLogicMetadata extends BaseErrorMetadata {
   //fields for not found errors
   resource_type?: string;
   resource_id?: string;
+  //fields for invalid value errors
+  invalid_value?: string;
+
 }
 
 export interface AuthErrorMetadata extends BaseErrorMetadata {

@@ -34,5 +34,3 @@ export const authorizationErrors: ErrorSystem = {
     severity: "medium",
     http_status_code: StatusCodes.FORBIDDEN //CONFLICT
   },
-
-}

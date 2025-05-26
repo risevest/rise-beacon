@@ -35,5 +35,4 @@ export const authenticationErrors: ErrorSystem = {
     severity: "medium",
     http_status_code: StatusCodes.UNAUTHORIZED
   },
-
 }
