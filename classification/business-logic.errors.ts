@@ -27,12 +27,11 @@ export const businessLogicErrors: ErrorSystem = {
   [BusinessLogicErrorCodes.RESOURCE_INACTIVE]: {
     category: "business_logic",
     description: {
-      en: "Resource is inactive",
-      fr: "Le compte est inactif",
-      es: "La cuenta está inactiva"
+      en: "Resource {{resource_type}} with ID {{resource_id}} is inactive.",
+      fr: "La ressource {{resource_type}} avec l'identifiant {{resource_id}} est inactive.",
+      es: "El recurso {{resource_type}} con ID {{resource_id}} está inactivo."
     },
     severity: "medium",
     http_status_code: StatusCodes.FORBIDDEN
   }
-
 };

@@ -55,5 +55,4 @@ export const validationErrors: ErrorSystem = {
     severity: "medium",
     http_status_code: StatusCodes.BAD_REQUEST
   },
-
 };
