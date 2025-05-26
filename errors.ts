@@ -1,11 +1,20 @@
-import { ERROR_SYSTEM } from "./classification";
+import {
+  authenticationErrors,
+  authorizationErrors,
+  businessLogicErrors,
+  ERROR_SYSTEM,
+  externalServiceErrors,
+  systemErrors,
+  validationErrors
+} from "./classification";
 import {
   AuthErrorMetadata,
   BaseErrorMetadata,
   BusinessLogicMetadata,
   ERROR_CATEGORIES,
   ExternalServiceMetadata,
-  LanguageCode, SerializedError,
+  LanguageCode,
+  SerializedError,
   ValidationFailedMetadata
 } from "./error.model";
 
@@ -14,7 +23,7 @@ import {
  * Base class for application errors.
  */
 export class AppErrors extends Error {
-  internal_status_code: string;
+  internal_status_code: keyof typeof ERROR_SYSTEM;
   category: string;
   severity: string;
   description: Record<string, any>;
@@ -36,7 +45,7 @@ export class AppErrors extends Error {
    * @param request_id - Optional unique identifier for tracing the request.
    */
   constructor(
-    internal_status_code: string,
+    internal_status_code: keyof typeof ERROR_SYSTEM,
     details?: Record<string, any>,
     custom_message?: string,
     language: LanguageCode = "en",
@@ -55,7 +64,8 @@ export class AppErrors extends Error {
       description[language] = custom_message;
     }
 
-    const message = description[language] || description.en || "Unknown error";
+    const template = description[language] || description.en || "Unknown error";
+    const message = details ? formatLocalizedMessage(template, details) : template;
 
     super(message);
 
@@ -70,7 +80,7 @@ export class AppErrors extends Error {
     this.service_name = service_name;
     this.request_id = request_id;
 
-    //todo: update to extend the ErrorConstructor Type
+    //todo: update to extend the ErrorConstructor Type...
     // if (Error.captureStackTrace) {
     //   Error.captureStackTrace(this, this.constructor);
     // }
@@ -119,20 +129,20 @@ export class AppErrors extends Error {
     return this.category === category;
   }
 }
-
+// throw new ValidationFailed(4001, {where: "blah blah blah.", field: "blah blah blah"})
 /**
  * Represents validation-related application errors.
  */
 export class ValidationFailed extends AppErrors {
   constructor(
-    internal_status_code: string,
+    internal_status_code: keyof typeof validationErrors,
     details?: ValidationFailedMetadata,
     custom_message?: string,
     language: LanguageCode = "en",
     service_name?: string,
     request_id?: string
   ) {
-    const errorDef = ERROR_SYSTEM[internal_status_code];
+    const errorDef = validationErrors[internal_status_code];
     if (!errorDef) {
       throw new Error(`Unknown internal status code: ${internal_status_code}`);
     }
@@ -150,14 +160,14 @@ export class ValidationFailed extends AppErrors {
  */
 export class AuthenticationFailed extends AppErrors {
   constructor(
-    internal_status_code: string,
+    internal_status_code: keyof typeof authenticationErrors,
     details?: AuthErrorMetadata,
     custom_message?: string,
     language: LanguageCode = "en",
     service_name?: string,
     request_id?: string
   ) {
-    const errorDef = ERROR_SYSTEM[internal_status_code];
+    const errorDef = authenticationErrors[internal_status_code];
     if (!errorDef) {
       throw new Error(`Unknown internal status code: ${internal_status_code}`);
     }
@@ -177,14 +187,14 @@ export class AuthenticationFailed extends AppErrors {
  */
 export class AuthorizationFailed extends AppErrors {
   constructor(
-    internal_status_code: string,
+    internal_status_code: keyof typeof authorizationErrors,
     details?: BaseErrorMetadata,
     custom_message?: string,
     language: LanguageCode = "en",
     service_name?: string,
     request_id?: string
   ) {
-    const errorDef = ERROR_SYSTEM[internal_status_code];
+    const errorDef = authorizationErrors[internal_status_code];
     if (!errorDef) {
       throw new Error(`Unknown internal status code: ${internal_status_code}`);
     }
@@ -203,14 +213,14 @@ export class AuthorizationFailed extends AppErrors {
  */
 export class BusinessLogicFailed extends AppErrors {
   constructor(
-    internal_status_code: string,
+    internal_status_code: keyof typeof businessLogicErrors,
     details?: BusinessLogicMetadata,
     custom_message?: string,
     language: LanguageCode = "en",
     service_name?: string,
     request_id?: string
   ) {
-    const errorDef = ERROR_SYSTEM[internal_status_code];
+    const errorDef = businessLogicErrors[internal_status_code];
     if (!errorDef) {
       throw new Error(`Unknown internal status code: ${internal_status_code}`);
     }
@@ -229,14 +239,14 @@ export class BusinessLogicFailed extends AppErrors {
  */
 export class ExternalServiceFailed extends AppErrors {
   constructor(
-    internal_status_code: string,
+    internal_status_code: keyof typeof externalServiceErrors,
     details?: ExternalServiceMetadata,
     custom_message?: string,
     language: LanguageCode = "en",
     service_name?: string,
     request_id?: string
   ) {
-    const errorDef = ERROR_SYSTEM[internal_status_code];
+    const errorDef = externalServiceErrors[internal_status_code];
     if (!errorDef) {
       throw new Error(`Unknown internal status code: ${internal_status_code}`);
     }
@@ -255,14 +265,14 @@ export class ExternalServiceFailed extends AppErrors {
  */
 export class SystemLevelFailed extends AppErrors {
   constructor(
-    internal_status_code: string,
+    internal_status_code: keyof typeof systemErrors,
     details?: BaseErrorMetadata,
     custom_message?: string,
     language: LanguageCode = "en",
     service_name?: string,
     request_id?: string
   ) {
-    const errorDef = ERROR_SYSTEM[internal_status_code];
+    const errorDef = systemErrors[internal_status_code];
     if (!errorDef) {
       throw new Error(`Unknown internal status code: ${internal_status_code}`);
     }
@@ -275,16 +285,6 @@ export class SystemLevelFailed extends AppErrors {
     super(internal_status_code, details, custom_message, language, service_name, request_id);
   }
 }
-
-/**
- * Alias for backward compatibility: NotFoundError mapped to BusinessLogicFailed.
- */
-export const NotFoundError = BusinessLogicFailed;
-
-/**
- * Alias for backward compatibility: DuplicateError mapped to ValidationFailed.
- */
-export const DuplicateError = ValidationFailed;
 
 /**
  * Represents a wrapper error that encapsulates a system-level failure,
@@ -323,3 +323,8 @@ export class WrapperError extends SystemLevelFailed {
   }
 }
 
+function formatLocalizedMessage(template: string, values: Record<string, any>): string {
+  return template.replace(/{{(.*?)}}/g, (_, key) => {
+    return values[key] ?? `{{${key}}}`;
+  });
+}
