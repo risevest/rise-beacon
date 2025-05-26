@@ -1,6 +1,6 @@
 import { ERROR_CATEGORIES, LanguageCode } from "./error.model";
-import { ERROR_SYSTEM } from "./classification";
 import { AppErrors } from "./errors";
+import { ERROR_SYSTEM } from "./classification";
 
 /**
  * Retrieves the error message for a given error code, in the specified language.
