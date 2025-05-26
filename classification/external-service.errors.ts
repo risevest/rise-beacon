@@ -24,5 +24,4 @@ export const externalServiceErrors: ErrorSystem = {
     severity: "high",
     http_status_code: StatusCodes.GATEWAY_TIMEOUT
   },
-
 }
