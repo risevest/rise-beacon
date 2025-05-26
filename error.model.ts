@@ -1,4 +1,6 @@
 // error.model.ts
+import { ERROR_SYSTEM } from "./classification";
+
 export const languageCode = <const>["en", "fr", "es"];
 export type LanguageCode = (typeof languageCode)[number];
 
@@ -15,7 +17,6 @@ export interface ErrorDefinition {
   category: keyof typeof ERROR_CATEGORIES;
   internal_status_code?: number; // for subcategorization within error groups
   http_status_code: number;
-
 }
 
 export interface ErrorSystem {
@@ -43,24 +44,20 @@ export interface BaseErrorMetadata {
   request_id?: string;
 }
 
-export interface NotFoundMetadata extends BaseErrorMetadata {
-  resource_type?: string;
-  resource_id?: string;
-}
-
-export interface DuplicateErrorMetadata extends BaseErrorMetadata {
-  conflicting_field?: string;
-  existing_value?: any;
-}
-
 export interface ValidationFailedMetadata extends BaseErrorMetadata {
   validation_rules?: string[];
   invalid_value?: any;
+  //fields for duplicate errors
+  conflicting_field?: string;
+  existing_value?: any;
 }
 
 export interface BusinessLogicMetadata extends BaseErrorMetadata {
   business_rule?: string;
   required_conditions?: string[];
+  //fields for not found errors
+  resource_type?: string;
+  resource_id?: string;
 }
 
 export interface AuthErrorMetadata extends BaseErrorMetadata {
@@ -78,7 +75,7 @@ export interface ExternalServiceMetadata extends BaseErrorMetadata {
  * Serialized representation of an application error.
  */
 export interface SerializedError {
-  internal_status_code: string;
+  internal_status_code: keyof typeof ERROR_SYSTEM;
   category: string;
   description: Record<string, string>;
   severity: string;
