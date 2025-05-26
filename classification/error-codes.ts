@@ -24,6 +24,7 @@ export enum BusinessLogicErrorCodes {
   BUSINESS_RULE_VIOLATION = 4000,
   RESOURCE_NOT_FOUND = 4001,
   RESOURCE_INACTIVE = 4002,
+  INVALID_ENUM_VALUE = 4003
 }
 
 export enum ExternalServiceErrorCodes {
