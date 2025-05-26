@@ -33,5 +33,16 @@ export const businessLogicErrors: ErrorSystem = {
     },
     severity: "medium",
     http_status_code: StatusCodes.FORBIDDEN
+  },
+  [BusinessLogicErrorCodes.INVALID_ENUM_VALUE]: {
+    category: "business_logic",
+    description: {
+      en: "Invalid value '{{invalid_value}}' for '{{business_rule}}'. Expected one of: {{required_conditions}}.",
+      fr: "Valeur invalide '{{invalid_value}}' pour '{{business_rule}}'. Valeurs attendues : {{required_conditions}}.",
+      es: "Valor inválido '{{invalid_value}}' para '{{business_rule}}'. Se esperaban: {{required_conditions}}."
+    },
+    severity: "medium",
+    http_status_code: StatusCodes.BAD_REQUEST
   }
+
 };
