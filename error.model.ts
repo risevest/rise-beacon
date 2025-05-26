@@ -47,15 +47,17 @@ export interface BaseErrorMetadata {
 export interface ValidationFailedMetadata extends BaseErrorMetadata {
   validation_rules?: string[];
   invalid_value?: any;
+  //fields for duplicate errors
+  conflicting_field?: string;
+  existing_value?: any;
 }
 
 export interface BusinessLogicMetadata extends BaseErrorMetadata {
   business_rule?: string;
   required_conditions?: string[];
+  //fields for not found errors
   resource_type?: string;
   resource_id?: string;
-  conflicting_field?: string;
-  existing_value?: any;
 }
 
 export interface AuthErrorMetadata extends BaseErrorMetadata {
