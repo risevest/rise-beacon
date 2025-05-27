@@ -17,9 +17,13 @@ export enum AuthenticationErrorCodes {
 export enum AuthorizationErrorCodes {
   ACCESS_DENIED = 3000,
   RESOURCE_FORBIDDEN = 3001,
-  INVALID_STATE = 3002
-
+  INVALID_STATE = 3002,
+  MISSING_PERMISSION = 3003,
+  TENANT_ACCESS_DENIED = 3004,
+  ORG_ACCESS_DENIED = 3005,
+  POLICY_VIOLATION = 3006
 }
+
 
 export enum BusinessLogicErrorCodes {
   BUSINESS_RULE_VIOLATION = 4000,
