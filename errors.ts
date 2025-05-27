@@ -8,7 +8,7 @@ import {
   validationErrors
 } from "./classification";
 import {
-  AuthErrorMetadata,
+  AuthErrorMetadata, AuthorizationErrorMetadata,
   BaseErrorMetadata,
   BusinessLogicMetadata,
   ERROR_CATEGORIES,
@@ -188,7 +188,7 @@ export class AuthenticationFailed extends AppErrors {
 export class AuthorizationFailed extends AppErrors {
   constructor(
     internal_status_code: keyof typeof authorizationErrors,
-    details?: BaseErrorMetadata,
+    details?: AuthorizationErrorMetadata,
     custom_message?: string,
     language: LanguageCode = "en",
     service_name?: string,

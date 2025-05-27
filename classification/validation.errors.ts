@@ -55,4 +55,15 @@ export const validationErrors: ErrorSystem = {
     severity: "medium",
     http_status_code: StatusCodes.BAD_REQUEST
   },
+  [ValidationErrorCodes.UNPROCESSABLE_ENTITY]: {
+    category: "validation",
+    description: {
+      en: "The field {{field}} could not be processed due to a semantic validation error: {{context}}.",
+      fr: "Le champ {{field}} n'a pas pu être traité en raison d'une erreur de validation sémantique : {{context}}.",
+      es: "El campo {{field}} no se pudo procesar debido a un error de validación semántica: {{context}}."
+    },
+    severity: "medium",
+    http_status_code: StatusCodes.UNPROCESSABLE_ENTITY
+  }
+
 };

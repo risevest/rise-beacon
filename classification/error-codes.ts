@@ -4,7 +4,8 @@ export enum ValidationErrorCodes {
   INVALID_OTP = 1001,
   DUPLICATE_ENTRY = 1002,
   REQUIRED_FIELD_MISSING = 1003,
-  INVALID_FORMAT = 1004
+  INVALID_FORMAT = 1004,
+  UNPROCESSABLE_ENTITY = 1005,
 }
 
 export enum AuthenticationErrorCodes {

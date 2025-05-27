@@ -34,6 +34,10 @@ export enum ERROR_CATEGORIES {
 }
 
 type RequestDataSource = "params" | "query" | "body" | "header" | "context";
+type AuthMethod = "password" | "token" | "oauth" | "apiKey";
+type TokenType = "Bearer" | "JWT" | "APIKey";
+type LoginSource = "web" | "mobile" | "api";
+type RoleAccessTypes = "RBAC" | "ABAC" | "custom";
 
 export interface BaseErrorMetadata {
   where?: RequestDataSource;
@@ -64,8 +68,27 @@ export interface BusinessLogicMetadata extends BaseErrorMetadata {
 }
 
 export interface AuthErrorMetadata extends BaseErrorMetadata {
-  auth_method?: string;
-  token_type?: string;
+  auth_method?: AuthMethod;
+  token_type?: TokenType;
+  token_expired_at?: string;
+  issued_at?: string;
+  user_agent?: string;
+  client_ip?: string;
+  login_source?: LoginSource;
+  username?: string;
+}
+
+export interface AuthorizationErrorMetadata extends BaseErrorMetadata {
+  attempted_action?: string; // e.g., "delete_user"
+  resource_type?: string;    // e.g., "user", "claim"
+  resource_id?: string;
+  required_roles?: string[];
+  actual_roles?: string[];
+  permission_required?: string;
+  auth_policy?: RoleAccessTypes;
+  tenant_id?: string;
+  org_id?: string;
+  reason?: string;
 }
 
 export interface ExternalServiceMetadata extends BaseErrorMetadata {
