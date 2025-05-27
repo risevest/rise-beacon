@@ -79,7 +79,7 @@ export interface AuthErrorMetadata extends BaseErrorMetadata {
 }
 
 export interface AuthorizationErrorMetadata extends BaseErrorMetadata {
-  attempted_action?: string; // e.g., "delete_user"
+  attempted_action?: string; // e.g., "delete_user" "generate-account-statement"
   resource_type?: string;    // e.g., "user", "claim"
   resource_id?: string;
   required_roles?: string[];
