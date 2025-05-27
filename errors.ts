@@ -129,7 +129,7 @@ export class AppErrors extends Error {
     return this.category === category;
   }
 }
-// throw new ValidationFailed(4001, {where: "blah blah blah.", field: "blah blah blah"})
+
 /**
  * Represents validation-related application errors.
  */
