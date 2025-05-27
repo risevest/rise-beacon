@@ -65,5 +65,4 @@ export const validationErrors: ErrorSystem = {
     severity: "medium",
     http_status_code: StatusCodes.UNPROCESSABLE_ENTITY
   }
-
 };
