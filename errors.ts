@@ -102,7 +102,7 @@ export class AppError extends Error {
  */
 export class ValidationFailed extends AppError {
   constructor(params: {
-    subCode: keyof typeof ValidationSubCodes;
+    subCode: ValidationSubCodes;
     message?: string;
     meta?: Record<string, any>;
     language?: LanguageCode;
@@ -126,7 +126,7 @@ export class ValidationFailed extends AppError {
  */
 export class AuthenticationFailed extends AppError {
   constructor(params: {
-    subCode: keyof typeof AuthenticationSubCodes;
+    subCode: AuthenticationSubCodes;
     message?: string;
     meta?: Record<string, any>;
     language?: LanguageCode;
@@ -150,7 +150,7 @@ export class AuthenticationFailed extends AppError {
  */
 export class AuthorizationFailed extends AppError {
   constructor(params: {
-    subCode: keyof typeof AuthorizationSubCodes;
+    subCode: AuthorizationSubCodes;
     message?: string;
     meta?: Record<string, any>;
     language?: LanguageCode;
@@ -174,7 +174,7 @@ export class AuthorizationFailed extends AppError {
  */
 export class BusinessLogicFailed extends AppError {
   constructor(params: {
-    subCode: keyof typeof BusinessLogicSubCodes;
+    subCode: BusinessLogicSubCodes;
     message?: string;
     meta?: Record<string, any>;
     language?: LanguageCode;
@@ -200,7 +200,7 @@ export class ExternalServiceFailed extends AppError {
   originalError?: Error;
 
   constructor(params: {
-    subCode: keyof typeof ExternalServiceSubCodes;
+    subCode: ExternalServiceSubCodes;
     message?: string;
     meta?: Record<string, any>;
     language?: LanguageCode;
@@ -228,7 +228,6 @@ export class ExternalServiceFailed extends AppError {
       meta,
     });
 
-    // Optionally track originalError
     if (originalError instanceof Error) {
       this.originalError = originalError;
       this.stack = originalError.stack;
@@ -252,7 +251,7 @@ export class ExternalServiceFailed extends AppError {
  */
 export class SystemLevelFailed extends AppError {
   constructor(params: {
-    subCode: keyof typeof SystemSubCodes;
+    subCode: SystemSubCodes;
     message?: string;
     meta?: Record<string, any>;
     language?: LanguageCode;
@@ -269,10 +268,4 @@ export class SystemLevelFailed extends AppError {
       meta,
     });
   }
-}
-
-function formatLocalizedMessage(template: string, values: Record<string, any>): string {
-  return template.replace(/{{(.*?)}}/g, (_, key) => {
-    return values[key] ?? `{{${key}}}`;
-  });
 }
