@@ -1,4 +1,4 @@
-name: TypeScript Build
+name: TypeScript Validation
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
       - master
 
 jobs:
-  build:
+  validate:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +24,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Type check
-        run: yarn tsc --noEmit
+        run: yarn typecheck
 
-      - name: Compile TypeScript
-        run: yarn tsc
+      - name: Build
+        run: yarn build
