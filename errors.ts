@@ -125,12 +125,12 @@ export class ValidationFailed extends AppError {
  */
 export class AuthenticationFailed extends AppError {
   constructor(
-    subCode: ValidationSubCodes,
+    subCode: AuthenticationSubCodes,
     message?: string,
     meta?: Record<string, any>,
     language: LanguageCode = "en"
   ) {
-    const errorDef = validationErrors[subCode];
+    const errorDef = authenticationErrors[subCode];
 
     const defaultMessage =
       errorDef?.description?.[language] ?? errorDef?.description?.en ??  "Authentication failed";
@@ -149,12 +149,12 @@ export class AuthenticationFailed extends AppError {
  */
 export class AuthorizationFailed extends AppError {
   constructor(
-    subCode: ValidationSubCodes,
+    subCode: AuthorizationSubCodes,
     message?: string,
     meta?: Record<string, any>,
     language: LanguageCode = "en"
   ) {
-    const errorDef = validationErrors[subCode];
+    const errorDef = authorizationErrors[subCode];
 
     const defaultMessage =
       errorDef?.description?.[language] ?? errorDef?.description?.en ?? "Authorization failed";
@@ -173,12 +173,12 @@ export class AuthorizationFailed extends AppError {
  */
 export class BusinessLogicFailed extends AppError {
   constructor(
-    subCode: ValidationSubCodes,
+    subCode: BusinessLogicSubCodes,
     message?: string,
     meta?: Record<string, any>,
     language: LanguageCode = "en"
   ) {
-    const errorDef = validationErrors[subCode];
+    const errorDef = businessLogicErrors[subCode];
 
     const defaultMessage =
       errorDef?.description?.[language] ?? errorDef?.description?.en ?? "Business logic error";
@@ -242,12 +242,12 @@ export class ExternalServiceFailed extends AppError {
  */
 export class SystemLevelFailed extends AppError {
   constructor(
-    subCode: ValidationSubCodes,
+    subCode: SystemSubCodes,
     message?: string,
     meta?: Record<string, any>,
     language: LanguageCode = "en"
   ) {
-    const errorDef = validationErrors[subCode];
+    const errorDef = systemErrors[subCode];
 
     const defaultMessage =
       errorDef?.description?.[language] ?? errorDef?.description?.en ?? "System error";
