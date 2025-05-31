@@ -1,22 +1,6 @@
 import { ERROR_CATEGORIES, LanguageCode } from "./error.model";
-import { AppErrors } from "./errors";
+import { AppError } from "./errors";
 import { ERROR_SYSTEM } from "./classification";
-
-/**
- * Retrieves the error message for a given error code, in the specified language.
- *
- * @param code - The error code for which the message is being retrieved.
- * @param language - The language in which the error message should be retrieved.
- * @returns The error message for the given code and language, or undefined if the language is not supported.
- * @throws {Error} If the error code is unknown.
- */
-export function getErrorMessageByLanguage(code: string, language: LanguageCode = "en"): string | undefined {
-  const error = ERROR_SYSTEM[code];
-  if (!error) {
-    throw new Error(`Unknown error code: ${code}`);
-  }
-  return error.description[language] || error.description.en;
-}
 
 /**
  * A utility class for error operations such as type-checking and introspection.
@@ -41,8 +25,8 @@ export class ErrorUtils {
    * Checks if the provided error is an instance of AppErrors.
    * @param error - Any error object
    */
-  static isAppError(error: any): error is AppErrors {
-    return error instanceof AppErrors;
+  static isAppError(error: any): error is AppError {
+    return error instanceof AppError;
   }
 
   /**

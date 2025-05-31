@@ -1,5 +1,5 @@
 // error.model.ts
-import { ERROR_SYSTEM } from "./classification";
+import { SuperErrorCodes } from "./classification";
 
 export const languageCode = <const>["en", "fr", "es"];
 export type LanguageCode = (typeof languageCode)[number];
@@ -15,8 +15,8 @@ export interface ErrorDefinition {
   description: ErrorTranslation;
   severity: Severity;
   category: keyof typeof ERROR_CATEGORIES;
-  internal_status_code?: number; // for subcategorization within error groups
-  http_status_code: number;
+  super_code?: number;
+  sub_code?: number;
 }
 
 export interface ErrorSystem {
@@ -33,60 +33,24 @@ export enum ERROR_CATEGORIES {
   system_level = "6"
 }
 
-type RequestDataSource = "params" | "query" | "body" | "header" | "context";
-
-export interface BaseErrorMetadata {
-  where?: RequestDataSource;
-  field?: string;
-  fields?: Record<string, string>;
-  context?: any;
-  service_name?: string;
-  request_id?: string;
-}
-
-export interface ValidationFailedMetadata extends BaseErrorMetadata {
-  validation_rules?: string[];
-  invalid_value?: any;
-  //fields for duplicate errors
-  conflicting_field?: string;
-  existing_value?: any;
-}
-
-export interface BusinessLogicMetadata extends BaseErrorMetadata {
-  business_rule?: string;
-  required_conditions?: string[];
-  //fields for not found errors
-  resource_type?: string;
-  resource_id?: string;
-  //fields for invalid value errors
-  invalid_value?: string;
-
-}
-
-export interface AuthErrorMetadata extends BaseErrorMetadata {
-  auth_method?: string;
-  token_type?: string;
-}
-
-export interface ExternalServiceMetadata extends BaseErrorMetadata {
-  service_name?: string;
-  endpoint?: string;
-  response_code?: number;
+/**
+ * Mini-serialized representation of an application error.
+ */
+export interface MiniSerializedError {
+  super_code: SuperErrorCodes;
+  sub_code: string;
+  message: string;
 }
 
 /**
- * Serialized representation of an application error.
+ * Mini-serialized representation of an application error.
  */
 export interface SerializedError {
-  internal_status_code: keyof typeof ERROR_SYSTEM;
-  category: string;
-  description: Record<string, string>;
-  severity: string;
-  http_status_code: number;
-  details?: Record<string, any>;
+  super_code: SuperErrorCodes;
+  sub_code: string;
+  message: string;
+  meta?: Record<string, any>;
   timestamp: string;
-  service_name?: string;
-  request_id?: string;
 }
 
 export interface ErrorConstructor {
