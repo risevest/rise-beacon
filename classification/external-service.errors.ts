@@ -1,27 +1,20 @@
+import { ExternalServiceSubCodes } from "./error-codes";
 import { ErrorSystem } from "../error.model";
-import { ExternalServiceErrorCodes } from "./error-codes";
-import { StatusCodes } from "http-status-codes";
 
 export const externalServiceErrors: ErrorSystem = {
-  // 5xxx - External Service Errors
-  [ExternalServiceErrorCodes.SERVICE_UNAVAILABLE]: {
+  [ExternalServiceSubCodes.SERVICE_UNAVAILABLE]: {
     category: "external_service",
     description: {
-      en: "External service unavailable",
-      fr: "Service externe indisponible",
-      es: "Servicio externo no disponible"
+      en: "An external service is currently unavailable."
     },
-    severity: "high",
-    http_status_code: StatusCodes.SERVICE_UNAVAILABLE
+    severity: "high"
   },
-  [ExternalServiceErrorCodes.SERVICE_TIMEOUT]: {
+
+  [ExternalServiceSubCodes.SERVICE_TIMEOUT]: {
     category: "external_service",
     description: {
-      en: "External service timeout",
-      fr: "Délai d'attente du service externe",
-      es: "Tiempo de espera del servicio externo"
+      en: "The external service did not respond in time."
     },
     severity: "high",
-    http_status_code: StatusCodes.GATEWAY_TIMEOUT
-  },
-}
+  }
+};

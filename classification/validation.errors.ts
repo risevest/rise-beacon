@@ -1,68 +1,48 @@
 import { ErrorSystem } from "../error.model";
-import { ValidationErrorCodes } from "./error-codes";
-import { StatusCodes } from "http-status-codes";
-
+import { ValidationSubCodes } from "./error-codes";
 
 export const validationErrors: ErrorSystem = {
   // 1xxx - Validation Errors
-  [ValidationErrorCodes.VALIDATION_FAILED]: {
+  [ValidationSubCodes.BASE]: {
     category: "validation",
     description: {
-      en: "Validation failed",
-      fr: "La validation a échoué",
-      es: "La validación falló"
+      en: "Validation failed"
     },
-    severity: "medium",
-    http_status_code: StatusCodes.BAD_REQUEST
+    severity: "medium"
   },
-  [ValidationErrorCodes.INVALID_OTP]: {
+  [ValidationSubCodes.INVALID_OTP]: {
     category: "validation",
     description: {
-      en: "Invalid or expired OTP",
-      fr: "OTP invalide ou expiré",
-      es: "OTP inválido o expirado"
+      en: "Invalid or expired OTP"
     },
-    severity: "medium",
-    http_status_code: StatusCodes.UNPROCESSABLE_ENTITY
+    severity: "medium"
   },
-  [ValidationErrorCodes.DUPLICATE_ENTRY]: {
+  [ValidationSubCodes.DUPLICATE_ENTRY]: {
     category: "validation",
     description: {
-      en: "Duplicate value found for {{conflicting_field}}: {{existing_value}}.",
-      fr: "Valeur en double trouvée pour {{conflicting_field}} : {{existing_value}}.",
-      es: "Valor duplicado encontrado para {{conflicting_field}}: {{existing_value}}."
+      en: "Duplicate value found."
     },
-    severity: "low",
-    http_status_code: StatusCodes.CONFLICT
+    severity: "low"
   },
-  [ValidationErrorCodes.REQUIRED_FIELD_MISSING]: {
+  [ValidationSubCodes.REQUIRED_FIELD_MISSING]: {
     category: "validation",
     description: {
-      en: "Required field missing",
-      fr: "Champ obligatoire manquant",
-      es: "Campo requerido faltante"
+      en: "Required field missing"
     },
-    severity: "medium",
-    http_status_code: StatusCodes.BAD_REQUEST
+    severity: "medium"
   },
-  [ValidationErrorCodes.INVALID_FORMAT]: {
+  [ValidationSubCodes.INVALID_FORMAT]: {
     category: "validation",
     description: {
-      en: "Invalid format",
-      fr: "Format invalide",
-      es: "Formato inválido"
+      en: "Invalid format"
     },
-    severity: "medium",
-    http_status_code: StatusCodes.BAD_REQUEST
+    severity: "medium"
   },
-  [ValidationErrorCodes.UNPROCESSABLE_ENTITY]: {
+  [ValidationSubCodes.UNPROCESSABLE_ENTITY]: {
     category: "validation",
     description: {
-      en: "The field {{field}} could not be processed due to a semantic validation error: {{context}}.",
-      fr: "Le champ {{field}} n'a pas pu être traité en raison d'une erreur de validation sémantique : {{context}}.",
-      es: "El campo {{field}} no se pudo procesar debido a un error de validación semántica: {{context}}."
+      en: "The some fields could not be processed due to a semantic validation error."
     },
-    severity: "medium",
-    http_status_code: StatusCodes.UNPROCESSABLE_ENTITY
+    severity: "medium"
   }
 };
