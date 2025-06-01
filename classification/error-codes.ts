@@ -31,22 +31,22 @@ export enum SuperErrorCodes {
  * These are used alongside `super_code` 1000 to identify specific validation issues.
  */
 export enum ValidationSubCodes {
-  BASE = "00",
+  BASE = 0,
 
   /** The OTP provided is invalid */
-  INVALID_OTP = "01",
+  INVALID_OTP = 1,
 
   /** A resource with the same unique identifier already exists */
-  DUPLICATE_ENTRY = "02",
+  DUPLICATE_ENTRY = 2,
 
   /** A required field is missing in the request payload */
-  REQUIRED_FIELD_MISSING = "03",
+  REQUIRED_FIELD_MISSING = 3,
 
   /** Input does not match the required format */
-  INVALID_FORMAT = "04",
+  INVALID_FORMAT =  4,
 
   /** The entity is semantically incorrect and cannot be processed */
-  UNPROCESSABLE_ENTITY = "05"
+  UNPROCESSABLE_ENTITY =  5
 }
 
 /**
@@ -54,13 +54,24 @@ export enum ValidationSubCodes {
  * Used with `super_code` 2000.
  */
 export enum AuthenticationSubCodes {
-  BASE = "00",
+  BASE = 0,
 
   /** Username or password is incorrect */
-  INVALID_CREDENTIALS = "01",
+  INVALID_CREDENTIALS = 1,
 
   /** Token has expired and is no longer valid */
-  TOKEN_EXPIRED = "02"
+  TOKEN_EXPIRED = 2,
+
+  /** Token is invalid or could not be verified */
+  TOKEN_INVALID = 3,
+
+  /** No Authorization header was provided in the request */
+  NO_AUTH_HEADER = 4,
+
+  /** The provided authentication scheme is not supported */
+  INVALID_AUTH_SCHEME = 5,
+
+  ACTION_MISMATCH = 6,
 }
 
 /**
@@ -68,25 +79,25 @@ export enum AuthenticationSubCodes {
  * Used with `super_code` 3000.
  */
 export enum AuthorizationSubCodes {
-  ACCESS_DENIED = "00", //BASE
+  ACCESS_DENIED = 0, //BASE
 
   /** Access to the requested resource is denied */
-  RESOURCE_FORBIDDEN = "01",
+  RESOURCE_FORBIDDEN = 1,
 
   /** Operation is not allowed in the current state */
-  INVALID_STATE = "02",
+  INVALID_STATE = 2,
 
   /** Missing required permission for this action */
-  MISSING_PERMISSION = "03",
+  MISSING_PERMISSION = 3,
 
   /** User is not allowed to access this tenant’s data */
-  TENANT_ACCESS_DENIED = "04",
+  TENANT_ACCESS_DENIED = 4,
 
   /** User is not allowed to access this organization’s data */
-  ORG_ACCESS_DENIED = "05",
+  ORG_ACCESS_DENIED = 5,
 
   /** Policy restrictions have been violated */
-  POLICY_VIOLATION = "06"
+  POLICY_VIOLATION = 6
 }
 
 /**
@@ -94,16 +105,16 @@ export enum AuthorizationSubCodes {
  * Used with `super_code` 4000.
  */
 export enum BusinessLogicSubCodes {
-  BASE = "00",
+  BASE = 0,
 
   /** The requested resource could not be found */
-  RESOURCE_NOT_FOUND = "01",
+  RESOURCE_NOT_FOUND = 1,
 
   /** The resource is inactive and cannot be operated on */
-  RESOURCE_INACTIVE = "02",
+  RESOURCE_INACTIVE = 2,
 
   /** A value does not match any valid enum entries */
-  INVALID_ENUM_VALUE = "03"
+  INVALID_ENUM_VALUE = 3
 }
 
 /**
@@ -112,10 +123,10 @@ export enum BusinessLogicSubCodes {
  */
 export enum ExternalServiceSubCodes {
   /** The downstream service is currently unavailable */
-  SERVICE_UNAVAILABLE = "01",
+  SERVICE_UNAVAILABLE = 1,
 
   /** The request to the downstream service timed out */
-  SERVICE_TIMEOUT = "02"
+  SERVICE_TIMEOUT = 2
 }
 
 /**
@@ -123,10 +134,10 @@ export enum ExternalServiceSubCodes {
  * Used with `super_code` 6000.
  */
 export enum SystemSubCodes {
-  UNKNOWN_SYSTEM_ERROR = "00",
+  UNKNOWN_SYSTEM_ERROR = 0,
 
 /** The system could not connect to the database */
-  DATABASE_CONNECTION_FAILED = "01"
+  DATABASE_CONNECTION_FAILED = 1
 }
 
 /**
@@ -141,3 +152,11 @@ export const ErrorSubCodes = {
   ExternalService: ExternalServiceSubCodes,
   System: SystemSubCodes
 };
+
+export type AllSubCodes =
+  | ValidationSubCodes
+  | AuthenticationSubCodes
+  | AuthorizationSubCodes
+  | BusinessLogicSubCodes
+  | ExternalServiceSubCodes
+  | SystemSubCodes;

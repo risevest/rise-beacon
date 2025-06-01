@@ -1,5 +1,5 @@
 // error.model.ts
-import { SuperErrorCodes } from "./classification";
+import { AllSubCodes, SuperErrorCodes } from "./classification";
 
 export const languageCode = <const>["en", "fr", "es"];
 export type LanguageCode = (typeof languageCode)[number];
@@ -14,7 +14,7 @@ type ErrorTranslation = {
 export interface ErrorDefinition {
   description: ErrorTranslation;
   severity: Severity;
-  category: keyof typeof ERROR_CATEGORIES;
+  category: ERROR_CATEGORIES;
   super_code?: number;
   sub_code?: number;
 }
@@ -25,12 +25,12 @@ export interface ErrorSystem {
 
 // Error categories for better organization
 export enum ERROR_CATEGORIES {
-  validation = "1",
-  authentication = "2",
-  authorization = "3",
-  business_logic = "4",
-  external_service = "5",
-  system_level = "6"
+  validation = 1,
+  authentication = 2,
+  authorization = 3,
+  business_logic = 4,
+  external_service = 5,
+  system_level = 6
 }
 
 /**
@@ -38,7 +38,7 @@ export enum ERROR_CATEGORIES {
  */
 export interface MiniSerializedError {
   super_code: SuperErrorCodes;
-  sub_code: string;
+  sub_code: AllSubCodes;
   message: string;
 }
 
@@ -47,7 +47,7 @@ export interface MiniSerializedError {
  */
 export interface SerializedError {
   super_code: SuperErrorCodes;
-  sub_code: string;
+  sub_code: AllSubCodes;
   message: string;
   meta?: Record<string, any>;
   timestamp: string;

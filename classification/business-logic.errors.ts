@@ -1,9 +1,9 @@
 import { BusinessLogicSubCodes } from "./error-codes";
-import { ErrorSystem } from "../error.model";
+import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
 
 export const businessLogicErrors: ErrorSystem = {
   [BusinessLogicSubCodes.BASE]: { //BUSINESS_RULE_VIOLATION
-    category: "business_logic",
+    category: ERROR_CATEGORIES.business_logic,
     description: {
       en: "A business rule was violated."
     },
@@ -11,7 +11,7 @@ export const businessLogicErrors: ErrorSystem = {
   },
 
   [BusinessLogicSubCodes.RESOURCE_NOT_FOUND]: {
-    category: "business_logic",
+    category: ERROR_CATEGORIES.business_logic,
     description: {
       en: "The requested resource was not found."
     },
@@ -19,7 +19,7 @@ export const businessLogicErrors: ErrorSystem = {
   },
 
   [BusinessLogicSubCodes.RESOURCE_INACTIVE]: {
-    category: "business_logic",
+    category: ERROR_CATEGORIES.business_logic,
     description: {
       en: "The requested resource is inactive."
     },
@@ -27,7 +27,7 @@ export const businessLogicErrors: ErrorSystem = {
   },
 
   [BusinessLogicSubCodes.INVALID_ENUM_VALUE]: {
-    category: "business_logic",
+    category: ERROR_CATEGORIES.business_logic,
     description: {
       en: "An invalid value was provided for a required condition."
     },

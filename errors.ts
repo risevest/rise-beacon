@@ -1,4 +1,5 @@
 import {
+  AllSubCodes,
   authenticationErrors,
   AuthenticationSubCodes,
   authorizationErrors,
@@ -14,7 +15,6 @@ import {
   ValidationSubCodes
 } from "./classification";
 import { LanguageCode, MiniSerializedError, SerializedError } from "./error.model";
-
 
 /**
  * Represents a structured application error for consistent error responses.
@@ -33,7 +33,7 @@ export class AppError extends Error {
    * Specific error detail within the category.
    * Should match a key in a subcode enum (e.g., `ValidationSubCodes`).
    */
-  readonly subCode: string;
+  readonly subCode: AllSubCodes;
 
   /**
    * ISO timestamp of when the error occurred.
@@ -55,7 +55,7 @@ export class AppError extends Error {
    */
   constructor(params: {
     superCode: SuperErrorCodes;
-    subCode: string;
+    subCode: AllSubCodes;
     message: string;
     meta?: Record<string, any>;
   }) {
@@ -73,7 +73,7 @@ export class AppError extends Error {
   /**
    * Returns a minimal structure suitable for API responses.
    */
-  toResponse() : MiniSerializedError {
+  toMinimalJSON() : MiniSerializedError {
     return {
       super_code: this.superCode,
       sub_code: this.subCode,
@@ -85,7 +85,7 @@ export class AppError extends Error {
    * Returns the complete error details including metadata and timestamp.
    * Useful for internal logging or detailed error diagnostics.
    */
-  toFullResponse() : SerializedError {
+  toJSON() : SerializedError {
     return {
       super_code: this.superCode,
       sub_code: this.subCode,
@@ -225,8 +225,8 @@ export class ExternalServiceFailed extends AppError {
     }
   }
 
-  toJSON(): Record<string, any> {
-    const base = super.toFullResponse?.() ?? {};
+  toJSON(): SerializedError {
+    const base = super.toJSON?.() ?? {};
 
     return {
       ...base,

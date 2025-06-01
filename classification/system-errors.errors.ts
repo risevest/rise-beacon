@@ -1,4 +1,4 @@
-import { ErrorSystem } from "../error.model";
+import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
 import { SystemSubCodes } from "./error-codes";
 
 export const systemErrors: ErrorSystem = {
@@ -6,7 +6,7 @@ export const systemErrors: ErrorSystem = {
     description: {
       en: "A system error occurred. Please try again later."
     },
-    category: "system_level",
+    category: ERROR_CATEGORIES.system_level,
     severity: "critical"
   },
 
@@ -14,7 +14,7 @@ export const systemErrors: ErrorSystem = {
     description: {
       en: "Unable to connect to the database. Please try again later."
     },
-    category: "system_level",
+    category: ERROR_CATEGORIES.system_level,
     severity: "critical"
   }
 };

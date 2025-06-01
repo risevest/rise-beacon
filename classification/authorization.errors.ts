@@ -1,9 +1,9 @@
 import { AuthorizationSubCodes } from "./error-codes";
-import { ErrorSystem } from "../error.model";
+import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
 
 export const authorizationErrors: ErrorSystem = {
   [AuthorizationSubCodes.ACCESS_DENIED]: {
-    category: "authorization",
+    category: ERROR_CATEGORIES.authorization,
     description: {
       en: "Access denied: You are not authorized to perform this action.",
     },
@@ -11,7 +11,7 @@ export const authorizationErrors: ErrorSystem = {
   },
 
   [AuthorizationSubCodes.RESOURCE_FORBIDDEN]: {
-    category: "authorization",
+    category: ERROR_CATEGORIES.authorization,
     description: {
       en: "You are not allowed to access this resource.",
     },
@@ -19,7 +19,7 @@ export const authorizationErrors: ErrorSystem = {
   },
 
   [AuthorizationSubCodes.INVALID_STATE]: {
-    category: "authorization",
+    category: ERROR_CATEGORIES.authorization,
     description: {
       en: "This action cannot be performed in the current state.",
     },
@@ -27,7 +27,7 @@ export const authorizationErrors: ErrorSystem = {
   },
 
   [AuthorizationSubCodes.MISSING_PERMISSION]: {
-    category: "authorization",
+    category: ERROR_CATEGORIES.authorization,
     description: {
       en: "Permission missing to perform the requested action.",
     },
@@ -35,7 +35,7 @@ export const authorizationErrors: ErrorSystem = {
   },
 
   [AuthorizationSubCodes.TENANT_ACCESS_DENIED]: {
-    category: "authorization",
+    category: ERROR_CATEGORIES.authorization,
     description: {
       en: "Access to this tenant is denied.",
     },
@@ -43,7 +43,7 @@ export const authorizationErrors: ErrorSystem = {
   },
 
   [AuthorizationSubCodes.ORG_ACCESS_DENIED]: {
-    category: "authorization",
+    category: ERROR_CATEGORIES.authorization,
     description: {
       en: "Access to this organization is denied.",
     },
@@ -51,7 +51,7 @@ export const authorizationErrors: ErrorSystem = {
   },
 
   [AuthorizationSubCodes.POLICY_VIOLATION]: {
-    category: "authorization",
+    category: ERROR_CATEGORIES.authorization,
     description: {
       en: "Action violates an authorization policy.",
     },
