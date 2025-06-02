@@ -108,7 +108,7 @@ export class AppError extends Error {
       sub_code: this.subCode,
       message: this.message,
       timestamp: this.timestamp,
-
+      http_status_code: this.http_status_code,
       ...(this.meta && { meta: this.meta })
     };
   }
