@@ -5,7 +5,7 @@ import {
   authorizationErrors,
   AuthorizationSubCodes,
   businessLogicErrors,
-  BusinessLogicSubCodes,
+  BusinessLogicSubCodes, ERROR_SYSTEM,
   externalServiceErrors,
   ExternalServiceSubCodes,
   SuperErrorCodes,
@@ -15,6 +15,15 @@ import {
   ValidationSubCodes
 } from "./classification";
 import { LanguageCode, MiniSerializedError, SerializedError } from "./error.model";
+
+/**
+ * HTTP error codes as classes. This serves as the base class.
+ */
+export class ApplicationError extends Error {
+  constructor(readonly code: number, message: string, readonly data?: any) {
+    super(message);
+  }
+}
 
 /**
  * Represents a structured application error for consistent error responses.
@@ -45,6 +54,9 @@ export class AppError extends Error {
    */
   readonly meta?: Record<string, any>;
 
+  readonly http_status_code?: number;
+
+
   /**
    * Constructs a new AppError instance.
    *
@@ -59,11 +71,16 @@ export class AppError extends Error {
     message: string;
     meta?: Record<string, any>;
   }) {
+
     super(params.message);
     this.name = this.constructor.name;
     this.superCode = params.superCode;
     this.subCode = params.subCode;
     this.meta = params.meta;
+
+    const errorDef = ERROR_SYSTEM[this.subCode];
+
+    this.http_status_code = errorDef.http_status_code;
 
     if ("captureStackTrace" in Error) {
       (Error as any).captureStackTrace(this, this.constructor);
@@ -91,6 +108,7 @@ export class AppError extends Error {
       sub_code: this.subCode,
       message: this.message,
       timestamp: this.timestamp,
+
       ...(this.meta && { meta: this.meta })
     };
   }

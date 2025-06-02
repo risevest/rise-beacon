@@ -45,8 +45,10 @@ export enum ValidationSubCodes {
   /** Input does not match the required format */
   INVALID_FORMAT =  4,
 
+  INVALID_INPUT = 5,
+
   /** The entity is semantically incorrect and cannot be processed */
-  UNPROCESSABLE_ENTITY =  5
+  UNPROCESSABLE_ENTITY =  6,
 }
 
 /**

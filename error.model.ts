@@ -17,6 +17,7 @@ export interface ErrorDefinition {
   category: ERROR_CATEGORIES;
   super_code?: number;
   sub_code?: number;
+  http_status_code?: number;
 }
 
 export interface ErrorSystem {
@@ -51,6 +52,7 @@ export interface SerializedError {
   message: string;
   meta?: Record<string, any>;
   timestamp: string;
+  http_status_code: number;
 }
 
 export interface ErrorConstructor {

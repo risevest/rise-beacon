@@ -1,5 +1,6 @@
 import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
 import { SystemSubCodes } from "./error-codes";
+import { StatusCodes } from "http-status-codes";
 
 export const systemErrors: ErrorSystem = {
   [SystemSubCodes.UNKNOWN_SYSTEM_ERROR]: {
@@ -7,7 +8,8 @@ export const systemErrors: ErrorSystem = {
       en: "A system error occurred. Please try again later."
     },
     category: ERROR_CATEGORIES.system_level,
-    severity: "critical"
+    severity: "critical",
+    http_status_code: StatusCodes.INTERNAL_SERVER_ERROR
   },
 
   [SystemSubCodes.DATABASE_CONNECTION_FAILED]: {
@@ -15,6 +17,7 @@ export const systemErrors: ErrorSystem = {
       en: "Unable to connect to the database. Please try again later."
     },
     category: ERROR_CATEGORIES.system_level,
-    severity: "critical"
+    severity: "critical",
+    http_status_code: StatusCodes.INTERNAL_SERVER_ERROR
   }
 };

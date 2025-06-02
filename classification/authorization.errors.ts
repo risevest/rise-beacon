@@ -1,5 +1,6 @@
 import { AuthorizationSubCodes } from "./error-codes";
 import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
+import { StatusCodes } from "http-status-codes";
 
 export const authorizationErrors: ErrorSystem = {
   [AuthorizationSubCodes.ACCESS_DENIED]: {
@@ -7,7 +8,8 @@ export const authorizationErrors: ErrorSystem = {
     description: {
       en: "Access denied: You are not authorized to perform this action.",
     },
-    severity: "high"
+    severity: "high",
+    http_status_code: StatusCodes.FORBIDDEN
   },
 
   [AuthorizationSubCodes.RESOURCE_FORBIDDEN]: {
@@ -15,7 +17,8 @@ export const authorizationErrors: ErrorSystem = {
     description: {
       en: "You are not allowed to access this resource.",
     },
-    severity: "high"
+    severity: "high",
+    http_status_code: StatusCodes.FORBIDDEN
   },
 
   [AuthorizationSubCodes.INVALID_STATE]: {
@@ -23,7 +26,8 @@ export const authorizationErrors: ErrorSystem = {
     description: {
       en: "This action cannot be performed in the current state.",
     },
-    severity: "medium"
+    severity: "medium",
+    http_status_code: StatusCodes.FORBIDDEN
   },
 
   [AuthorizationSubCodes.MISSING_PERMISSION]: {
@@ -31,7 +35,8 @@ export const authorizationErrors: ErrorSystem = {
     description: {
       en: "Permission missing to perform the requested action.",
     },
-    severity: "high"
+    severity: "high",
+    http_status_code: StatusCodes.FORBIDDEN
   },
 
   [AuthorizationSubCodes.TENANT_ACCESS_DENIED]: {
@@ -39,7 +44,8 @@ export const authorizationErrors: ErrorSystem = {
     description: {
       en: "Access to this tenant is denied.",
     },
-    severity: "high"
+    severity: "high",
+    http_status_code: StatusCodes.FORBIDDEN
   },
 
   [AuthorizationSubCodes.ORG_ACCESS_DENIED]: {
@@ -47,7 +53,8 @@ export const authorizationErrors: ErrorSystem = {
     description: {
       en: "Access to this organization is denied.",
     },
-    severity: "high"
+    severity: "high",
+    http_status_code: StatusCodes.FORBIDDEN
   },
 
   [AuthorizationSubCodes.POLICY_VIOLATION]: {
@@ -55,6 +62,7 @@ export const authorizationErrors: ErrorSystem = {
     description: {
       en: "Action violates an authorization policy.",
     },
-    severity: "high"
+    severity: "high",
+    http_status_code: StatusCodes.FORBIDDEN
   }
 };
