@@ -93,3 +93,147 @@
 //   });
 // }
 //
+
+
+//auth.ts
+//
+// import env from "@app/config/env";
+// import { ApplicationError } from "@app/internal/errors";
+// import { RedisStore, jwt as octojwt } from "@risemaxi/octonet";
+// import { NextFunction, Request, Response } from "express";
+// import { StatusCodes } from "http-status-codes";
+// import { Session } from "@app/sessions";
+// import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+// import { Actions } from "@app/core/verifications";
+// import { loadSession } from "./manator";
+// import { AuthenticationFailed, AuthenticationSubCodes } from "@app/internal/rise-beacon";
+//
+// let tokenStore: RedisStore;
+//
+// export function initStore(store: RedisStore) {
+//   tokenStore = store;
+// }
+//
+// /**
+//  * Load the claims from headless request into `Request.session`
+//  * @param req express request
+//  * @param res express respone
+//  * @param next next middleware function
+//  */
+// export async function headlessOnly(req: Request, _res: Response, next: NextFunction) {
+//   const authSession = req.headers.authorization;
+//
+//   if (!authSession) {
+//     return handleAuthError(next,"We could not authenticate your request");
+//   }
+//
+//   const [scheme, token] = authSession.split(/\s+/);
+//
+//   if (scheme !== env.auth_scheme) {
+//     return handleAuthError(next, `${scheme} is not supported`);
+//   }
+//
+//   try {
+//     req.session = await octojwt.decode(env.service_secret_bytes, token);
+//     return next();
+//   } catch (err) {
+//     if (err instanceof TokenExpiredError) {
+//       return handleAuthError(next, "Your authentication has expired", AuthenticationSubCodes.TOKEN_EXPIRED);
+//     }
+//     if (err instanceof JsonWebTokenError) {
+//       return handleAuthError(next, "We could not verify your authentication");
+//     }
+//     return next(err);
+//   }
+// }
+//
+// /**
+//  * Load the session of the user into `Request.session`
+//  * @param req express request
+//  * @param res express response
+//  * @param next next middleware function
+//  */
+// export async function authenticate(req: Request, res: Response, next: NextFunction) {
+//   const authSession = req.headers.authorization;
+//
+//   if (!authSession) {
+//     return handleAuthError(next, "We could not authenticate your request");
+//   }
+//
+//   const [scheme, token] = authSession.split(/\s+/);
+//
+//   if (scheme === env.auth_scheme) {
+//     try {
+//       req.session = await octojwt.decode(env.service_secret_bytes, token);
+//     } catch (err) {
+//       return handleAuthError(next, "Invalid or expired token", AuthenticationSubCodes.TOKEN_EXPIRED);
+//     }
+//   } else if (scheme === "Bearer") {
+//     const session = await tokenStore.extend<Session>(token, `${env.session_ttl}s`);
+//
+//     if (!session) {
+//       // NB: If there's no session, we need to validate that it's a deprecated session from the legacy system,
+//       return loadSession(req, res, next);
+//     }
+//
+//     const device = req.headers.device as string | undefined;
+//
+//     if (!device || session.device !== device) {
+//       return handleAuthError(next, "Your session is invalid");
+//     }
+//
+//     req.session = session;
+//   } else {
+//     return handleAuthError(next, `${scheme} is not supported. Please use the Bearer scheme`);
+//   }
+//
+//   next();
+// }
+//
+// export async function generateToken(session: Session, timeout: string = "5m") {
+//   return await octojwt.encode(env.service_secret_bytes, timeout, session);
+// }
+//
+// export async function authenticateOptional(req: Request, res: Response, next: NextFunction) {
+//   const authSession = req.headers.authorization;
+//
+//   if (!authSession) {
+//     return next();
+//   }
+//
+//   await authenticate(req, res, next);
+// }
+//
+// export function verify2FA(expectedAction: string) {
+//   return async (req: Request, _res: Response, next: NextFunction) => {
+//     const token = req.headers["x-rise-authorization-token"] as string | undefined;
+//
+//     if (!token) {
+//       return handleAuthError(next, "We could not validate your request");
+//     }
+//
+//     try {
+//       const actualAction = await tokenStore.peek<Actions>(token);
+//
+//       if (actualAction !== expectedAction) {
+//         return handleAuthError(next, "You can't perform this action", AuthenticationSubCodes.BASE);
+//       }
+//
+//       await tokenStore.revoke(token);
+//       return next();
+//     } catch (err) {
+//       return handleAuthError(next, "There was an issue verifying your request");
+//     }
+//   };
+// }
+//
+//
+// //helper functions
+// function handleAuthError(
+//   next: NextFunction,
+//   message: string,
+//   subCode: AuthenticationSubCodes = AuthenticationSubCodes.BASE
+// ) {
+//   const authError = new AuthenticationFailed(subCode, message);
+//   return next(new ApplicationError(StatusCodes.UNAUTHORIZED, authError.message, authError));
+// }

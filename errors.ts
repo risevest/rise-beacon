@@ -18,15 +18,6 @@ import { LanguageCode, MiniSerializedError, SerializedError } from "./error.mode
 import { StatusCodes } from "http-status-codes";
 
 /**
- * HTTP error codes as classes. This serves as the base class.
- */
-export class ApplicationError extends Error {
-  constructor(readonly code: number, message: string, readonly data?: any) {
-    super(message);
-  }
-}
-
-/**
  * Represents a structured application error for consistent error responses.
  *
  * This class is used to encapsulate application-level error information,
@@ -90,9 +81,11 @@ export class AppError extends Error {
    */
   toMinimalJSON() : MiniSerializedError {
     return {
-      super_code: this.superCode,
-      sub_code: this.subCode,
-      message: this.message
+      message: this.message,
+      data:{
+        super_code: this.superCode,
+        sub_code: this.subCode,
+      }
     };
   }
 
@@ -102,12 +95,15 @@ export class AppError extends Error {
    */
   toJSON() : SerializedError {
     return {
-      super_code: this.superCode,
-      sub_code: this.subCode,
       message: this.message,
-      timestamp: this.timestamp,
-      http_status_code: this.httpStatusCode,
-      ...(this.meta && { meta: this.meta })
+      data:{
+        super_code: this.superCode,
+        sub_code: this.subCode,
+
+        timestamp: this.timestamp,
+        http_status_code: this.httpStatusCode,
+        ...(this.meta && { meta: this.meta })
+      }
     };
   }
 }
