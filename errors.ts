@@ -243,8 +243,8 @@ export class ExternalServiceFailed extends AppError {
     }
   }
 
-  toJSON(): SerializedError {
-    const base = super.toJSON?.() ?? {};
+  toJSON(): SerializedError & { original_error?: string } {
+    const base = super.toJSON();
 
     return {
       ...base,
