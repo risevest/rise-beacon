@@ -1,10 +1,11 @@
 import {
+  AllSubCodes,
   authenticationErrors,
   AuthenticationSubCodes,
   authorizationErrors,
   AuthorizationSubCodes,
   businessLogicErrors,
-  BusinessLogicSubCodes,
+  BusinessLogicSubCodes, ERROR_SYSTEM,
   externalServiceErrors,
   ExternalServiceSubCodes,
   SuperErrorCodes,
@@ -15,6 +16,14 @@ import {
 } from "./classification";
 import { LanguageCode, MiniSerializedError, SerializedError } from "./error.model";
 
+/**
+ * HTTP error codes as classes. This serves as the base class.
+ */
+export class ApplicationError extends Error {
+  constructor(readonly code: number, message: string, readonly data?: any) {
+    super(message);
+  }
+}
 
 /**
  * Represents a structured application error for consistent error responses.
@@ -33,7 +42,7 @@ export class AppError extends Error {
    * Specific error detail within the category.
    * Should match a key in a subcode enum (e.g., `ValidationSubCodes`).
    */
-  readonly subCode: string;
+  readonly subCode: AllSubCodes;
 
   /**
    * ISO timestamp of when the error occurred.
@@ -45,6 +54,9 @@ export class AppError extends Error {
    */
   readonly meta?: Record<string, any>;
 
+  readonly http_status_code?: number;
+
+
   /**
    * Constructs a new AppError instance.
    *
@@ -55,15 +67,20 @@ export class AppError extends Error {
    */
   constructor(params: {
     superCode: SuperErrorCodes;
-    subCode: string;
+    subCode: AllSubCodes;
     message: string;
     meta?: Record<string, any>;
   }) {
+
     super(params.message);
     this.name = this.constructor.name;
     this.superCode = params.superCode;
     this.subCode = params.subCode;
     this.meta = params.meta;
+
+    const errorDef = ERROR_SYSTEM[this.subCode];
+
+    this.http_status_code = errorDef.http_status_code;
 
     if ("captureStackTrace" in Error) {
       (Error as any).captureStackTrace(this, this.constructor);
@@ -73,7 +90,7 @@ export class AppError extends Error {
   /**
    * Returns a minimal structure suitable for API responses.
    */
-  toResponse() : MiniSerializedError {
+  toMinimalJSON() : MiniSerializedError {
     return {
       super_code: this.superCode,
       sub_code: this.subCode,
@@ -85,12 +102,13 @@ export class AppError extends Error {
    * Returns the complete error details including metadata and timestamp.
    * Useful for internal logging or detailed error diagnostics.
    */
-  toFullResponse() : SerializedError {
+  toJSON() : SerializedError {
     return {
       super_code: this.superCode,
       sub_code: this.subCode,
       message: this.message,
       timestamp: this.timestamp,
+      http_status_code: this.http_status_code,
       ...(this.meta && { meta: this.meta })
     };
   }
@@ -225,8 +243,8 @@ export class ExternalServiceFailed extends AppError {
     }
   }
 
-  toJSON(): Record<string, any> {
-    const base = super.toFullResponse?.() ?? {};
+  toJSON(): SerializedError {
+    const base = super.toJSON?.() ?? {};
 
     return {
       ...base,
