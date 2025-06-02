@@ -38,21 +38,24 @@ export enum ERROR_CATEGORIES {
  * Mini-serialized representation of an application error.
  */
 export interface MiniSerializedError {
-  super_code: SuperErrorCodes;
-  sub_code: AllSubCodes;
   message: string;
+  data: SerializedErrorData;
 }
 
 /**
  * Mini-serialized representation of an application error.
  */
 export interface SerializedError {
+  message: string;
+  data: SerializedErrorData;
+}
+
+export interface SerializedErrorData{
   super_code: SuperErrorCodes;
   sub_code: AllSubCodes;
-  message: string;
   meta?: Record<string, any>;
-  timestamp: string;
-  http_status_code: number;
+  timestamp?: string;
+  http_status_code?: number;
 }
 
 export interface ErrorConstructor {
