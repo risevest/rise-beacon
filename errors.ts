@@ -5,7 +5,7 @@ import {
   authorizationErrors,
   AuthorizationSubCodes,
   businessLogicErrors,
-  BusinessLogicSubCodes,
+  BusinessLogicSubCodes, ERROR_SYSTEM,
   externalServiceErrors,
   ExternalServiceSubCodes,
   SuperErrorCodes,
@@ -57,7 +57,6 @@ export class AppError extends Error {
 
   readonly httpStatusCode: StatusCodes;
 
-
   /**
    * Constructs a new AppError instance.
    *
@@ -80,6 +79,10 @@ export class AppError extends Error {
     this.subCode = params.subCode;
     this.meta = params.meta;
     this.httpStatusCode = params.httpStatusCode;
+
+    const errorDef = ERROR_SYSTEM[this.subCode];
+
+    this.http_status_code = errorDef.http_status_code;
 
     if ("captureStackTrace" in Error) {
       (Error as any).captureStackTrace(this, this.constructor);
