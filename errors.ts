@@ -5,7 +5,7 @@ import {
   authorizationErrors,
   AuthorizationSubCodes,
   businessLogicErrors,
-  BusinessLogicSubCodes, ERROR_SYSTEM,
+  BusinessLogicSubCodes,
   externalServiceErrors,
   ExternalServiceSubCodes,
   SuperErrorCodes,
@@ -15,6 +15,7 @@ import {
   ValidationSubCodes
 } from "./classification";
 import { LanguageCode, MiniSerializedError, SerializedError } from "./error.model";
+import { StatusCodes } from "http-status-codes";
 
 /**
  * HTTP error codes as classes. This serves as the base class.
@@ -54,7 +55,7 @@ export class AppError extends Error {
    */
   readonly meta?: Record<string, any>;
 
-  readonly http_status_code?: number;
+  readonly httpStatusCode: StatusCodes;
 
 
   /**
@@ -69,6 +70,7 @@ export class AppError extends Error {
     superCode: SuperErrorCodes;
     subCode: AllSubCodes;
     message: string;
+    httpStatusCode: StatusCodes;
     meta?: Record<string, any>;
   }) {
 
@@ -77,10 +79,7 @@ export class AppError extends Error {
     this.superCode = params.superCode;
     this.subCode = params.subCode;
     this.meta = params.meta;
-
-    const errorDef = ERROR_SYSTEM[this.subCode];
-
-    this.http_status_code = errorDef.http_status_code;
+    this.httpStatusCode = params.httpStatusCode;
 
     if ("captureStackTrace" in Error) {
       (Error as any).captureStackTrace(this, this.constructor);
@@ -108,7 +107,7 @@ export class AppError extends Error {
       sub_code: this.subCode,
       message: this.message,
       timestamp: this.timestamp,
-      http_status_code: this.http_status_code,
+      http_status_code: this.httpStatusCode,
       ...(this.meta && { meta: this.meta })
     };
   }
@@ -133,7 +132,8 @@ export class ValidationFailed extends AppError {
       superCode: SuperErrorCodes.VALIDATION_ERROR,
       subCode,
       message: message ?? defaultMessage,
-      meta,
+      httpStatusCode: errorDef.http_status_code,
+      meta
     });
   }
 }
@@ -157,6 +157,7 @@ export class AuthenticationFailed extends AppError {
       superCode: SuperErrorCodes.AUTHENTICATION_ERROR,
       subCode,
       message: message ?? defaultMessage,
+      httpStatusCode: errorDef.http_status_code,
       meta,
     });
   }
@@ -181,6 +182,7 @@ export class AuthorizationFailed extends AppError {
       superCode: SuperErrorCodes.AUTHORIZATION_ERROR,
       subCode,
       message: message ?? defaultMessage,
+      httpStatusCode: errorDef.http_status_code,
       meta,
     });
   }
@@ -205,6 +207,7 @@ export class BusinessLogicFailed extends AppError {
       superCode: SuperErrorCodes.BUSINESS_LOGIC_ERROR,
       subCode,
       message: message ?? defaultMessage,
+      httpStatusCode: errorDef.http_status_code,
       meta,
     });
   }
@@ -234,6 +237,7 @@ export class ExternalServiceFailed extends AppError {
       superCode: SuperErrorCodes.EXTERNAL_SERVICE_ERROR,
       subCode,
       message: message ?? defaultMessage,
+      httpStatusCode: errorDef.http_status_code,
       meta,
     });
 
@@ -274,6 +278,7 @@ export class SystemLevelFailed extends AppError {
       superCode: SuperErrorCodes.SYSTEM_ERROR,
       subCode,
       message: message ?? defaultMessage,
+      httpStatusCode: errorDef.http_status_code,
       meta,
     });
   }
