@@ -48,7 +48,6 @@ export class AppError extends Error {
 
   readonly httpStatusCode: StatusCodes;
 
-
   /**
    * Constructs a new AppError instance.
    *
