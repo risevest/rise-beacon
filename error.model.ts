@@ -15,8 +15,8 @@ export interface ErrorDefinition {
   description: ErrorTranslation;
   severity: Severity;
   category: ERROR_CATEGORIES;
-  super_code: number;
-  sub_code: number;
+  super_code?: number;
+  sub_code?: number;
   http_status_code: number;
 }
 
