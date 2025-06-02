@@ -19,6 +19,7 @@ export const authenticationErrors: ErrorSystem = {
       en: "Invalid login credentials"
     },
     severity: "high",
+    http_status_code: StatusCodes.UNAUTHORIZED
   },
   [AuthenticationSubCodes.TOKEN_EXPIRED]: {
     category: ERROR_CATEGORIES.authentication,

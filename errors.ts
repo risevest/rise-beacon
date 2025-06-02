@@ -15,6 +15,7 @@ import {
   ValidationSubCodes
 } from "./classification";
 import { LanguageCode, MiniSerializedError, SerializedError } from "./error.model";
+import { StatusCodes } from "http-status-codes";
 
 /**
  * HTTP error codes as classes. This serves as the base class.
@@ -54,8 +55,7 @@ export class AppError extends Error {
    */
   readonly meta?: Record<string, any>;
 
-  readonly http_status_code?: number;
-
+  readonly httpStatusCode: StatusCodes;
 
   /**
    * Constructs a new AppError instance.
@@ -69,6 +69,7 @@ export class AppError extends Error {
     superCode: SuperErrorCodes;
     subCode: AllSubCodes;
     message: string;
+    httpStatusCode: StatusCodes;
     meta?: Record<string, any>;
   }) {
 
@@ -77,6 +78,7 @@ export class AppError extends Error {
     this.superCode = params.superCode;
     this.subCode = params.subCode;
     this.meta = params.meta;
+    this.httpStatusCode = params.httpStatusCode;
 
     const errorDef = ERROR_SYSTEM[this.subCode];
 
@@ -108,7 +110,7 @@ export class AppError extends Error {
       sub_code: this.subCode,
       message: this.message,
       timestamp: this.timestamp,
-      http_status_code: this.http_status_code,
+      http_status_code: this.httpStatusCode,
       ...(this.meta && { meta: this.meta })
     };
   }
@@ -133,7 +135,8 @@ export class ValidationFailed extends AppError {
       superCode: SuperErrorCodes.VALIDATION_ERROR,
       subCode,
       message: message ?? defaultMessage,
-      meta,
+      httpStatusCode: errorDef.http_status_code,
+      meta
     });
   }
 }
@@ -157,6 +160,7 @@ export class AuthenticationFailed extends AppError {
       superCode: SuperErrorCodes.AUTHENTICATION_ERROR,
       subCode,
       message: message ?? defaultMessage,
+      httpStatusCode: errorDef.http_status_code,
       meta,
     });
   }
@@ -181,6 +185,7 @@ export class AuthorizationFailed extends AppError {
       superCode: SuperErrorCodes.AUTHORIZATION_ERROR,
       subCode,
       message: message ?? defaultMessage,
+      httpStatusCode: errorDef.http_status_code,
       meta,
     });
   }
@@ -205,6 +210,7 @@ export class BusinessLogicFailed extends AppError {
       superCode: SuperErrorCodes.BUSINESS_LOGIC_ERROR,
       subCode,
       message: message ?? defaultMessage,
+      httpStatusCode: errorDef.http_status_code,
       meta,
     });
   }
@@ -234,6 +240,7 @@ export class ExternalServiceFailed extends AppError {
       superCode: SuperErrorCodes.EXTERNAL_SERVICE_ERROR,
       subCode,
       message: message ?? defaultMessage,
+      httpStatusCode: errorDef.http_status_code,
       meta,
     });
 
@@ -243,8 +250,8 @@ export class ExternalServiceFailed extends AppError {
     }
   }
 
-  toJSON(): SerializedError {
-    const base = super.toJSON?.() ?? {};
+  toJSON(): SerializedError & { original_error?: string } {
+    const base = super.toJSON();
 
     return {
       ...base,
@@ -274,6 +281,7 @@ export class SystemLevelFailed extends AppError {
       superCode: SuperErrorCodes.SYSTEM_ERROR,
       subCode,
       message: message ?? defaultMessage,
+      httpStatusCode: errorDef.http_status_code,
       meta,
     });
   }
