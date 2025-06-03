@@ -4,20 +4,12 @@ import { StatusCodes } from "http-status-codes";
 
 export const systemErrors: ErrorSystem = {
   [SystemSubCodes.UNKNOWN_SYSTEM_ERROR]: {
-    description: {
-      en: "A system error occurred. Please try again later."
-    },
     category: ERROR_CATEGORIES.system_level,
-    severity: "critical",
-    http_status_code: StatusCodes.INTERNAL_SERVER_ERROR
+    description: "A system error occurred. Please try again later."
   },
-
   [SystemSubCodes.DATABASE_CONNECTION_FAILED]: {
-    description: {
-      en: "Unable to connect to the database. Please try again later."
-    },
     category: ERROR_CATEGORIES.system_level,
-    severity: "critical",
-    http_status_code: StatusCodes.INTERNAL_SERVER_ERROR
+
+    description: "Unable to connect to the database. Please try again later."
   }
 };

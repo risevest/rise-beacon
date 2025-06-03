@@ -5,64 +5,36 @@ import { StatusCodes } from "http-status-codes";
 export const authorizationErrors: ErrorSystem = {
   [AuthorizationSubCodes.ACCESS_DENIED]: {
     category: ERROR_CATEGORIES.authorization,
-    description: {
-      en: "Access denied: You are not authorized to perform this action.",
-    },
-    severity: "high",
-    http_status_code: StatusCodes.FORBIDDEN
+    description: "Access denied: You are not authorized to perform this action."
   },
 
   [AuthorizationSubCodes.RESOURCE_FORBIDDEN]: {
     category: ERROR_CATEGORIES.authorization,
-    description: {
-      en: "You are not allowed to access this resource.",
-    },
-    severity: "high",
-    http_status_code: StatusCodes.FORBIDDEN
+    description: "You are not allowed to access this resource."
   },
 
   [AuthorizationSubCodes.INVALID_STATE]: {
     category: ERROR_CATEGORIES.authorization,
-    description: {
-      en: "This action cannot be performed in the current state.",
-    },
-    severity: "medium",
-    http_status_code: StatusCodes.FORBIDDEN
+    description: "This action cannot be performed in the current state."
   },
 
   [AuthorizationSubCodes.MISSING_PERMISSION]: {
     category: ERROR_CATEGORIES.authorization,
-    description: {
-      en: "Permission missing to perform the requested action.",
-    },
-    severity: "high",
-    http_status_code: StatusCodes.FORBIDDEN
+    description: "Permission missing to perform the requested action."
   },
 
   [AuthorizationSubCodes.TENANT_ACCESS_DENIED]: {
     category: ERROR_CATEGORIES.authorization,
-    description: {
-      en: "Access to this tenant is denied.",
-    },
-    severity: "high",
-    http_status_code: StatusCodes.FORBIDDEN
+    description: "Access to this tenant is denied."
   },
 
   [AuthorizationSubCodes.ORG_ACCESS_DENIED]: {
     category: ERROR_CATEGORIES.authorization,
-    description: {
-      en: "Access to this organization is denied.",
-    },
-    severity: "high",
-    http_status_code: StatusCodes.FORBIDDEN
+    description:  "Access to this organization is denied."
   },
 
   [AuthorizationSubCodes.POLICY_VIOLATION]: {
     category: ERROR_CATEGORIES.authorization,
-    description: {
-      en: "Action violates an authorization policy.",
-    },
-    severity: "high",
-    http_status_code: StatusCodes.FORBIDDEN
+    description: "Action violates an authorization policy."
   }
 };
