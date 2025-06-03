@@ -46,6 +46,9 @@ export class AppError extends Error {
    */
   readonly meta?: Record<string, any>;
 
+  /**
+   * HTTP status code that should be returned for this error.
+   */
   readonly httpStatusCode: StatusCodes;
 
   /**
