@@ -13,15 +13,7 @@ export interface ErrorSystem {
 }
 
 /**
- * Mini-serialized representation of an application error.
- */
-export interface MiniSerializedError {
-  message: string;
-  data: SerializedErrorData;
-}
-
-/**
- * Mini-serialized representation of an application error.
+ * Serialized representation of an application error.
  */
 export interface SerializedError {
   message: string;

@@ -14,7 +14,7 @@ import {
   validationErrors,
   ValidationSubCodes
 } from "./classification";
-import { MiniSerializedError, SerializedError } from "./error.model";
+import { SerializedError } from "./error.model";
 
 /**
  * Represents a structured application error for consistent error responses.
@@ -74,7 +74,7 @@ export class AppError extends Error {
   /**
    * Returns a minimal structure suitable for API responses.
    */
-  toMinimalJSON() : MiniSerializedError {
+  toMinimalJSON() : SerializedError {
     return {
       message: this.message,
       data:{
