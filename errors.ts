@@ -72,19 +72,6 @@ export class AppError extends Error {
   }
 
   /**
-   * Returns a minimal structure suitable for API responses.
-   */
-  toMinimalJSON() : SerializedError {
-    return {
-      message: this.message,
-      data:{
-        super_code: this.superCode,
-        sub_code: this.subCode,
-      }
-    };
-  }
-
-  /**
    * Returns the complete error details including metadata and timestamp.
    * Useful for internal logging or detailed error diagnostics.
    */
