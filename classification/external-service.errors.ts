@@ -5,19 +5,11 @@ import { StatusCodes } from "http-status-codes";
 export const externalServiceErrors: ErrorSystem = {
   [ExternalServiceSubCodes.SERVICE_UNAVAILABLE]: {
     category: ERROR_CATEGORIES.external_service,
-    description: {
-      en: "An external service is currently unavailable."
-    },
-    severity: "high",
-    http_status_code: StatusCodes.SERVICE_UNAVAILABLE
+    description: "An external service is currently unavailable."
   },
 
   [ExternalServiceSubCodes.SERVICE_TIMEOUT]: {
     category: ERROR_CATEGORIES.external_service,
-    description: {
-      en: "The external service did not respond in time."
-    },
-    severity: "high",
-    http_status_code: StatusCodes.SERVICE_UNAVAILABLE
+    description: "The external service did not respond in time."
   }
 };

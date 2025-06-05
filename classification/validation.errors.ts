@@ -6,58 +6,30 @@ export const validationErrors: ErrorSystem = {
   // 1xxx - Validation Errors
   [ValidationSubCodes.BASE]: {
     category: ERROR_CATEGORIES.validation,
-    description: {
-      en: "Validation failed"
-    },
-    severity: "medium",
-    http_status_code: StatusCodes.BAD_REQUEST
+    description: "Validation failed"
   },
   [ValidationSubCodes.INVALID_OTP]: {
     category: ERROR_CATEGORIES.validation,
-    description: {
-      en: "Invalid or expired OTP"
-    },
-    severity: "medium",
-    http_status_code: StatusCodes.UNPROCESSABLE_ENTITY
+    description: "Invalid or expired OTP"
   },
   [ValidationSubCodes.DUPLICATE_ENTRY]: {
     category: ERROR_CATEGORIES.validation,
-    description: {
-      en: "Duplicate value found."
-    },
-    severity: "low",
-    http_status_code: StatusCodes.CONFLICT
+    description: "Duplicate value found."
   },
   [ValidationSubCodes.REQUIRED_FIELD_MISSING]: {
     category: ERROR_CATEGORIES.validation,
-    description: {
-      en: "Required field missing"
-    },
-    severity: "medium",
-    http_status_code: StatusCodes.BAD_REQUEST
+    description: "Required field missing"
   },
   [ValidationSubCodes.INVALID_FORMAT]: {
     category: ERROR_CATEGORIES.validation,
-    description: {
-      en: "Invalid format"
-    },
-    severity: "medium",
-    http_status_code: StatusCodes.BAD_REQUEST
+    description: "Invalid format"
   },
   [ValidationSubCodes.INVALID_INPUT]: {
     category: ERROR_CATEGORIES.validation,
-    description: {
-      en: "Invalid input"
-    },
-    severity: "medium",
-    http_status_code: StatusCodes.BAD_REQUEST
+    description:  "Invalid input"
   },
   [ValidationSubCodes.UNPROCESSABLE_ENTITY]: {
     category: ERROR_CATEGORIES.validation,
-    description: {
-      en: "The some fields could not be processed due to a semantic validation error."
-    },
-    severity: "medium",
-    http_status_code: StatusCodes.UNPROCESSABLE_ENTITY
+    description: "The some fields could not be processed due to a semantic validation error."
   }
 };
