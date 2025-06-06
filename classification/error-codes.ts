@@ -73,7 +73,11 @@ export enum AuthenticationSubCodes {
   /** The provided authentication scheme is not supported */
   INVALID_AUTH_SCHEME = 5,
 
+  /** The action requested does not match the allowed or expected action */
   ACTION_MISMATCH = 6,
+
+  /** The provided signature is invalid or does not match the expected value */
+  INVALID_SIGNATURE = 7,
 }
 
 /**
