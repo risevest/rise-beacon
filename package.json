@@ -13,8 +13,6 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "tsc",
-    "generate-docs": "ts-node scripts/generate-error-docs.ts",
-    "prepare": "npm run build && npm run generate-docs"
+    "build": "tsc"
   }
 }

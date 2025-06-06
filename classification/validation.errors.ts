@@ -1,6 +1,5 @@
 import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
 import { ValidationSubCodes } from "./error-codes";
-import { StatusCodes } from "http-status-codes";
 
 export const validationErrors: ErrorSystem = {
   // 1xxx - Validation Errors
