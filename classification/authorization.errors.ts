@@ -1,6 +1,6 @@
-import { AuthorizationSubCodes } from "./error-codes";
 import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
-import { StatusCodes } from "http-status-codes";
+
+import { AuthorizationSubCodes } from "./error-codes";
 
 export const authorizationErrors: ErrorSystem = {
   [AuthorizationSubCodes.ACCESS_DENIED]: {
@@ -30,7 +30,7 @@ export const authorizationErrors: ErrorSystem = {
 
   [AuthorizationSubCodes.ORG_ACCESS_DENIED]: {
     category: ERROR_CATEGORIES.authorization,
-    description:  "Access to this organization is denied."
+    description: "Access to this organization is denied."
   },
 
   [AuthorizationSubCodes.POLICY_VIOLATION]: {
