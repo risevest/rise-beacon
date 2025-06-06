@@ -1,6 +1,5 @@
 import { AuthorizationSubCodes } from "./error-codes";
 import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
-import { StatusCodes } from "http-status-codes";
 
 export const authorizationErrors: ErrorSystem = {
   [AuthorizationSubCodes.ACCESS_DENIED]: {
