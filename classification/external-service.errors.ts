@@ -1,6 +1,6 @@
-import { ExternalServiceSubCodes } from "./error-codes";
 import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
-import { StatusCodes } from "http-status-codes";
+
+import { ExternalServiceSubCodes } from "./error-codes";
 
 export const externalServiceErrors: ErrorSystem = {
   [ExternalServiceSubCodes.SERVICE_UNAVAILABLE]: {

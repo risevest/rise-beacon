@@ -1,9 +1,10 @@
-import { BusinessLogicSubCodes } from "./error-codes";
 import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
-import { StatusCodes } from "http-status-codes";
+
+import { BusinessLogicSubCodes } from "./error-codes";
 
 export const businessLogicErrors: ErrorSystem = {
-  [BusinessLogicSubCodes.BASE]: { //BUSINESS_RULE_VIOLATION
+  [BusinessLogicSubCodes.BASE]: {
+    //BUSINESS_RULE_VIOLATION
     category: ERROR_CATEGORIES.business_logic,
     description: "A business rule was violated."
   },

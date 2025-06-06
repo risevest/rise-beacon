@@ -1,6 +1,6 @@
 import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
+
 import { SystemSubCodes } from "./error-codes";
-import { StatusCodes } from "http-status-codes";
 
 export const systemErrors: ErrorSystem = {
   [SystemSubCodes.UNKNOWN_SYSTEM_ERROR]: {
