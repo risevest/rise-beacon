@@ -1,4 +1,5 @@
 import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
+
 import { ValidationSubCodes } from "./error-codes";
 
 export const validationErrors: ErrorSystem = {
@@ -25,7 +26,7 @@ export const validationErrors: ErrorSystem = {
   },
   [ValidationSubCodes.INVALID_INPUT]: {
     category: ERROR_CATEGORIES.validation,
-    description:  "Invalid input"
+    description: "Invalid input"
   },
   [ValidationSubCodes.UNPROCESSABLE_ENTITY]: {
     category: ERROR_CATEGORIES.validation,

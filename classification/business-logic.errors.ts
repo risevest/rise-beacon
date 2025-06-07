@@ -1,8 +1,8 @@
-import { BusinessLogicSubCodes } from "./error-codes";
 import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
+import { BusinessLogicSubCodes } from "./error-codes";
 
 export const businessLogicErrors: ErrorSystem = {
-  [BusinessLogicSubCodes.BASE]: {
+  [BusinessLogicSubCodes.BASE]: {  //BUSINESS_RULE_VIOLATION
     category: ERROR_CATEGORIES.business_logic,
     description: "A business rule was violated."
   },
