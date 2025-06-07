@@ -1,5 +1,4 @@
 import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
-
 import { AuthorizationSubCodes } from "./error-codes";
 
 export const authorizationErrors: ErrorSystem = {

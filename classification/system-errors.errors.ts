@@ -9,7 +9,6 @@ export const systemErrors: ErrorSystem = {
   },
   [SystemSubCodes.DATABASE_CONNECTION_FAILED]: {
     category: ERROR_CATEGORIES.system_level,
-
     description: "Unable to connect to the database. Please try again later."
   }
 };

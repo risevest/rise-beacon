@@ -31,5 +31,9 @@ export const authenticationErrors: ErrorSystem = {
   [AuthenticationSubCodes.ACTION_MISMATCH]: {
     category: ERROR_CATEGORIES.authentication,
     description: "The provided token is not valid for this action"
+  },
+  [AuthenticationSubCodes.INVALID_SIGNATURE]: {
+    category: ERROR_CATEGORIES.authentication,
+    description: "The provided signature is invalid or does not match the expected value"
   }
 }

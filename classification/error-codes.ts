@@ -73,7 +73,11 @@ export enum AuthenticationSubCodes {
   /** The provided authentication scheme is not supported */
   INVALID_AUTH_SCHEME = 5,
 
+  /** The action requested does not match the allowed or expected action */
   ACTION_MISMATCH = 6,
+
+  /** The provided signature is invalid or does not match the expected value */
+  INVALID_SIGNATURE = 7,
 }
 
 /**
@@ -116,7 +120,16 @@ export enum BusinessLogicSubCodes {
   RESOURCE_INACTIVE = 2,
 
   /** A value does not match any valid enum entries */
-  INVALID_ENUM_VALUE = 3
+  INVALID_ENUM_VALUE = 3,
+
+  /** The resource cannot be updated or acted upon due to its current state */
+  RESOURCE_STATE_INVALID = 4,
+
+  /** A domain/business rule was violated */
+  RULE_VIOLATION = 5,
+
+  /** A structural or contextual constraint was violated */
+  CONSTRAINT_VIOLATION = 6,
 }
 
 /**
@@ -126,9 +139,24 @@ export enum BusinessLogicSubCodes {
 export enum ExternalServiceSubCodes {
   /** The downstream service is currently unavailable */
   SERVICE_UNAVAILABLE = 1,
-
   /** The request to the downstream service timed out */
-  SERVICE_TIMEOUT = 2
+  SERVICE_TIMEOUT = 2,
+  /** Authentication failed when calling the external service */
+  SERVICE_AUTH_FAILED = 3,
+  /** The external service rejected the request format/data */
+  SERVICE_VALIDATION_ERROR = 4,
+  /** The external service returned an unexpected response format */
+  SERVICE_RESPONSE_INVALID = 5,
+  /** The external service is experiencing degraded performance */
+  SERVICE_DEGRADED = 6,
+  /** The external service quota/limits have been exceeded */
+  SERVICE_QUOTA_EXCEEDED = 7,
+  /** The requested resource was not found in the external service */
+  SERVICE_NOT_FOUND = 8,
+  /** The external service configuration is invalid */
+  SERVICE_MISCONFIGURED = 9,
+  /** Generic external service error that doesn't fit other categories */
+  SERVICE_UNKNOWN_ERROR = 99
 }
 
 /**
@@ -141,6 +169,7 @@ export enum SystemSubCodes {
 /** The system could not connect to the database */
   DATABASE_CONNECTION_FAILED = 1
 }
+
 
 /**
  * Grouped export of all subcodes by category.
