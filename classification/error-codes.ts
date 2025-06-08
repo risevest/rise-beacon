@@ -43,12 +43,12 @@ export enum ValidationSubCodes {
   REQUIRED_FIELD_MISSING = 3,
 
   /** Input does not match the required format */
-  INVALID_FORMAT =  4,
+  INVALID_FORMAT = 4,
 
   INVALID_INPUT = 5,
 
   /** The entity is semantically incorrect and cannot be processed */
-  UNPROCESSABLE_ENTITY =  6,
+  UNPROCESSABLE_ENTITY = 6
 }
 
 /**
@@ -77,7 +77,7 @@ export enum AuthenticationSubCodes {
   ACTION_MISMATCH = 6,
 
   /** The provided signature is invalid or does not match the expected value */
-  INVALID_SIGNATURE = 7,
+  INVALID_SIGNATURE = 7
 }
 
 /**
@@ -129,7 +129,7 @@ export enum BusinessLogicSubCodes {
   RULE_VIOLATION = 5,
 
   /** A structural or contextual constraint was violated */
-  CONSTRAINT_VIOLATION = 6,
+  CONSTRAINT_VIOLATION = 6
 }
 
 /**
@@ -166,10 +166,9 @@ export enum ExternalServiceSubCodes {
 export enum SystemSubCodes {
   UNKNOWN_SYSTEM_ERROR = 0,
 
-/** The system could not connect to the database */
+  /** The system could not connect to the database */
   DATABASE_CONNECTION_FAILED = 1
 }
-
 
 /**
  * Grouped export of all subcodes by category.

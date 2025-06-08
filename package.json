@@ -2,6 +2,13 @@
   "name": "rise-beacon",
   "version": "1.0.0",
   "description": "Standardized error handling and classification for Rise projects",
+  "repository": "git@github.com:risevest/rise-beacon.git",
+  "author": "Audrey Ezeonyedika <audreyezeonyedika@gmail.com>",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "spotless-apply": "eslint . --ext .ts,.tsx --fix && prettier --write '**/*.{ts,tsx,js,jsx,json,md}' '!node_modules/**'"
+  },
   "peerDependencies": {
     "http-status-codes": ">=2.0.0"
   },
@@ -9,10 +16,13 @@
     "http-status-codes": "^2.3.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.28.0",
+    "@typescript-eslint/eslint-plugin": "^8.33.1",
+    "@typescript-eslint/parser": "^8.33.1",
+    "eslint": "^9.28.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "prettier": "^3.5.3",
     "typescript": "^5.4.2"
-  },
-  "scripts": {
-    "typecheck": "tsc --noEmit",
-    "build": "tsc"
   }
 }

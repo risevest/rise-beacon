@@ -1,20 +1,20 @@
 import {
   AllSubCodes,
-  authenticationErrors,
   AuthenticationSubCodes,
-  authorizationErrors,
   AuthorizationSubCodes,
-  businessLogicErrors,
   BusinessLogicSubCodes,
-  externalServiceErrors,
   ExternalServiceSubCodes,
   SuperErrorCodes,
-  systemErrors,
   SystemSubCodes,
-  validationErrors,
-  ValidationSubCodes
-} from "./classification";
-import { SerializedError } from "./error.model";
+  ValidationSubCodes,
+  authenticationErrors,
+  authorizationErrors,
+  businessLogicErrors,
+  externalServiceErrors,
+  systemErrors,
+  validationErrors
+} from './classification';
+import { SerializedError } from './error.model';
 
 /**
  * Represents a structured application error for consistent error responses.
@@ -59,14 +59,13 @@ export class AppError extends Error {
     message: string;
     meta?: Record<string, any>;
   }) {
-
     super(params.message);
     this.name = this.constructor.name;
     this.superCode = params.superCode;
     this.subCode = params.subCode;
     this.meta = params.meta;
 
-    if ("captureStackTrace" in Error) {
+    if ('captureStackTrace' in Error) {
       (Error as any).captureStackTrace(this, this.constructor);
     }
   }
@@ -75,10 +74,10 @@ export class AppError extends Error {
    * Returns the complete error details including metadata and timestamp.
    * Useful for internal logging or detailed error diagnostics.
    */
-  toJSON() : SerializedError {
+  toJSON(): SerializedError {
     return {
       message: this.message,
-      data:{
+      data: {
         super_code: this.superCode,
         sub_code: this.subCode,
 
@@ -93,15 +92,10 @@ export class AppError extends Error {
  * Represents validation-related application errors.
  */
 export class ValidationFailed extends AppError {
-  constructor(
-    subCode: ValidationSubCodes,
-    message?: string,
-    meta?: Record<string, any>
-  ) {
+  constructor(subCode: ValidationSubCodes, message?: string, meta?: Record<string, any>) {
     const errorDef = validationErrors[subCode];
 
-    const defaultMessage =
-       errorDef?.description ?? "Validation failed";
+    const defaultMessage = errorDef?.description ?? 'Validation failed';
 
     super({
       superCode: SuperErrorCodes.VALIDATION_ERROR,
@@ -116,21 +110,16 @@ export class ValidationFailed extends AppError {
  * Represents authentication-related application errors.
  */
 export class AuthenticationFailed extends AppError {
-  constructor(
-    subCode: AuthenticationSubCodes,
-    message?: string,
-    meta?: Record<string, any>
-  ) {
+  constructor(subCode: AuthenticationSubCodes, message?: string, meta?: Record<string, any>) {
     const errorDef = authenticationErrors[subCode];
 
-    const defaultMessage =
-      errorDef?.description ??  "Authentication failed";
+    const defaultMessage = errorDef?.description ?? 'Authentication failed';
 
     super({
       superCode: SuperErrorCodes.AUTHENTICATION_ERROR,
       subCode,
       message: message ?? defaultMessage,
-      meta,
+      meta
     });
   }
 }
@@ -139,21 +128,16 @@ export class AuthenticationFailed extends AppError {
  * Represents authorization-related application errors.
  */
 export class AuthorizationFailed extends AppError {
-  constructor(
-    subCode: AuthorizationSubCodes,
-    message?: string,
-    meta?: Record<string, any>
-  ) {
+  constructor(subCode: AuthorizationSubCodes, message?: string, meta?: Record<string, any>) {
     const errorDef = authorizationErrors[subCode];
 
-    const defaultMessage =
-      errorDef?.description ?? "Authorization failed";
+    const defaultMessage = errorDef?.description ?? 'Authorization failed';
 
     super({
       superCode: SuperErrorCodes.AUTHORIZATION_ERROR,
       subCode,
       message: message ?? defaultMessage,
-      meta,
+      meta
     });
   }
 }
@@ -162,21 +146,16 @@ export class AuthorizationFailed extends AppError {
  * Represents business-logic-related application errors.
  */
 export class BusinessLogicFailed extends AppError {
-  constructor(
-    subCode: BusinessLogicSubCodes,
-    message?: string,
-    meta?: Record<string, any>
-  ) {
+  constructor(subCode: BusinessLogicSubCodes, message?: string, meta?: Record<string, any>) {
     const errorDef = businessLogicErrors[subCode];
 
-    const defaultMessage =
-      errorDef?.description ?? "Business logic error";
+    const defaultMessage = errorDef?.description ?? 'Business logic error';
 
     super({
       superCode: SuperErrorCodes.BUSINESS_LOGIC_ERROR,
       subCode,
       message: message ?? defaultMessage,
-      meta,
+      meta
     });
   }
 }
@@ -187,23 +166,16 @@ export class BusinessLogicFailed extends AppError {
 export class ExternalServiceFailed extends AppError {
   originalError?: Error;
 
-  constructor(
-    subCode: ExternalServiceSubCodes,
-    message?: string,
-    meta?: Record<string, any>,
-    originalError?: unknown
-  ) {
+  constructor(subCode: ExternalServiceSubCodes, message?: string, meta?: Record<string, any>, originalError?: unknown) {
     const errorDef = externalServiceErrors[subCode];
 
-    const defaultMessage =
-      errorDef?.description ??
-      "External service error";
+    const defaultMessage = errorDef?.description ?? 'External service error';
 
     super({
       superCode: SuperErrorCodes.EXTERNAL_SERVICE_ERROR,
       subCode,
       message: message ?? defaultMessage,
-      meta,
+      meta
     });
 
     if (originalError instanceof Error) {
@@ -218,8 +190,8 @@ export class ExternalServiceFailed extends AppError {
     return {
       ...base,
       ...(this.originalError && {
-        original_error: this.originalError.message,
-      }),
+        original_error: this.originalError.message
+      })
     };
   }
 }
@@ -228,21 +200,16 @@ export class ExternalServiceFailed extends AppError {
  * Represents system-level application errors.
  */
 export class SystemLevelFailed extends AppError {
-  constructor(
-    subCode: SystemSubCodes,
-    message?: string,
-    meta?: Record<string, any>
-  ) {
+  constructor(subCode: SystemSubCodes, message?: string, meta?: Record<string, any>) {
     const errorDef = systemErrors[subCode];
 
-    const defaultMessage =
-      errorDef?.description ?? "System error";
+    const defaultMessage = errorDef?.description ?? 'System error';
 
     super({
       superCode: SuperErrorCodes.SYSTEM_ERROR,
       subCode,
       message: message ?? defaultMessage,
-      meta,
+      meta
     });
   }
 }

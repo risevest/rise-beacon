@@ -1,5 +1,5 @@
 // error.model.ts
-import { AllSubCodes, SuperErrorCodes } from "./classification";
+import { AllSubCodes, SuperErrorCodes } from './classification';
 
 export interface ErrorDefinition {
   description: string;
@@ -20,7 +20,7 @@ export interface SerializedError {
   data: SerializedErrorData;
 }
 
-export interface SerializedErrorData{
+export interface SerializedErrorData {
   super_code: SuperErrorCodes;
   sub_code: AllSubCodes;
   meta?: Record<string, any>;

@@ -1,6 +1,6 @@
-import { ERROR_CATEGORIES } from "./error.model";
-import { AppError } from "./errors";
-import { ERROR_SYSTEM } from "./classification";
+import { ERROR_SYSTEM } from './classification';
+import { ERROR_CATEGORIES } from './error.model';
+import { AppError } from './errors';
 
 /**
  * A utility class for error operations such as introspection, validation,
