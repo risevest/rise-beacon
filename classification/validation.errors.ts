@@ -31,5 +31,13 @@ export const validationErrors: ErrorSystem = {
   [ValidationSubCodes.UNPROCESSABLE_ENTITY]: {
     category: ERROR_CATEGORIES.validation,
     description: "The some fields could not be processed due to a semantic validation error."
+  },
+  [ValidationSubCodes.RESOURCE_NOT_FOUND]: {
+    category: ERROR_CATEGORIES.validation,
+    description: "The referenced resource could not be found."
+  },
+  [ValidationSubCodes.INCOMPLETE_VERIFICATION]: {
+    category: ERROR_CATEGORIES.validation,
+    description: "User has not completed all required verification steps."
   }
 };

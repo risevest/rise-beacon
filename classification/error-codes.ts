@@ -31,9 +31,10 @@ export enum SuperErrorCodes {
  * These are used alongside `super_code` 1000 to identify specific validation issues.
  */
 export enum ValidationSubCodes {
+  /** Base validation error */
   BASE = 0,
 
-  /** The OTP provided is invalid */
+  /** The OTP provided is invalid or has expired */
   INVALID_OTP = 1,
 
   /** A resource with the same unique identifier already exists */
@@ -43,12 +44,21 @@ export enum ValidationSubCodes {
   REQUIRED_FIELD_MISSING = 3,
 
   /** Input does not match the required format */
-  INVALID_FORMAT =  4,
+  INVALID_FORMAT = 4,
 
+  /** Input provided is not valid for the current operation */
   INVALID_INPUT = 5,
 
   /** The entity is semantically incorrect and cannot be processed */
-  UNPROCESSABLE_ENTITY =  6,
+  UNPROCESSABLE_ENTITY = 6,
+
+  /** The referenced resource could not be found */
+  RESOURCE_NOT_FOUND = 7,
+
+  /** User has not completed all required verification steps */
+  INCOMPLETE_VERIFICATION = 8,
+
+  I
 }
 
 /**
@@ -56,9 +66,10 @@ export enum ValidationSubCodes {
  * Used with `super_code` 2000.
  */
 export enum AuthenticationSubCodes {
+  /** Base authentication error */
   BASE = 0,
 
-  /** Username or password is incorrect */
+  /** Username or password or pin is incorrect */
   INVALID_CREDENTIALS = 1,
 
   /** Token has expired and is no longer valid */
@@ -85,25 +96,29 @@ export enum AuthenticationSubCodes {
  * Used with `super_code` 3000.
  */
 export enum AuthorizationSubCodes {
-  ACCESS_DENIED = 0, //BASE
+  /** Base validation error */
+  BASE = 0,
 
   /** Access to the requested resource is denied */
-  RESOURCE_FORBIDDEN = 1,
+  ACCESS_DENIED = 1, //BASE
+
+  /** Access to the requested resource is not allowed */
+  RESOURCE_FORBIDDEN = 2,
 
   /** Operation is not allowed in the current state */
-  INVALID_STATE = 2,
+  INVALID_STATE = 3,
 
   /** Missing required permission for this action */
-  MISSING_PERMISSION = 3,
+  MISSING_PERMISSION = 4,
 
   /** User is not allowed to access this tenant’s data */
-  TENANT_ACCESS_DENIED = 4,
+  TENANT_ACCESS_DENIED = 5,
 
   /** User is not allowed to access this organization’s data */
-  ORG_ACCESS_DENIED = 5,
+  ORG_ACCESS_DENIED = 6,
 
   /** Policy restrictions have been violated */
-  POLICY_VIOLATION = 6
+  POLICY_VIOLATION = 7,
 }
 
 /**
@@ -130,6 +145,34 @@ export enum BusinessLogicSubCodes {
 
   /** A structural or contextual constraint was violated */
   CONSTRAINT_VIOLATION = 6,
+
+  /** The resource is not supported in this context */
+  RESOURCE_NOT_SUPPORTED = 7,
+
+  /** The client has exceeded allowed request rate limits */
+  RATE_LIMIT_EXCEEDED = 8,
+
+  /** The user does not have sufficient balance to complete the transaction */
+  INSUFFICIENT_FUNDS = 9,
+
+  /** The action is not allowed due to a feature or limit tier (e.g. non-KYC user) */
+  LIMIT_RESTRICTION = 10,
+
+  /** The requested feature is not implemented */
+  FEATURE_NOT_IMPLEMENTED = 11,
+
+  /** The requested currency is not supported */
+  CURRENCY_NOT_SUPPORTED = 12,
+
+  /** The requested location or region is not supported */
+  LOCATION_NOT_SUPPORTED = 13,
+
+  /** The requested provider is not supported */
+  PROVIDER_NOT_SUPPORTED = 14,
+
+  /** The requested category is not supported */
+  CATEGORY_NOT_SUPPORTED = 15,
+
 }
 
 /**
@@ -143,18 +186,26 @@ export enum ExternalServiceSubCodes {
   SERVICE_TIMEOUT = 2,
   /** Authentication failed when calling the external service */
   SERVICE_AUTH_FAILED = 3,
+  /** Verification token or process has expired or is no longer valid */
+  SERVICE_VERIFICATION_EXPIRED = 4,
   /** The external service rejected the request format/data */
-  SERVICE_VALIDATION_ERROR = 4,
+  SERVICE_VALIDATION_ERROR = 5,
   /** The external service returned an unexpected response format */
-  SERVICE_RESPONSE_INVALID = 5,
+  SERVICE_RESPONSE_INVALID = 6,
   /** The external service is experiencing degraded performance */
-  SERVICE_DEGRADED = 6,
+  SERVICE_DEGRADED = 7,
   /** The external service quota/limits have been exceeded */
-  SERVICE_QUOTA_EXCEEDED = 7,
+  SERVICE_QUOTA_EXCEEDED = 8,
   /** The requested resource was not found in the external service */
-  SERVICE_NOT_FOUND = 8,
+  SERVICE_NOT_FOUND = 9,
   /** The external service configuration is invalid */
-  SERVICE_MISCONFIGURED = 9,
+  SERVICE_MISCONFIGURED = 10,
+  /** The external service rejected the request due to a duplicate record (e.g., existing customer/account) */
+  SERVICE_DUPLICATE_ENTRY = 11,
+  /** The external service process failed despite a valid request */
+  SERVICE_PROCESS_FAILED = 12,
+  /** The operation failed due to insufficient funds or balance */
+  SERVICE_INSUFFICIENT_FUNDS = 13,
   /** Generic external service error that doesn't fit other categories */
   SERVICE_UNKNOWN_ERROR = 99
 }
