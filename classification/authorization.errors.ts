@@ -2,6 +2,11 @@ import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
 import { AuthorizationSubCodes } from "./error-codes";
 
 export const authorizationErrors: ErrorSystem = {
+  [AuthorizationSubCodes.BASE]: {
+    category: ERROR_CATEGORIES.authorization,
+    description: "You are not authorized to perform this action."
+  },
+
   [AuthorizationSubCodes.ACCESS_DENIED]: {
     category: ERROR_CATEGORIES.authorization,
     description: "Access denied: You are not authorized to perform this action."
