@@ -81,6 +81,7 @@ export const businessLogicErrors: ErrorSystem = {
     category: ERROR_CATEGORIES.business_logic,
     description: "The requested category is not supported."
   },
+
   [BusinessLogicSubCodes.DUPLICATE_PROCESS]: {
     category: ERROR_CATEGORIES.business_logic,
     description: "The process was already completed or attempted more than once. The same process was triggered more than once simultaneously"
