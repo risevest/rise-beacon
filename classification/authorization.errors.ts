@@ -40,5 +40,10 @@ export const authorizationErrors: ErrorSystem = {
   [AuthorizationSubCodes.POLICY_VIOLATION]: {
     category: ERROR_CATEGORIES.authorization,
     description: "Action violates an authorization policy."
+  },
+
+  [AuthorizationSubCodes.RATE_LIMIT]: {
+    category: ERROR_CATEGORIES.authorization,
+    description: "Request was rate-limited due to exceeding allowed request thresholds."
   }
 };

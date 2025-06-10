@@ -118,6 +118,9 @@ export enum AuthorizationSubCodes {
 
   /** Policy restrictions have been violated */
   POLICY_VIOLATION = 7,
+
+  RATE_LIMIT = 8,
+
 }
 
 /**
