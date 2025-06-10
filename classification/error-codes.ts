@@ -177,6 +177,25 @@ export enum BusinessLogicSubCodes {
 
   /** The process was attempted more than once or has already been completed */
   DUPLICATE_PROCESS = 16,
+
+  /** The verification process has already been completed or is in progress */
+  VERIFICATION_ALREADY_EXISTS = 17,
+
+  /** The verification attempt failed due to business logic or partner rules */
+  VERIFICATION_FAILED = 18,
+
+  /** The data provided for verification does not match the expected identity */
+  VERIFICATION_MISMATCH = 19,
+
+  /** The verification has expired or is no longer valid */
+  VERIFICATION_EXPIRED = 20,
+
+  /** Verification is not allowed in the current context or for the given identity */
+  VERIFICATION_NOT_ALLOWED = 21,
+
+  /** The verification request is not in a valid state for the requested action */
+  VERIFICATION_STATE_NOT_ALLOWED = 22,
+
 }
 
 /**
