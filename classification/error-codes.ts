@@ -58,7 +58,6 @@ export enum ValidationSubCodes {
   /** User has not completed all required verification steps */
   INCOMPLETE_VERIFICATION = 8,
 
-  I
 }
 
 /**
@@ -173,6 +172,8 @@ export enum BusinessLogicSubCodes {
   /** The requested category is not supported */
   CATEGORY_NOT_SUPPORTED = 15,
 
+  /** The process was attempted more than once or has already been completed */
+  DUPLICATE_PROCESS = 16,
 }
 
 /**
