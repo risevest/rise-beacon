@@ -2,6 +2,7 @@ import { ERROR_CATEGORIES } from "./error.model";
 import { AppError } from "./errors";
 import { ERROR_SYSTEM, ServiceCodePrefix, ServiceId, ServiceRegistry, ServiceSubCode } from "./classification";
 
+
 /**
  * A utility class for error operations such as introspection, validation,
  * and categorization of internal error codes.

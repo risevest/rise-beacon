@@ -30,6 +30,19 @@ export function setServicePrefix(prefix: ServiceCodePrefix) {
   isServicePrefixSet = true;
 }
 
+let CURRENT_SERVICE_PREFIX: ServiceCodePrefix = "GEN";
+let isServicePrefixSet = false;
+
+export function setServicePrefix(prefix: ServiceCodePrefix) {
+  if (isServicePrefixSet) {
+    console.warn(`[Warning] Service prefix already set to "${CURRENT_SERVICE_PREFIX}". Ignoring new value "${prefix}".`);
+    return;
+  }
+  CURRENT_SERVICE_PREFIX = prefix;
+  isServicePrefixSet = true;
+}
+
+
 /**
  * Represents a structured application error for consistent error responses.
  *
