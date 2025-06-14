@@ -1,3 +1,18 @@
+export type ServiceCodePrefix =
+  | "GEN" // Default
+  | "MIO"
+  | "WLT"
+  | "PLN"
+  | "PRT"
+  | "USR"
+  | "API"
+  | "VER"
+  | "ADM"
+  | "FDS"
+  | "ORC";
+
+export type ServiceSubCode = `${ServiceCodePrefix}-${string}`;
+
 /**
  * Top-level error categories used as `super_code` in error responses.
  * Each category corresponds to a broad domain of errors.
