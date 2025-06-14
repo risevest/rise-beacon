@@ -1,18 +1,3 @@
-export type ServiceCodePrefix =
-  | "GEN" // Default
-  | "MIO"
-  | "WLT"
-  | "PLN"
-  | "PRT"
-  | "USR"
-  | "API"
-  | "VER"
-  | "ADM"
-  | "FDS"
-  | "ORC";
-
-export type ServiceSubCode = `${ServiceCodePrefix}-${string}`;
-
 /**
  * Top-level error categories used as `super_code` in error responses.
  * Each category corresponds to a broad domain of errors.
@@ -280,3 +265,45 @@ export type AllSubCodes =
   | BusinessLogicSubCodes
   | ExternalServiceSubCodes
   | SystemSubCodes;
+
+
+export enum ServiceId {
+  DEFAULT = 0,
+  MONEY_IO = 1,
+  WALLETS = 2,
+  PLANS = 3,
+  PORTFOLIOS = 4,
+  USERS = 5,
+  API = 6,
+  VERIFICATIONS = 7,
+  ADMINS = 8,
+  FEEDS = 9,
+  ORACLE = 10,
+}
+
+export type ServiceCodePrefix =
+  | "GEN" | "MIO" | "WLT" | "PLN" | "PRT"
+  | "USR" | "API" | "VER" | "ADM" | "FDS" | "ORC";
+
+export interface ServiceReference {
+  id: ServiceId;
+  name: string;
+  code: ServiceCodePrefix;
+  description?: string;
+}
+
+export const ServiceRegistry: Record<ServiceId, ServiceReference> = {
+  [ServiceId.DEFAULT]:     { id: ServiceId.DEFAULT, name: "Default", code: "GEN", description: "General or undefined" },
+  [ServiceId.MONEY_IO]:    { id: ServiceId.MONEY_IO, name: "MoneyIO", code: "MIO" },
+  [ServiceId.WALLETS]:     { id: ServiceId.WALLETS, name: "Wallets", code: "WLT" },
+  [ServiceId.PLANS]:       { id: ServiceId.PLANS, name: "Plans", code: "PLN" },
+  [ServiceId.PORTFOLIOS]:  { id: ServiceId.PORTFOLIOS, name: "Portfolios", code: "PRT" },
+  [ServiceId.USERS]:       { id: ServiceId.USERS, name: "Users", code: "USR" },
+  [ServiceId.API]:         { id: ServiceId.API, name: "API", code: "API" },
+  [ServiceId.VERIFICATIONS]: { id: ServiceId.VERIFICATIONS, name: "Verifications", code: "VER" },
+  [ServiceId.ADMINS]:      { id: ServiceId.ADMINS, name: "Admins", code: "ADM" },
+  [ServiceId.FEEDS]:       { id: ServiceId.FEEDS, name: "Feeds", code: "FDS" },
+  [ServiceId.ORACLE]:      { id: ServiceId.ORACLE, name: "Oracle", code: "ORC" },
+};
+
+export type ServiceSubCode = `${ServiceCodePrefix}-${AllSubCodes}`;

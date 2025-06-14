@@ -12,9 +12,23 @@ import {
   systemErrors,
   SystemSubCodes,
   validationErrors,
-  ValidationSubCodes
+  ValidationSubCodes,
+  ServiceSubCode, ServiceCodePrefix
 } from "./classification";
 import { SerializedError } from "./error.model";
+
+let CURRENT_SERVICE_PREFIX: ServiceCodePrefix = "GEN";
+let isServicePrefixSet = false;
+
+export function setServicePrefix(prefix: ServiceCodePrefix) {
+  if (isServicePrefixSet) {
+    console.warn(`[Warning] Service prefix already set to "${CURRENT_SERVICE_PREFIX}". Ignoring new value "${prefix}".`);
+    return;
+  }
+  CURRENT_SERVICE_PREFIX = prefix;
+  isServicePrefixSet = true;
+}
+
 
 /**
  * Represents a structured application error for consistent error responses.
@@ -76,12 +90,12 @@ export class AppError extends Error {
    * Useful for internal logging or detailed error diagnostics.
    */
   toJSON() : SerializedError {
+    const subCodeWithPrefix: ServiceSubCode = `${CURRENT_SERVICE_PREFIX}-${this.subCode}`;
     return {
       message: this.message,
       data:{
         super_code: this.superCode,
-        sub_code: this.subCode,
-
+        sub_code: subCodeWithPrefix,
         timestamp: this.timestamp,
         ...(this.meta && { meta: this.meta })
       }
