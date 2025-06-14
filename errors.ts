@@ -16,6 +16,7 @@ import {
   ServiceSubCode, ServiceCodePrefix
 } from "./classification";
 import { SerializedError } from "./error.model";
+import { ErrorUtils } from "./error-utils";
 
 let CURRENT_SERVICE_PREFIX: ServiceCodePrefix = "GEN";
 let isServicePrefixSet = false;
@@ -28,7 +29,6 @@ export function setServicePrefix(prefix: ServiceCodePrefix) {
   CURRENT_SERVICE_PREFIX = prefix;
   isServicePrefixSet = true;
 }
-
 
 /**
  * Represents a structured application error for consistent error responses.
@@ -90,12 +90,12 @@ export class AppError extends Error {
    * Useful for internal logging or detailed error diagnostics.
    */
   toJSON() : SerializedError {
-    const subCodeWithPrefix: ServiceSubCode = `${CURRENT_SERVICE_PREFIX}-${this.subCode}`;
+    const formattedSubCode: ServiceSubCode = ErrorUtils.formatSubCode(CURRENT_SERVICE_PREFIX, Number(this.subCode));
     return {
       message: this.message,
       data:{
         super_code: this.superCode,
-        sub_code: subCodeWithPrefix,
+        sub_code: formattedSubCode,
         timestamp: this.timestamp,
         ...(this.meta && { meta: this.meta })
       }
