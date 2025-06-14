@@ -1,6 +1,6 @@
 import { ERROR_CATEGORIES } from "./error.model";
 import { AppError } from "./errors";
-import { ERROR_SYSTEM, ServiceCodePrefix, ServiceId, ServiceRegistry } from "./classification";
+import { ERROR_SYSTEM, ServiceCodePrefix, ServiceId, ServiceRegistry, ServiceSubCode } from "./classification";
 
 /**
  * A utility class for error operations such as introspection, validation,
@@ -61,19 +61,11 @@ export class ErrorUtils {
   }
 
   /**
-   * Get service code prefix string like "MIO", "WLT"
+   * Format a subcode using a provided prefix.
+   * @example formatSubCode("MIO", 12) → "MIO-012"
    */
-  static getServiceCodePrefix(serviceId: ServiceId): ServiceCodePrefix {
-    return ServiceRegistry[serviceId]?.code ?? "GEN";
-  }
-
-  /**
-   * Format a subcode with the service prefix.
-   * @example formatSubCode(ServiceId.MONEY_IO, 12) → "MIO-012"
-   */
-  static formatSubCode(serviceId: ServiceId, subCode: number): string {
-    const prefix = this.getServiceCodePrefix(serviceId);
-    return `${prefix}-${subCode.toString().padStart(3, "0")}`;
+  static formatSubCode(prefix: ServiceCodePrefix, subCode: number): ServiceSubCode {
+    return `${prefix}-${subCode.toString().padStart(3, "0")}` as ServiceSubCode;
   }
 
   /**
