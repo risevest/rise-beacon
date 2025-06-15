@@ -276,14 +276,19 @@ export enum ServiceId {
   USERS = 5,
   API = 6,
   VERIFICATIONS = 7,
-  ADMINS = 8,
-  FEEDS = 9,
-  ORACLE = 10,
+  NOTIFICATIONS = 8,
+  TRANSACTIONS = 9,
+  ANALYTICS = 10,
+  FEEDS = 11,
+  ADMINS = 12,
+  CARDS = 13,
+  ORACLE = 14,
 }
 
 export type ServiceCodePrefix =
   | "GEN" | "MIO" | "WLT" | "PLN" | "PRT"
-  | "USR" | "API" | "VER" | "ADM" | "FDS" | "ORC";
+  | "USR" | "API" | "VER" | "ADM" | "FDS"
+  | "NTF" | "TRX" | "ANL" | "CRD" | "ORC";
 
 export interface ServiceReference {
   id: ServiceId;
@@ -293,17 +298,21 @@ export interface ServiceReference {
 }
 
 export const ServiceRegistry: Record<ServiceId, ServiceReference> = {
-  [ServiceId.DEFAULT]:     { id: ServiceId.DEFAULT, name: "Default", code: "GEN", description: "General or undefined" },
-  [ServiceId.MONEY_IO]:    { id: ServiceId.MONEY_IO, name: "MoneyIO", code: "MIO" },
-  [ServiceId.WALLETS]:     { id: ServiceId.WALLETS, name: "Wallets", code: "WLT" },
-  [ServiceId.PLANS]:       { id: ServiceId.PLANS, name: "Plans", code: "PLN" },
-  [ServiceId.PORTFOLIOS]:  { id: ServiceId.PORTFOLIOS, name: "Portfolios", code: "PRT" },
-  [ServiceId.USERS]:       { id: ServiceId.USERS, name: "Users", code: "USR" },
-  [ServiceId.API]:         { id: ServiceId.API, name: "API", code: "API" },
+  [ServiceId.DEFAULT]:       { id: ServiceId.DEFAULT, name: "Default", code: "GEN", description: "General or undefined" },
+  [ServiceId.MONEY_IO]:      { id: ServiceId.MONEY_IO, name: "MoneyIO", code: "MIO" },
+  [ServiceId.WALLETS]:       { id: ServiceId.WALLETS, name: "Wallets", code: "WLT" },
+  [ServiceId.PLANS]:         { id: ServiceId.PLANS, name: "Plans", code: "PLN" },
+  [ServiceId.PORTFOLIOS]:    { id: ServiceId.PORTFOLIOS, name: "Portfolios", code: "PRT" },
+  [ServiceId.USERS]:         { id: ServiceId.USERS, name: "Users", code: "USR" },
+  [ServiceId.API]:           { id: ServiceId.API, name: "API", code: "API" },
   [ServiceId.VERIFICATIONS]: { id: ServiceId.VERIFICATIONS, name: "Verifications", code: "VER" },
-  [ServiceId.ADMINS]:      { id: ServiceId.ADMINS, name: "Admins", code: "ADM" },
-  [ServiceId.FEEDS]:       { id: ServiceId.FEEDS, name: "Feeds", code: "FDS" },
-  [ServiceId.ORACLE]:      { id: ServiceId.ORACLE, name: "Oracle", code: "ORC" },
+  [ServiceId.NOTIFICATIONS]: { id: ServiceId.NOTIFICATIONS, name: "Notifications", code: "NTF" },
+  [ServiceId.ADMINS]:        { id: ServiceId.ADMINS, name: "Admins", code: "ADM" },
+  [ServiceId.FEEDS]:         { id: ServiceId.FEEDS, name: "Feeds", code: "FDS" },
+  [ServiceId.TRANSACTIONS]:  { id: ServiceId.TRANSACTIONS, name: "Transactions", code: "TRX" },
+  [ServiceId.ANALYTICS]:     { id: ServiceId.ANALYTICS, name: "Analytics", code: "ANL" },
+  [ServiceId.CARDS]:         { id: ServiceId.CARDS, name: "Cards", code: "CRD" },
+  [ServiceId.ORACLE]:        { id: ServiceId.ORACLE, name: "Oracle", code: "ORC" },
 };
 
 export type ServiceSubCode = `${ServiceCodePrefix}-${AllSubCodes}`;
