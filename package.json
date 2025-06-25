@@ -2,6 +2,8 @@
   "name": "rise-beacon",
   "version": "1.0.0",
   "description": "Standardized error handling and classification for Rise projects",
+  "repository": "git@github.com:risevest/rise-beacon.git",
+  "author": "Audrey Ezeonyedika <audreyezeonyedika@gmail.com>",
   "peerDependencies": {
     "http-status-codes": ">=2.0.0"
   },
