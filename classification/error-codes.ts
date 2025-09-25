@@ -56,8 +56,7 @@ export enum ValidationSubCodes {
   RESOURCE_NOT_FOUND = 7,
 
   /** User has not completed all required verification steps */
-  INCOMPLETE_VERIFICATION = 8,
-
+  INCOMPLETE_VERIFICATION = 8
 }
 
 /**
@@ -87,7 +86,7 @@ export enum AuthenticationSubCodes {
   ACTION_MISMATCH = 6,
 
   /** The provided signature is invalid or does not match the expected value */
-  INVALID_SIGNATURE = 7,
+  INVALID_SIGNATURE = 7
 }
 
 /**
@@ -119,8 +118,7 @@ export enum AuthorizationSubCodes {
   /** Policy restrictions have been violated */
   POLICY_VIOLATION = 7,
 
-  RATE_LIMIT = 8,
-
+  RATE_LIMIT = 8
 }
 
 /**
@@ -194,8 +192,7 @@ export enum BusinessLogicSubCodes {
   VERIFICATION_NOT_ALLOWED = 21,
 
   /** The verification request is not in a valid state for the requested action */
-  VERIFICATION_STATE_NOT_ALLOWED = 22,
-
+  VERIFICATION_STATE_NOT_ALLOWED = 22
 }
 
 /**
@@ -240,10 +237,9 @@ export enum ExternalServiceSubCodes {
 export enum SystemSubCodes {
   UNKNOWN_SYSTEM_ERROR = 0,
 
-/** The system could not connect to the database */
+  /** The system could not connect to the database */
   DATABASE_CONNECTION_FAILED = 1
 }
-
 
 /**
  * Grouped export of all subcodes by category.
@@ -266,7 +262,6 @@ export type AllSubCodes =
   | ExternalServiceSubCodes
   | SystemSubCodes;
 
-
 export enum ServiceId {
   DEFAULT = 0,
   MONEY_IO = 1,
@@ -282,13 +277,25 @@ export enum ServiceId {
   FEEDS = 11,
   ADMINS = 12,
   CARDS = 13,
-  ORACLE = 14,
+  ORACLE = 14
 }
 
 export type ServiceCodePrefix =
-  | "GEN" | "MIO" | "WLT" | "PLN" | "PRT"
-  | "USR" | "API" | "VER" | "ADM" | "FDS"
-  | "NTF" | "TRX" | "ANL" | "CRD" | "ORC";
+  | "GEN"
+  | "MIO"
+  | "WLT"
+  | "PLN"
+  | "PRT"
+  | "USR"
+  | "API"
+  | "VER"
+  | "ADM"
+  | "FDS"
+  | "NTF"
+  | "TRX"
+  | "ANL"
+  | "CRD"
+  | "ORC";
 
 export interface ServiceReference {
   id: ServiceId;
@@ -298,21 +305,21 @@ export interface ServiceReference {
 }
 
 export const ServiceRegistry: Record<ServiceId, ServiceReference> = {
-  [ServiceId.DEFAULT]:       { id: ServiceId.DEFAULT, name: "Default", code: "GEN", description: "General or undefined" },
-  [ServiceId.MONEY_IO]:      { id: ServiceId.MONEY_IO, name: "MoneyIO", code: "MIO" },
-  [ServiceId.WALLETS]:       { id: ServiceId.WALLETS, name: "Wallets", code: "WLT" },
-  [ServiceId.PLANS]:         { id: ServiceId.PLANS, name: "Plans", code: "PLN" },
-  [ServiceId.PORTFOLIOS]:    { id: ServiceId.PORTFOLIOS, name: "Portfolios", code: "PRT" },
-  [ServiceId.USERS]:         { id: ServiceId.USERS, name: "Users", code: "USR" },
-  [ServiceId.API]:           { id: ServiceId.API, name: "API", code: "API" },
+  [ServiceId.DEFAULT]: { id: ServiceId.DEFAULT, name: "Default", code: "GEN", description: "General or undefined" },
+  [ServiceId.MONEY_IO]: { id: ServiceId.MONEY_IO, name: "MoneyIO", code: "MIO" },
+  [ServiceId.WALLETS]: { id: ServiceId.WALLETS, name: "Wallets", code: "WLT" },
+  [ServiceId.PLANS]: { id: ServiceId.PLANS, name: "Plans", code: "PLN" },
+  [ServiceId.PORTFOLIOS]: { id: ServiceId.PORTFOLIOS, name: "Portfolios", code: "PRT" },
+  [ServiceId.USERS]: { id: ServiceId.USERS, name: "Users", code: "USR" },
+  [ServiceId.API]: { id: ServiceId.API, name: "API", code: "API" },
   [ServiceId.VERIFICATIONS]: { id: ServiceId.VERIFICATIONS, name: "Verifications", code: "VER" },
   [ServiceId.NOTIFICATIONS]: { id: ServiceId.NOTIFICATIONS, name: "Notifications", code: "NTF" },
-  [ServiceId.ADMINS]:        { id: ServiceId.ADMINS, name: "Admins", code: "ADM" },
-  [ServiceId.FEEDS]:         { id: ServiceId.FEEDS, name: "Feeds", code: "FDS" },
-  [ServiceId.TRANSACTIONS]:  { id: ServiceId.TRANSACTIONS, name: "Transactions", code: "TRX" },
-  [ServiceId.ANALYTICS]:     { id: ServiceId.ANALYTICS, name: "Analytics", code: "ANL" },
-  [ServiceId.CARDS]:         { id: ServiceId.CARDS, name: "Cards", code: "CRD" },
-  [ServiceId.ORACLE]:        { id: ServiceId.ORACLE, name: "Oracle", code: "ORC" },
+  [ServiceId.ADMINS]: { id: ServiceId.ADMINS, name: "Admins", code: "ADM" },
+  [ServiceId.FEEDS]: { id: ServiceId.FEEDS, name: "Feeds", code: "FDS" },
+  [ServiceId.TRANSACTIONS]: { id: ServiceId.TRANSACTIONS, name: "Transactions", code: "TRX" },
+  [ServiceId.ANALYTICS]: { id: ServiceId.ANALYTICS, name: "Analytics", code: "ANL" },
+  [ServiceId.CARDS]: { id: ServiceId.CARDS, name: "Cards", code: "CRD" },
+  [ServiceId.ORACLE]: { id: ServiceId.ORACLE, name: "Oracle", code: "ORC" }
 };
 
 export type ServiceSubCode = `${ServiceCodePrefix}-${AllSubCodes}`;
