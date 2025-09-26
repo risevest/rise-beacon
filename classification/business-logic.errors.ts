@@ -1,8 +1,10 @@
 import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
+
 import { BusinessLogicSubCodes } from "./error-codes";
 
 export const businessLogicErrors: ErrorSystem = {
-  [BusinessLogicSubCodes.BASE]: {  //BUSINESS_RULE_VIOLATION
+  [BusinessLogicSubCodes.BASE]: {
+    //BUSINESS_RULE_VIOLATION
     category: ERROR_CATEGORIES.business_logic,
     description: "A business rule was violated."
   },
@@ -84,12 +86,14 @@ export const businessLogicErrors: ErrorSystem = {
 
   [BusinessLogicSubCodes.DUPLICATE_PROCESS]: {
     category: ERROR_CATEGORIES.business_logic,
-    description: "The process was already completed or attempted more than once. The same process was triggered more than once simultaneously"
+    description:
+      "The process was already completed or attempted more than once. The same process was triggered more than once simultaneously"
   },
 
   [BusinessLogicSubCodes.VERIFICATION_ALREADY_EXISTS]: {
     category: ERROR_CATEGORIES.business_logic,
-    description: "There is an existing or ongoing verification process for this identity. New attempts are not allowed until it completes."
+    description:
+      "There is an existing or ongoing verification process for this identity. New attempts are not allowed until it completes."
   },
 
   [BusinessLogicSubCodes.VERIFICATION_FAILED]: {
@@ -114,7 +118,7 @@ export const businessLogicErrors: ErrorSystem = {
 
   [BusinessLogicSubCodes.VERIFICATION_STATE_NOT_ALLOWED]: {
     category: ERROR_CATEGORIES.business_logic,
-    description: "The verification request is not in a valid state to perform the requested action. This may be due to it being flagged, already completed, or not permitted in the current flow."
-  },
-
+    description:
+      "The verification request is not in a valid state to perform the requested action. This may be due to it being flagged, already completed, or not permitted in the current flow."
+  }
 };

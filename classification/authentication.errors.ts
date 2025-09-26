@@ -1,8 +1,8 @@
 import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
+
 import { AuthenticationSubCodes } from "./error-codes";
 
 export const authenticationErrors: ErrorSystem = {
-
   // 2xxx - Authentication Errors
   [AuthenticationSubCodes.BASE]: {
     category: ERROR_CATEGORIES.authentication,
@@ -10,7 +10,7 @@ export const authenticationErrors: ErrorSystem = {
   },
   [AuthenticationSubCodes.INVALID_CREDENTIALS]: {
     category: ERROR_CATEGORIES.authentication,
-    description:  "Invalid login credentials"
+    description: "Invalid login credentials"
   },
   [AuthenticationSubCodes.TOKEN_EXPIRED]: {
     category: ERROR_CATEGORIES.authentication,
@@ -36,4 +36,4 @@ export const authenticationErrors: ErrorSystem = {
     category: ERROR_CATEGORIES.authentication,
     description: "The provided signature is invalid or does not match the expected value"
   }
-}
+};

@@ -6,4 +6,4 @@ export * from "./error-codes";
 export * from "./external-service.errors";
 export * from "./system-errors.errors";
 export * from "./validation.errors";
-export  * from "./base"
+export * from "./base";

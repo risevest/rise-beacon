@@ -1,4 +1,5 @@
 import { ERROR_CATEGORIES, ErrorSystem } from "../error.model";
+
 import { ExternalServiceSubCodes } from "./error-codes";
 
 export const externalServiceErrors: ErrorSystem = {
@@ -54,7 +55,8 @@ export const externalServiceErrors: ErrorSystem = {
 
   [ExternalServiceSubCodes.SERVICE_DUPLICATE_ENTRY]: {
     category: ERROR_CATEGORIES.external_service,
-    description: "The external service rejected the request due to a duplicate record (e.g., existing customer or account)."
+    description:
+      "The external service rejected the request due to a duplicate record (e.g., existing customer or account)."
   },
 
   [ExternalServiceSubCodes.SERVICE_PROCESS_FAILED]: {
