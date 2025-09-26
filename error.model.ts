@@ -20,7 +20,7 @@ export interface SerializedError {
   data: SerializedErrorData;
 }
 
-export interface SerializedErrorData{
+export interface SerializedErrorData {
   super_code: SuperErrorCodes;
   sub_code: ServiceSubCode;
   meta?: Record<string, any>;
@@ -28,7 +28,7 @@ export interface SerializedErrorData{
 }
 
 export interface ErrorConstructor {
-  captureStackTrace?(targetObject: Object, constructorOpt?: Function): void;
+  captureStackTrace?(targetObject: object, constructorOpt?: (...args: any[]) => any): void;
 }
 
 // Error categories for better organization
