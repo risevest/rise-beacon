@@ -262,64 +262,17 @@ export type AllSubCodes =
   | ExternalServiceSubCodes
   | SystemSubCodes;
 
-export enum ServiceId {
-  DEFAULT = 0,
-  MONEY_IO = 1,
-  WALLETS = 2,
-  PLANS = 3,
-  PORTFOLIOS = 4,
-  USERS = 5,
-  API = 6,
-  VERIFICATIONS = 7,
-  NOTIFICATIONS = 8,
-  TRANSACTIONS = 9,
-  ANALYTICS = 10,
-  FEEDS = 11,
-  ADMINS = 12,
-  CARDS = 13,
-  ORACLE = 14
-}
+/**
+ * A short uppercase string identifying the service in error sub-codes.
+ * Conventionally 2–5 uppercase letters (e.g. "AUTH", "PAY", "USR").
+ *
+ * @example
+ * setServicePrefix("PAY")  // sub-codes will be formatted as "PAY-001"
+ */
+export type ServiceCodePrefix = string;
 
-export type ServiceCodePrefix =
-  | "GEN"
-  | "MIO"
-  | "WLT"
-  | "PLN"
-  | "PRT"
-  | "USR"
-  | "API"
-  | "VER"
-  | "ADM"
-  | "FDS"
-  | "NTF"
-  | "TRX"
-  | "ANL"
-  | "CRD"
-  | "ORC";
-
-export interface ServiceReference {
-  id: ServiceId;
-  name: string;
-  code: ServiceCodePrefix;
-  description?: string;
-}
-
-export const ServiceRegistry: Record<ServiceId, ServiceReference> = {
-  [ServiceId.DEFAULT]: { id: ServiceId.DEFAULT, name: "Default", code: "GEN", description: "General or undefined" },
-  [ServiceId.MONEY_IO]: { id: ServiceId.MONEY_IO, name: "MoneyIO", code: "MIO" },
-  [ServiceId.WALLETS]: { id: ServiceId.WALLETS, name: "Wallets", code: "WLT" },
-  [ServiceId.PLANS]: { id: ServiceId.PLANS, name: "Plans", code: "PLN" },
-  [ServiceId.PORTFOLIOS]: { id: ServiceId.PORTFOLIOS, name: "Portfolios", code: "PRT" },
-  [ServiceId.USERS]: { id: ServiceId.USERS, name: "Users", code: "USR" },
-  [ServiceId.API]: { id: ServiceId.API, name: "API", code: "API" },
-  [ServiceId.VERIFICATIONS]: { id: ServiceId.VERIFICATIONS, name: "Verifications", code: "VER" },
-  [ServiceId.NOTIFICATIONS]: { id: ServiceId.NOTIFICATIONS, name: "Notifications", code: "NTF" },
-  [ServiceId.ADMINS]: { id: ServiceId.ADMINS, name: "Admins", code: "ADM" },
-  [ServiceId.FEEDS]: { id: ServiceId.FEEDS, name: "Feeds", code: "FDS" },
-  [ServiceId.TRANSACTIONS]: { id: ServiceId.TRANSACTIONS, name: "Transactions", code: "TRX" },
-  [ServiceId.ANALYTICS]: { id: ServiceId.ANALYTICS, name: "Analytics", code: "ANL" },
-  [ServiceId.CARDS]: { id: ServiceId.CARDS, name: "Cards", code: "CRD" },
-  [ServiceId.ORACLE]: { id: ServiceId.ORACLE, name: "Oracle", code: "ORC" }
-};
-
-export type ServiceSubCode = `${ServiceCodePrefix}-${AllSubCodes}`;
+/**
+ * A formatted error sub-code string: "<PREFIX>-<zero-padded number>"
+ * @example "PAY-007"
+ */
+export type ServiceSubCode = string;
