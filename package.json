@@ -9,21 +9,30 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "default": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./dist/client/index.d.ts",
+      "require": "./dist/client/index.js",
+      "default": "./dist/client/index.js"
     },
     "./middleware/express": {
+      "types": "./dist/middleware/express.d.ts",
       "require": "./dist/middleware/express.js",
-      "types": "./dist/middleware/express.d.ts"
-    }
+      "default": "./dist/middleware/express.js"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build"
+    "test": "jest",
+    "prepublishOnly": "npm run test && npm run build"
   },
   "peerDependencies": {
     "express": ">=4.0.0"
@@ -34,7 +43,12 @@
     }
   },
   "devDependencies": {
+    "@types/chai": "4.3.14",
     "@types/express": "4.17.21",
+    "@types/jest": "29.5.12",
+    "chai": "4.4.1",
+    "jest": "29.7.0",
+    "ts-jest": "29.1.2",
     "typescript": "5.4.2"
   }
 }

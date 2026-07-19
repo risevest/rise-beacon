@@ -231,3 +231,94 @@ export class SystemLevelFailed extends AppError {
     });
   }
 }
+
+/**
+ * Represents an error created by a `defineErrorSystem` factory (see `registry.ts`).
+ *
+ * Extends `AppError`, so `instanceof` checks, `ErrorUtils.isAppError`, and the
+ * existing middleware continue to work. Alongside the numeric codes it carries
+ * the org-defined category and code names, the HTTP status from the registry,
+ * and the registry's service prefix. The global `setServicePrefix` value is
+ * not used for these errors.
+ */
+export class BeaconError extends AppError {
+  /** Org-defined category name, e.g. "WALLET". */
+  readonly categoryName: string;
+
+  /** Org-defined sub-code name, e.g. "FROZEN". */
+  readonly codeName: string;
+
+  /** HTTP status from the category definition. */
+  readonly httpStatus: number;
+
+  /** Documentation link from the sub-code definition, if any. */
+  readonly docsUrl?: string;
+
+  /** Service prefix from the registry, used when serializing the sub-code. */
+  readonly servicePrefix: ServiceCodePrefix;
+
+  constructor(params: {
+    categoryName: string;
+    codeName: string;
+    superCode: number;
+    subCode: number;
+    httpStatus: number;
+    message: string;
+    prefix: ServiceCodePrefix;
+    docsUrl?: string;
+    meta?: Record<string, any>;
+  }) {
+    super({
+      superCode: params.superCode as SuperErrorCodes,
+      subCode: params.subCode as AllSubCodes,
+      message: params.message,
+      meta: params.meta
+    });
+    this.categoryName = params.categoryName;
+    this.codeName = params.codeName;
+    this.httpStatus = params.httpStatus;
+    this.docsUrl = params.docsUrl;
+    this.servicePrefix = params.prefix;
+  }
+
+  toJSON(): SerializedError {
+    const formattedSubCode: ServiceSubCode = ErrorUtils.formatSubCode(this.servicePrefix, Number(this.subCode));
+    return {
+      message: this.message,
+      data: {
+        super_code: this.superCode,
+        sub_code: formattedSubCode,
+        timestamp: this.timestamp,
+        ...(this.meta && { meta: this.meta })
+      }
+    };
+  }
+}
+
+/**
+ * Normalizes an unknown thrown value into an `AppError`.
+ *
+ * `AppError` instances pass through unchanged. Anything else is wrapped in a
+ * `SystemLevelFailed`, preserving the original stack trace and attaching the
+ * original value as `cause`. `createBeaconErrorHandler` applies this to every
+ * non-AppError so clients always receive the same response shape.
+ */
+export function toBeaconError(error: unknown, fallbackMessage?: string): AppError {
+  if (error instanceof AppError) {
+    return error;
+  }
+
+  const message =
+    error instanceof Error
+      ? error.message
+      : typeof error === "string"
+        ? error
+        : fallbackMessage ?? "An unexpected error occurred.";
+
+  const wrapped = new SystemLevelFailed(SystemSubCodes.UNKNOWN_SYSTEM_ERROR, message);
+  if (error instanceof Error && error.stack) {
+    wrapped.stack = error.stack;
+  }
+  (wrapped as { cause?: unknown }).cause = error;
+  return wrapped;
+}
