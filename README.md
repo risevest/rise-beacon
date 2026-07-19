@@ -60,6 +60,47 @@ console.log(err.toJSON());
 // }
 ```
 
+## Server → client, end to end
+
+The same error shape flows from your Express route to your frontend, with no manual wiring on either side.
+
+**Server** throws a typed error and lets the middleware serialize it:
+
+```ts
+import express from "express";
+import { BusinessLogicFailed, BusinessLogicSubCodes } from "rise-beacon";
+import { beaconErrorHandler } from "rise-beacon/middleware/express";
+
+const app = express();
+
+app.post("/withdraw", (req, res) => {
+  if (req.body.amount > wallet.balance) {
+    throw new BusinessLogicFailed(BusinessLogicSubCodes.INSUFFICIENT_FUNDS, "Your balance is too low", {
+      available: wallet.balance
+    });
+  }
+  res.json({ ok: true });
+});
+
+app.use(beaconErrorHandler); // must be last
+```
+
+**Client** fetches, parses the response, and handles it by category:
+
+```ts
+import { parseBeaconError, matchBeaconError } from "rise-beacon/client";
+
+const response = await fetch("/withdraw", { method: "POST", body: JSON.stringify({ amount: 5000 }) });
+const err = parseBeaconError(await response.json());
+
+matchBeaconError(err, {
+  onBusiness: (e) => toast.error(e.message), // "Your balance is too low"
+  onFallback: () => toast.error("Something went wrong")
+});
+```
+
+No shared config is required for this flow, it works with the built-in taxonomy out of the box. See [Define your own error codes](#define-your-own-error-codes-v2) below for org-defined categories shared between server and client.
+
 ## Express middleware
 
 Register `beaconErrorHandler` as the last middleware in your Express app to automatically serialize any `AppError` thrown in your routes:
