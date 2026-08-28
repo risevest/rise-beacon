@@ -30,7 +30,7 @@ export const validationErrors: ErrorSystem = {
   },
   [ValidationSubCodes.UNPROCESSABLE_ENTITY]: {
     category: ERROR_CATEGORIES.validation,
-    description: "The some fields could not be processed due to a semantic validation error."
+    description: "Some fields could not be processed due to a semantic validation error."
   },
   [ValidationSubCodes.RESOURCE_NOT_FOUND]: {
     category: ERROR_CATEGORIES.validation,

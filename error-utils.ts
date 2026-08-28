@@ -1,6 +1,6 @@
 import { ERROR_CATEGORIES } from "./error.model";
 import { AppError } from "./errors";
-import { ERROR_SYSTEM, ServiceCodePrefix, ServiceId, ServiceRegistry, ServiceSubCode } from "./classification";
+import { ERROR_SYSTEM, ServiceCodePrefix, ServiceSubCode } from "./classification";
 
 
 /**
@@ -70,18 +70,13 @@ export class ErrorUtils {
   }
 
   /**
-   * Parse a formatted subcode like "WLT-001" into { serviceId, subCode }
+   * Parse a formatted subcode like "PAY-007" into { prefix, subCode }
    */
-  static parseSubCode(formatted: string): { serviceId: ServiceId; subCode: number } {
-    const match = formatted.match(/^([A-Z]{3})-(\d{3})$/);
+  static parseSubCode(formatted: string): { prefix: string; subCode: number } {
+    const match = formatted.match(/^([A-Z]+)-(\d+)$/);
     if (!match) throw new Error(`Invalid subcode format: ${formatted}`);
 
     const [, prefix, codeStr] = match;
-    const subCode = parseInt(codeStr, 10);
-
-    const entry = Object.values(ServiceRegistry).find((ref) => ref.code === prefix);
-    const serviceId = entry?.id ?? ServiceId.DEFAULT;
-
-    return { serviceId, subCode };
+    return { prefix, subCode: parseInt(codeStr, 10) };
   }
 }

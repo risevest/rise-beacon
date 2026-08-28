@@ -1,20 +1,54 @@
 {
   "name": "rise-beacon",
   "version": "1.0.0",
-  "description": "Standardized error handling and classification for Rise projects",
+  "description": "Structured error classification and handling for Node.js services",
   "repository": "git@github.com:risevest/rise-beacon.git",
   "author": "Audrey Ezeonyedika <audreyezeonyedika@gmail.com>",
-  "peerDependencies": {
-    "http-status-codes": ">=2.0.0"
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./dist/client/index.d.ts",
+      "require": "./dist/client/index.js",
+      "default": "./dist/client/index.js"
+    },
+    "./middleware/express": {
+      "types": "./dist/middleware/express.d.ts",
+      "require": "./dist/middleware/express.js",
+      "default": "./dist/middleware/express.js"
+    },
+    "./package.json": "./package.json"
   },
-  "dependencies": {
-    "http-status-codes": "^2.3.0"
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "prepublishOnly": "npm run test && npm run build"
+  },
+  "peerDependencies": {
+    "express": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "express": {
+      "optional": true
+    }
   },
   "devDependencies": {
-    "typescript": "^5.4.2"
-  },
-  "scripts": {
-    "typecheck": "tsc --noEmit",
-    "build": "tsc"
+    "@types/chai": "4.3.14",
+    "@types/express": "4.17.21",
+    "@types/jest": "29.5.12",
+    "chai": "4.4.1",
+    "jest": "29.7.0",
+    "ts-jest": "29.1.2",
+    "typescript": "5.4.2"
   }
 }
