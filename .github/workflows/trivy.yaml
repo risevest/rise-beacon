@@ -1,0 +1,31 @@
+name: Trivy CVE Scan
+
+# Thin caller. All scan, reporting, tracking-issue and Slack logic lives in
+# risevest/ci-hub — change it there once and every service repo picks it up.
+# Docs: https://github.com/risevest/ci-hub/blob/main/docs/workflows/ci-trivy-scan.md
+
+on:
+    pull_request:
+    push:
+        branches: [master]
+    schedule:
+        - cron: "0 10 1,15 * *" # twice a month (1st & 15th) at 10:00 UTC
+    workflow_dispatch: # re-run a scan on demand; same reporting path as the schedule
+
+jobs:
+    scan:
+        # Pinned to @main only while ci-hub is piloted. Switch to @v1 once
+        # the first hub release is tagged.
+        uses: risevest/ci-hub/.github/workflows/ci-trivy-scan.yaml@main
+        # A reusable workflow cannot request more than its caller grants.
+        permissions:
+            contents: read
+            pull-requests: write
+            issues: write
+        with:
+            slack_channel: C08SKJCHP4K
+            oncall_group_id: S0BJTUPPF4L
+            fail_on: none # report-only until this repo's CVE backlog is cleared; then tighten to critical-high
+        # Pass only what ci-hub declares, not every repo/org secret.
+        secrets:
+            WATSON_SLACK_BOT_TOKEN: ${{ secrets.WATSON_SLACK_BOT_TOKEN }}
